@@ -1,0 +1,12 @@
+{
+  "packageDirectories": [
+    {
+      "path": "ld-catfood",
+      "default": true
+    }
+  ],
+  "name": "SFDC_LD_Packages",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "52.0"
+}
