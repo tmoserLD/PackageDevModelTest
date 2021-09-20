@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transaction_Group_Compact</fullName>
+    <fields>SaaSOptics_Customer_SFDC_ID__c</fields>
+    <fields>SaaSOptics_Txs_SFDC_Opp_ID__c</fields>
+    <fields>SaaSOptics_Contract_SFDC_ID__c</fields>
+    <fields>SaaSOptics_Contract_Number__c</fields>
+    <fields>SaaSOptics_Txs_Order_Date__c</fields>
+    <fields>SaaSOptics_Txs_End_Date__c</fields>
+    <label>Transaction Group Compact</label>
+</CompactLayout>

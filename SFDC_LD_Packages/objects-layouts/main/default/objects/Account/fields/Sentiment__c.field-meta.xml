@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sentiment__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>How strong is the relationship with the champion?</inlineHelpText>
+    <label>Sentiment</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Stoplight</valueSetName>
+    </valueSet>
+</CustomField>

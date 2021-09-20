@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Insert_engagement_link</fullName>
+    <active>true</active>
+    <description>Insert engagement link if PS/TAM engagement check</description>
+    <errorConditionFormula>AND(ISBLANK(Engagement_link__c), PS_TAM_Engagement__c=true)</errorConditionFormula>
+    <errorDisplayField>Engagement_link__c</errorDisplayField>
+    <errorMessage>Please link the engagement in &quot;Engagement Link&quot; field</errorMessage>
+</ValidationRule>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Matches_Account_CSM__c</fullName>
+    <externalId>false</externalId>
+    <formula>CS_Manager__c = Account.Customer_Success_Manager__c</formula>
+    <label>Matches Account CSM</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Auto_Renew__c</fullName>
+    <description>is the auto renewal turned off?</description>
+    <externalId>false</externalId>
+    <label>Auto Renew?</label>
+    <length>225</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

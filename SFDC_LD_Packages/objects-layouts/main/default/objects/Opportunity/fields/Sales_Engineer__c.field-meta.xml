@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Engineer__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Solutions engineer who assisted with this Opportunity</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Solutions engineer who assisted with this Opportunity</inlineHelpText>
+    <label>Solutions Engineer</label>
+    <lookupFilter>
+        <active>false</active>
+        <booleanFilter>1 OR 2 OR 3</booleanFilter>
+        <filterItems>
+            <field>User.ProfileId</field>
+            <operation>equals</operation>
+            <value>00e41000001uKHBAA2</value>
+        </filterItems>
+        <filterItems>
+            <field>User.ProfileId</field>
+            <operation>equals</operation>
+            <value>00e41000000iug7AAA</value>
+        </filterItems>
+        <filterItems>
+            <field>User.Profile.Name</field>
+            <operation>contains</operation>
+            <value>Solutions Engineer</value>
+        </filterItems>
+        <isOptional>true</isOptional>
+    </lookupFilter>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Opportunities</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

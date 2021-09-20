@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSE_Handoff_Use_Cases__c</fullName>
+    <description>List of use cases by team</description>
+    <externalId>false</externalId>
+    <inlineHelpText>List of use cases by team</inlineHelpText>
+    <label>Use Cases</label>
+    <length>10000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Html</type>
+    <visibleLines>25</visibleLines>
+</CustomField>

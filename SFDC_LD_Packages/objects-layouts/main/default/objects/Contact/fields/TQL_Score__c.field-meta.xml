@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TQL_Score__c</fullName>
+    <description>Behavioral + Demographic Score</description>
+    <externalId>false</externalId>
+    <formula>Behavioral_Score__c +  Demographic_Score__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Behavioral + Demographic Score</inlineHelpText>
+    <label>TQL Score</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

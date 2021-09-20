@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Opp_LD_Account_ID_Does_Not_Match_Account__c</fullName>
+    <description>LD Account ID in Opportunity Doesn&apos;t Match LD Account ID in Account</description>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(LaunchDarkly_Account_ID__c), false,
+  IF(ISBLANK(Account.LD_Account_ID__c), false,
+    IF(LOWER(LaunchDarkly_Account_ID__c) != LOWER(Account.LD_Account_ID__c), true, false)
+  )
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Opp LD Account ID Does Not Match Account</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

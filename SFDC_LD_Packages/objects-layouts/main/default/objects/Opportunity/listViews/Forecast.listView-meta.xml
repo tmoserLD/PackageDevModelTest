@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Forecast</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>OPPORTUNITY.STAGE_NAME</columns>
+    <columns>OPPORTUNITY.CLOSE_DATE</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>OPPORTUNITY.TYPE</columns>
+    <columns>OPPORTUNITY.NEXT_STEP</columns>
+    <filterScope>Team</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>notEqual</operation>
+        <value>R - Renewals,7L - Closed Lost,Duplicate,DQ - Disqualified</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY.CLOSE_DATE</field>
+        <operation>equals</operation>
+        <value>THIS_FISCAL_QUARTER</value>
+    </filters>
+    <label>Forecast This FQ</label>
+    <sharedTo>
+        <role>Field_Account_Executive_Manager_Central</role>
+        <role>Field_Account_Executive_Manager_East</role>
+        <role>Field_Account_Executive_Manager_West</role>
+        <role>Regional_Account_Executive_Central</role>
+        <role>Regional_Account_Executive_East</role>
+        <role>Regional_Account_Executive_West</role>
+        <role>VP_North_America_Field_Sales</role>
+        <role>VP_Sales</role>
+    </sharedTo>
+</ListView>

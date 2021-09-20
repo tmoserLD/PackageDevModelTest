@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Effective_service_date__c</fullName>
+    <description>Automated through rollup helper</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Pulled from the min Start Date on Product table</inlineHelpText>
+    <label>Effective service start date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

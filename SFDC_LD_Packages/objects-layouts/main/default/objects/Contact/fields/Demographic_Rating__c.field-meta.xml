@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Demographic_Rating__c</fullName>
+    <description>A letter grade assigned to the demographic score. A, B, C, D</description>
+    <externalId>false</externalId>
+    <inlineHelpText>A letter grade assigned to the demographic score. A, B, C, D</inlineHelpText>
+    <label>Demographic Rating</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Scoring_Rating</valueSetName>
+    </valueSet>
+</CustomField>

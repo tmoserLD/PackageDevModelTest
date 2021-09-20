@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>POV_Status</fullName>
+    <columns>OPPORTUNITY.NAME</columns>
+    <columns>Sales_Engineer__c</columns>
+    <columns>OPPORTUNITY.AMOUNT</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>OPPORTUNITY.STAGE_NAME</field>
+        <operation>equals</operation>
+        <value>2 - Develop Opportunity,3 - Present Solution,4 - Close Opportunity</value>
+    </filters>
+    <filters>
+        <field>POV_Status__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <label>POV Status</label>
+    <sharedTo>
+        <role>Lead_Solution_Engineer_East</role>
+        <role>Lead_Solution_Engineer_West</role>
+        <role>SE_Manager</role>
+        <role>Solutions_Engineer_East</role>
+        <role>Solutions_Engineer_West</role>
+    </sharedTo>
+</ListView>

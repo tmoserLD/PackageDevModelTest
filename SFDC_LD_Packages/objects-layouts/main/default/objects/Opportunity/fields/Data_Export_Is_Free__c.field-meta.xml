@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Data_Export_Is_Free__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Did the customer pay for data exports or get it for free?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Did the customer pay for data exports or get it for free?</inlineHelpText>
+    <label>Data Export - Is Free</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

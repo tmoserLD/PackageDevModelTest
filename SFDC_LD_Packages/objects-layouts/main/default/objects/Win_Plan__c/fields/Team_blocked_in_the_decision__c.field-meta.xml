@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Team_blocked_in_the_decision__c</fullName>
+    <description>What teams could block the deal?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>What teams could block the deal?</inlineHelpText>
+    <label>Team that could block the deal?</label>
+    <length>1000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MQL_50__c</fullName>
+    <externalId>false</externalId>
+    <formula>MQL_Score__c &gt; 50</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>MQL &gt; 50</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

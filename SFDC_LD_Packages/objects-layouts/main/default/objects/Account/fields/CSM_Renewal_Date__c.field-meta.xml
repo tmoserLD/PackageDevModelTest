@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSM_Renewal_Date__c</fullName>
+    <description>Pull from the formula renewal date field but CSM have edit access</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use this field to rewrite the field above (Renewal Date) if incorrect.</inlineHelpText>
+    <label>CSM Renewal Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

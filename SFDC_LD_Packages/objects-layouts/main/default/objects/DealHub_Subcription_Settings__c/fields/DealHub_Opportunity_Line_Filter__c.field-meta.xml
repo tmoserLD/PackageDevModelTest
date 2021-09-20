@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DealHub_Opportunity_Line_Filter__c</fullName>
+    <defaultValue>&apos;Product2.DealHub_Is_Renewable__c = true&apos;</defaultValue>
+    <externalId>false</externalId>
+    <label>Opportunity Line Filter</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

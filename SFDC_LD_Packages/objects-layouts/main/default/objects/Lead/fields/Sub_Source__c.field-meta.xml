@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Source__c</fullName>
+    <externalId>false</externalId>
+    <label>Lead Sub-Source</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Inbound - Search</fullName>
+                <default>false</default>
+                <label>Inbound - Search</label>
+            </value>
+            <value>
+                <fullName>Inbound - Advertising</fullName>
+                <default>false</default>
+                <label>Inbound - Advertising</label>
+            </value>
+            <value>
+                <fullName>Inbound - Event</fullName>
+                <default>false</default>
+                <label>Inbound - Event</label>
+            </value>
+            <value>
+                <fullName>Inbound - Intercom</fullName>
+                <default>false</default>
+                <label>Inbound - Intercom</label>
+            </value>
+            <value>
+                <fullName>Inbound - Referral</fullName>
+                <default>false</default>
+                <label>Inbound - Referral</label>
+            </value>
+            <value>
+                <fullName>Inbound - Social</fullName>
+                <default>false</default>
+                <label>Inbound - Social</label>
+            </value>
+            <value>
+                <fullName>Inbound - Sponsored Content</fullName>
+                <default>false</default>
+                <label>Inbound - Sponsored Content</label>
+            </value>
+            <value>
+                <fullName>Inbound - Web Referral</fullName>
+                <default>false</default>
+                <label>Inbound - Web Referral</label>
+            </value>
+            <value>
+                <fullName>Outbound - Business Development / Apollo</fullName>
+                <default>false</default>
+                <label>Outbound - Business Development / Apollo</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

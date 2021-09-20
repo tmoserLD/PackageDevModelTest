@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Territory__c</fullName>
+    <description>based on location</description>
+    <externalId>false</externalId>
+    <label>Territory</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Australia</fullName>
+                <default>false</default>
+                <label>Australia</label>
+            </value>
+            <value>
+                <fullName>California - Minor - 1</fullName>
+                <default>false</default>
+                <label>California - Minor - 1</label>
+            </value>
+            <value>
+                <fullName>California - Minor - 3</fullName>
+                <default>false</default>
+                <label>California - Minor - 3</label>
+            </value>
+            <value>
+                <fullName>California - Minor - 4</fullName>
+                <default>false</default>
+                <label>California - Minor - 4</label>
+            </value>
+            <value>
+                <fullName>California - Minor - 5</fullName>
+                <default>false</default>
+                <label>California - Minor - 5</label>
+            </value>
+            <value>
+                <fullName>East Canada</fullName>
+                <default>false</default>
+                <label>East Canada</label>
+            </value>
+            <value>
+                <fullName>East Central</fullName>
+                <default>false</default>
+                <label>East Central</label>
+            </value>
+            <value>
+                <fullName>East Coast</fullName>
+                <default>false</default>
+                <label>East Coast</label>
+            </value>
+            <value>
+                <fullName>International</fullName>
+                <default>false</default>
+                <label>International</label>
+            </value>
+            <value>
+                <fullName>Midwest</fullName>
+                <default>false</default>
+                <label>Midwest</label>
+            </value>
+            <value>
+                <fullName>Minnesota, Wisconsin, Illinois</fullName>
+                <default>false</default>
+                <label>Minnesota, Wisconsin, Illinois</label>
+            </value>
+            <value>
+                <fullName>New England</fullName>
+                <default>false</default>
+                <label>New England</label>
+            </value>
+            <value>
+                <fullName>New York</fullName>
+                <default>false</default>
+                <label>New York</label>
+            </value>
+            <value>
+                <fullName>New York City</fullName>
+                <default>false</default>
+                <label>New York City</label>
+            </value>
+            <value>
+                <fullName>Northwest</fullName>
+                <default>false</default>
+                <label>Northwest</label>
+            </value>
+            <value>
+                <fullName>Ohio, Michigan, Indiana</fullName>
+                <default>false</default>
+                <label>Ohio, Michigan, Indiana</label>
+            </value>
+            <value>
+                <fullName>Rockies</fullName>
+                <default>false</default>
+                <label>Rockies</label>
+            </value>
+            <value>
+                <fullName>SMB</fullName>
+                <default>false</default>
+                <label>SMB</label>
+            </value>
+            <value>
+                <fullName>SoCal</fullName>
+                <default>false</default>
+                <label>SoCal</label>
+            </value>
+            <value>
+                <fullName>Southeast</fullName>
+                <default>false</default>
+                <label>Southeast</label>
+            </value>
+            <value>
+                <fullName>Southwest</fullName>
+                <default>false</default>
+                <label>Southwest</label>
+            </value>
+            <value>
+                <fullName>Strat</fullName>
+                <default>false</default>
+                <label>Strat</label>
+            </value>
+            <value>
+                <fullName>TOLA</fullName>
+                <default>false</default>
+                <label>TOLA</label>
+            </value>
+            <value>
+                <fullName>Texas</fullName>
+                <default>false</default>
+                <label>Texas</label>
+            </value>
+            <value>
+                <fullName>US Other</fullName>
+                <default>false</default>
+                <label>US Other</label>
+            </value>
+            <value>
+                <fullName>United Kingdom</fullName>
+                <default>false</default>
+                <label>United Kingdom</label>
+            </value>
+            <value>
+                <fullName>Wisconsin, Illinois</fullName>
+                <default>false</default>
+                <label>Wisconsin, Illinois</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

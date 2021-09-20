@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_features__c</fullName>
+    <description>When the Opportunity Plan is updated AND the &apos;Standard Features?&apos; checkbox = TRUE, this box will populate with the base features associated with this plan.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>When the Opportunity Plan is updated AND the &apos;Standard Features?&apos; checkbox = TRUE, this box will populate with the base features associated with this plan.</inlineHelpText>
+    <label>Product features</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

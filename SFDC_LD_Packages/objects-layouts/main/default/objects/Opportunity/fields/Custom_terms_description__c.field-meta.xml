@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Custom_terms_description__c</fullName>
+    <description>Summarize the custom terms we have in place.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Please summarize the custom terms we have in place.</inlineHelpText>
+    <label>Custom Terms Detail</label>
+    <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

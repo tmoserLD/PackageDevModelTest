@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Orphan__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Is the Contact record an orphan? (no Account)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Is the Contact record an orphan? (no Account)</inlineHelpText>
+    <label>Orphan?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

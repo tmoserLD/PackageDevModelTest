@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>KM_Inbound_Leads_by_JR_interim</fullName>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>Account_Match_Type__c</columns>
+    <columns>mkto_si__Last_Interesting_Moment__c</columns>
+    <columns>Description__c</columns>
+    <columns>Account_Match_Owner_Name__c</columns>
+    <columns>Account_Match_Assigned_BDR__c</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>Campaigns__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>MQL_Score__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>LEAD.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/30/2020 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>notContain</operation>
+        <value>Apollo,LeadIQ,Zendesk,ZoomInfo</value>
+    </filters>
+    <filters>
+        <field>mkto_si__Last_Interesting_Moment__c</field>
+        <operation>notContain</operation>
+        <value>LaunchDarkly 101</value>
+    </filters>
+    <filters>
+        <field>Account_Match_Owner_Name__c</field>
+        <operation>equals</operation>
+        <value>Tom Fashola,Stephen McDonough,Wade Erickson,Jake LeBlanc</value>
+    </filters>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Working,Qualifying,Disqualified</value>
+    </filters>
+    <filters>
+        <field>LEAD.COMPANY</field>
+        <operation>notContain</operation>
+        <value>IBM,CGI,Bell,John Hancock,OpenText,CIBC World Markets,National Bank of Canada,Canadian National Railway,Morneau Shepell,Hudson&apos;s Bay Company,Intact Finacncial,CBC,Desjardins Group,TMX Group,Sobeys</value>
+    </filters>
+    <filters>
+        <field>LEAD.COMPANY</field>
+        <operation>notContain</operation>
+        <value>Ontario Lottery and Gaming,CGI,Constellation Brands,BJ’s Wholesale,IBM,PTC,American Tower,Charter Communications,Waters,Hologic,Keurig Dr Pepper,M&amp;T Bank,Pepsi,Nuance Communications</value>
+    </filters>
+    <filters>
+        <field>LEAD.COMPANY</field>
+        <operation>notContain</operation>
+        <value>Thermo Fisher,Bookings Group,TJX</value>
+    </filters>
+    <filters>
+        <field>bizible2__Account__c</field>
+        <operation>notEqual</operation>
+        <value>Customer</value>
+    </filters>
+    <label>KM Inbound Leads - by JR - interim</label>
+</ListView>

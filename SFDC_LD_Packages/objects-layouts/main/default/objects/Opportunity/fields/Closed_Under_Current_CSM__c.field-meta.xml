@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Under_Current_CSM__c</fullName>
+    <externalId>false</externalId>
+    <formula>CloseDate &gt; Account.CSM_Assigned__c</formula>
+    <label>Closed Under Current CSM</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

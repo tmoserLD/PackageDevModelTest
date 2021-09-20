@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DealHub_Subscription_Line_Threshold__c</fullName>
+    <defaultValue>200</defaultValue>
+    <description>Maximum subscription lines that will be process in immediate transaction, above this number the process will schedule future process.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Maximum subscription lines that will be process in immediate transaction, above this number the process will schedule future process.</inlineHelpText>
+    <label>Subscription Line Threshold</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

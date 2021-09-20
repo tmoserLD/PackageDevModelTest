@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reseller_PO</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ ISPICKVAL( StageName, &quot;5 - Sales Closed Won&quot;),
+ RecordTypeId != &quot;0121K000001cutOQAQ&quot; ,
+ NOT(ISBLANK( Reseller_Customer__c )),
+ ISBLANK( PO_Number__c )
+)</errorConditionFormula>
+    <errorDisplayField>PO_Number__c</errorDisplayField>
+    <errorMessage>PO Number is required for non-Trial Reseller Opportunities</errorMessage>
+</ValidationRule>

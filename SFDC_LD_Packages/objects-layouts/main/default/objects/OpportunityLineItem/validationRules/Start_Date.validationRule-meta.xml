@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_Date</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+$User.ProfileId &lt;&gt; &quot;00e41000000iufw&quot;,
+ISPICKVAL(Opportunity.StageName, &quot;7W - Closed Won&quot;),
+ISBLANK( Start_Date__c )
+)</errorConditionFormula>
+    <errorDisplayField>Start_Date__c</errorDisplayField>
+    <errorMessage>Start Date Required</errorMessage>
+</ValidationRule>

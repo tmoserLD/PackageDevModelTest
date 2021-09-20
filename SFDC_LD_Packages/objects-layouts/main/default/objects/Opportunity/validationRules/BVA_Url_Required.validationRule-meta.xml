@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BVA_Url_Required</fullName>
+    <active>true</active>
+    <description>BVA Url required for all deals over 100k</description>
+    <errorConditionFormula>AND(
+contains($Profile.Name, &quot;Sales&quot;),
+ISPICKVAL(Type, &quot;New Business&quot;),
+ISBLANK(BVA_url__c), 
+J_Customer_completed_a_BVA_or_BVA_lite__c = TRUE,
+Incremental_ARR__c &gt;=100000
+)</errorConditionFormula>
+    <errorDisplayField>BVA_url__c</errorDisplayField>
+    <errorMessage>BVA url is required for all deals over $100k</errorMessage>
+</ValidationRule>

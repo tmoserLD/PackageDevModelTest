@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Campaign_Status__c</fullName>
+    <externalId>false</externalId>
+    <label>Last Campaign Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Added</fullName>
+                <default>false</default>
+                <label>Added</label>
+            </value>
+            <value>
+                <fullName>Responded</fullName>
+                <default>false</default>
+                <label>Responded</label>
+            </value>
+            <value>
+                <fullName>RSVP_Yes</fullName>
+                <default>false</default>
+                <label>RSVP_Yes</label>
+            </value>
+            <value>
+                <fullName>RSVP_No</fullName>
+                <default>false</default>
+                <label>RSVP_No</label>
+            </value>
+            <value>
+                <fullName>CheckedIn</fullName>
+                <default>false</default>
+                <label>CheckedIn</label>
+            </value>
+            <value>
+                <fullName>Waitlist</fullName>
+                <default>false</default>
+                <label>Waitlist</label>
+            </value>
+            <value>
+                <fullName>Registration Error</fullName>
+                <default>false</default>
+                <label>Registration Error</label>
+            </value>
+            <value>
+                <fullName>Waitlisted</fullName>
+                <default>false</default>
+                <label>Waitlisted</label>
+            </value>
+            <value>
+                <fullName>Registered</fullName>
+                <default>false</default>
+                <label>Registered</label>
+            </value>
+            <value>
+                <fullName>No Show</fullName>
+                <default>false</default>
+                <label>No Show</label>
+            </value>
+            <value>
+                <fullName>Attended</fullName>
+                <default>false</default>
+                <label>Attended</label>
+            </value>
+            <value>
+                <fullName>Attended On-demand</fullName>
+                <default>false</default>
+                <label>Attended On-demand</label>
+            </value>
+            <value>
+                <fullName>Attended Live</fullName>
+                <default>false</default>
+                <label>Attended Live</label>
+            </value>
+            <value>
+                <fullName>Watched OD</fullName>
+                <default>false</default>
+                <label>Watched OD</label>
+            </value>
+            <value>
+                <fullName>Sent</fullName>
+                <default>false</default>
+                <label>Sent</label>
+            </value>
+            <value>
+                <fullName>Invited</fullName>
+                <default>false</default>
+                <label>Invited</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

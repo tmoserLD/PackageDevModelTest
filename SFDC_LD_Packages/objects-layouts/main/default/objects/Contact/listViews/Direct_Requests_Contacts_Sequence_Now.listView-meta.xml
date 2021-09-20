@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Direct_Requests_Contacts_Sequence_Now</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4</booleanFilter>
+    <columns>FULL_NAME</columns>
+    <columns>CONTACT.EMAIL</columns>
+    <columns>CONTACT.TITLE</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>Last_Campaign__c</columns>
+    <columns>Demo_Contact_Sales_Request__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Date_Added_to_Sequence__c</field>
+        <operation>equals</operation>
+    </filters>
+    <filters>
+        <field>Manual_Follow_Up__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Actively_being_Sequenced__c</field>
+        <operation>equals</operation>
+        <value>0</value>
+    </filters>
+    <filters>
+        <field>Demo_Contact_Sales_Request__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>8/1/2021</value>
+    </filters>
+    <label>Direct Requests Contacts - Sequence Now!</label>
+</ListView>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Exit_Criterion__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>https://launchdarkly.atlassian.net/wiki/spaces/Policy/pages/62554380/Compendium+of+Custom+Contracts</description>
+    <externalId>false</externalId>
+    <inlineHelpText>https://launchdarkly.atlassian.net/wiki/spaces/Policy/pages/62554380/Compendium+of+Custom+Contracts</inlineHelpText>
+    <label>Termination Language changes</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

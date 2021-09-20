@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Sales_Touched__c</fullName>
+    <description>There is at least 1 sales-touched Opportunity against the account</description>
+    <externalId>false</externalId>
+    <formula>Account.Sales_touched__c &gt; 0</formula>
+    <inlineHelpText>There is at least 1 sales-touched Opportunity against the account</inlineHelpText>
+    <label>Account Sales-Touched</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

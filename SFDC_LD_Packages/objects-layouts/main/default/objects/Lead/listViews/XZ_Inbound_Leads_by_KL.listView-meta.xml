@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>XZ_Inbound_Leads_by_KL</fullName>
+    <booleanFilter>1 AND 2 AND (3 OR 4)</booleanFilter>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>mkto_si__Last_Interesting_Moment__c</columns>
+    <columns>Description__c</columns>
+    <columns>Account_Match_Type__c</columns>
+    <columns>Account_Match_Owner_Name__c</columns>
+    <columns>Account_Match_Assigned_BDR__c</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>Campaigns__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>MQL_Score__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>equals</operation>
+        <value>czhai</value>
+    </filters>
+    <filters>
+        <field>LEAD.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>4/6/2020 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>equals</operation>
+        <value>Adwords - Paid,Bing Natural Search,Bing - Paid,Content,Event,Facebook - Paid,Google Natural Search,Inbound organic,Inbound paid,LinkedIn - Paid,Lunch n&apos; Learn,Quora - Paid,Social,Invite,Trial Invitee,Twitter - Paid,Youtube - Paid</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>equals</operation>
+        <value>Webinar,Clearbit,Intercom,Content - Website,Content - Blog,Content - Docs,Current Customer,Direct,Dzone,google,Google Ad,Zendesk,rollworks,Outreach,Usergem,PureB2B,G2Crowd,InfoQ</value>
+    </filters>
+    <label>XZ Inbound Leads - by KL</label>
+</ListView>

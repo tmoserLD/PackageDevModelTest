@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Why_did_they_select_us_picklist__c</fullName>
+    <externalId>false</externalId>
+    <label>Why did they select us (picklist)</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Canary Release/Progressive Rollout/Granular Targeting</fullName>
+                <default>false</default>
+                <label>Canary Release/Progressive Rollout/Granular Targeting</label>
+            </value>
+            <value>
+                <fullName>Developer first platform, ease of use</fullName>
+                <default>false</default>
+                <label>Developer first platform, ease of use</label>
+            </value>
+            <value>
+                <fullName>Measurable financial ROI</fullName>
+                <default>false</default>
+                <label>Measurable financial ROI</label>
+            </value>
+            <value>
+                <fullName>Combine experimentation with feature management</fullName>
+                <default>false</default>
+                <label>Combine experimentation with feature management</label>
+            </value>
+            <value>
+                <fullName>Cross team collaboration &amp; alignment</fullName>
+                <default>false</default>
+                <label>Cross team collaboration &amp; alignment</label>
+            </value>
+            <value>
+                <fullName>Long-lived operational use cases/kill switch/reactive monitoring</fullName>
+                <default>false</default>
+                <label>Long-lived operational use cases/kill switch/reactive monitoring</label>
+            </value>
+            <value>
+                <fullName>User entitlements</fullName>
+                <default>false</default>
+                <label>User entitlements</label>
+            </value>
+            <value>
+                <fullName>Decouple release and deployment</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Decouple release and deployment</label>
+            </value>
+            <value>
+                <fullName>Ease of use</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Ease of use</label>
+            </value>
+            <value>
+                <fullName>Mitigate unintended consequences of releases</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Mitigate unintended consequences of releases</label>
+            </value>
+            <value>
+                <fullName>Reduction in time to troubleshoot/debug/rollback</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Reduction in time to troubleshoot/debug/rollback</label>
+            </value>
+            <value>
+                <fullName>Release faster</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Release faster</label>
+            </value>
+            <value>
+                <fullName>Scalability</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Scalability</label>
+            </value>
+            <value>
+                <fullName>Simplify working across multiple environments</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Simplify working across multiple environments</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

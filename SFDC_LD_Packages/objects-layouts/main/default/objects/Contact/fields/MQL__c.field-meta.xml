@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MQL__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>MQL = True if the prospect was qualified by marketing before becoming a customer</description>
+    <externalId>false</externalId>
+    <inlineHelpText>MQL = True if the prospect was qualified by marketing before becoming a customer</inlineHelpText>
+    <label>MQL</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

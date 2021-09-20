@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disqualify__c</fullName>
+    <description>Reasons why the Lead is not qualified. If not a duplicate, please explain why.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Reasons why the Lead is not qualified. If not a duplicate, please explain why.</inlineHelpText>
+    <label>Disqualification Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Status</controllingField>
+        <restricted>true</restricted>
+        <valueSetName>Disqualify_Reasons</valueSetName>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Milestones_Stage_5</fullName>
+    <active>false</active>
+    <description>Milestones required for NB opps stage 5</description>
+    <errorConditionFormula>AND(
+contains($Profile.Name, &quot;Sales&quot;),
+ISPICKVAL(Plan__c, &quot;Enterprise&quot;),
+ISPICKVAL(Type, &quot;New Business&quot;),
+ISPICKVAL(StageName, &quot;5 - Sales Closed Won&quot;),
+Stage_Number__c &gt; PRIORVALUE(Stage_Number__c),
+
+OR(
+ O_Customer_agrees_to_contract__c = FALSE,
+ P_Customer_initiated_signing_process__c = FALSE
+))</errorConditionFormula>
+    <errorMessage>Please check milestones O &amp; P to advance to stage 5 Sales Closed</errorMessage>
+</ValidationRule>

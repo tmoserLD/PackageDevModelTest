@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MQL__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If the Lead was created without a plan (existing account) it&apos;s an MQL</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If the Lead was created without a plan (existing account) it&apos;s an MQL</inlineHelpText>
+    <label>MQL</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

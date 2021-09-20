@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Value_Why_Now__c</fullName>
+    <description>Used in Business Value Strategy section of OpportunityPlan Aura component.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>What is the cost of delay? Is there a compelling event driving urgency? What business or organizational pain/gain is driving urgency? What about personal pain/gain?</inlineHelpText>
+    <label>Why Now?</label>
+    <length>500</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

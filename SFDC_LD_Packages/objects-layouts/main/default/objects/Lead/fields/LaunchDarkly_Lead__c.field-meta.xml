@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LaunchDarkly_Lead__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This lead is a LaunchDarkly test account, and should not be worked.</description>
+    <externalId>false</externalId>
+    <label>LaunchDarkly Lead</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

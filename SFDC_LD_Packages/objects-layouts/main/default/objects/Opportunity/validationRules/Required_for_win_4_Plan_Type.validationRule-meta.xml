@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_for_win_4_Plan_Type</fullName>
+    <active>false</active>
+    <description>Plan and Signer selected is required for Closed Won</description>
+    <errorConditionFormula>AND( 
+$Profile.Name &lt;&gt;&quot;System Administrator&quot;, 
+NOT(ISPICKVAL( Type , &quot;Trial&quot;)),
+
+IsWon,
+  
+ISBLANK( Text(Plan__c )),
+ISBLANK(Primary_Contact__c))</errorConditionFormula>
+    <errorMessage>Plan and Signer required for Closed Won.</errorMessage>
+</ValidationRule>

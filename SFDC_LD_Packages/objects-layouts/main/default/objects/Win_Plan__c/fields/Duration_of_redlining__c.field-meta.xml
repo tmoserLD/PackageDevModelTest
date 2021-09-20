@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duration_of_redlining__c</fullName>
+    <description>How long does redlining typically take them?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>How long does redlining typically take them?</inlineHelpText>
+    <label>Duration of redlining</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

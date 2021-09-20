@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contact_method__c</fullName>
+    <description>This is how the customer made first contact with us....in addition to the lead source.</description>
+    <externalId>false</externalId>
+    <label>Contact method</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Contact_method</valueSetName>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Locked_for_sales</fullName>
+    <active>false</active>
+    <description>Lock sales from moving to closed won</description>
+    <errorConditionFormula>AND(
+
+TEXT(StageName) = &quot;5 - Sales Closed Won&quot;, 
+
+TEXT(PRIORVALUE(StageName)) != &quot;4 - Close Opportunity&quot;,
+
+NOT(CONTAINS($Profile.Name, &quot;Admin&quot;)),
+NOT(CONTAINS($Profile.Name, &quot;Finance&quot;))
+
+)</errorConditionFormula>
+    <errorMessage>Editing opportunities at Stage 5 - Sales Closed Won is restricted to Finance profiles. Please consult DealDesk if further edits are required.</errorMessage>
+</ValidationRule>
