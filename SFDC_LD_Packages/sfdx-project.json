@@ -4,8 +4,8 @@
             "path": "ld-catfood",
             "default": true,
             "package": "LaunchDarklyCatFood",
-            "versionName": "ver 0.1",
-            "versionNumber": "0.1.0.NEXT"
+            "versionName": "ver 1.0",
+            "versionNumber": "1.0.0.NEXT"
         }
     ],
     "name": "SFDC_LD_Packages",
@@ -14,6 +14,7 @@
     "sourceApiVersion": "52.0",
     "packageAliases": {
         "LaunchDarklyCatFood": "0Ho1K000000fxVUSAY",
-        "LaunchDarklyCatFood@0.1.0-1": "04t1K000002qpJ9QAI"
+        "LaunchDarklyCatFood@0.1.0-1": "04t1K000002qpJ9QAI",
+        "LaunchDarklyCatFood@1.0.0-1": "04t1K000002qpJdQAI"
     }
 }
