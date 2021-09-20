@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Worked_Date__c</fullName>
+    <description>Date that the Account was moved into a &apos;working&apos; status by the rep who is outbounding.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Date that the Account was moved into a &apos;working&apos; status by the rep who is outbounding.</inlineHelpText>
+    <label>Account Worked Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

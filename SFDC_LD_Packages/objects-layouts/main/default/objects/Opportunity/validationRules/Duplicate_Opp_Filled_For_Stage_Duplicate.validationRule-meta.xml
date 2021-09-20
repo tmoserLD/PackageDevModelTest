@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duplicate_Opp_Filled_For_Stage_Duplicate</fullName>
+    <active>true</active>
+    <description>Please select the duplicate opportunity.</description>
+    <errorConditionFormula>AND( 
+
+NOT(ISNEW()),
+
+TEXT(StageName) = &quot;Duplicate&quot;,
+
+ISBLANK(Duplicate_Opportunity__c),
+
+NOT($User.Admin_Bypass_Validations__c)
+)</errorConditionFormula>
+    <errorDisplayField>Duplicate_Opportunity__c</errorDisplayField>
+    <errorMessage>Please select the duplicate opportunity.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Success_Sub__c</fullName>
+    <externalId>false</externalId>
+    <label>Success Sub</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Measurement__c</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>quarterly monthly releases</fullName>
+                <default>false</default>
+                <label>quarterly monthly releases</label>
+            </value>
+            <value>
+                <fullName>monthly to weekly</fullName>
+                <default>false</default>
+                <label>monthly to weekly</label>
+            </value>
+            <value>
+                <fullName>weekly to daily</fullName>
+                <default>false</default>
+                <label>weekly to daily</label>
+            </value>
+            <value>
+                <fullName>daily to continuous deploy</fullName>
+                <default>false</default>
+                <label>daily to continuous deploy</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Baseline deployment velocity</controllingFieldValue>
+            <valueName>quarterly monthly releases</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Baseline deployment velocity</controllingFieldValue>
+            <valueName>monthly to weekly</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Baseline deployment velocity</controllingFieldValue>
+            <valueName>weekly to daily</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Baseline deployment velocity</controllingFieldValue>
+            <valueName>daily to continuous deploy</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

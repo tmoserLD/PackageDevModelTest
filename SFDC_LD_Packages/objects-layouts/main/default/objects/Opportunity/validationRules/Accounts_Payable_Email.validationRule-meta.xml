@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Accounts_Payable_Email</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ $User.ProfileId &lt;&gt; &quot;00e41000000iufw&quot;,
+ ISPICKVAL(StageName, &quot;7W - Closed Won&quot;),
+ NOT(ISPICKVAL(Type, &quot;Churn&quot;)),
+ ISBLANK(Launch_Darkly_Billing_Email__c)
+)</errorConditionFormula>
+    <errorDisplayField>Launch_Darkly_Billing_Email__c</errorDisplayField>
+    <errorMessage>Accounts Payable Email is Required</errorMessage>
+</ValidationRule>

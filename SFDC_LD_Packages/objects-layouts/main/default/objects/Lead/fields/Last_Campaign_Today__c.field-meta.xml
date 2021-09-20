@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Campaign_Today__c</fullName>
+    <externalId>false</externalId>
+    <formula>Last_Campaign_Date__c = Today()</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Last Campaign Today</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

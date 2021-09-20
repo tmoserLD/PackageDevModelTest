@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Disqualification_Note__c</fullName>
+    <description>Detail on why the Lead was disqualified. If duplicate, leave blank.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Detail on why the Lead was disqualified. If duplicate, leave blank.</inlineHelpText>
+    <label>Disqualification Note</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>TextArea</type>
+</CustomField>

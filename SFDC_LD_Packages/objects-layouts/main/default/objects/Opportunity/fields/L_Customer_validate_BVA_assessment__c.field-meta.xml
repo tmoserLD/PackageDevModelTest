@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>L_Customer_validate_BVA_assessment__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>milestone</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Pricing and value are aligned</inlineHelpText>
+    <label>L. Customer validated BVA assessment</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

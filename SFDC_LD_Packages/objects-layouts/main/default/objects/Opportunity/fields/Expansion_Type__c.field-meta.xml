@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expansion_Type__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>For Expansions that are either an Add-On, New Product, or New Team, the evaluation order should be 1) if the sale is to a new team, select New Team. 2) If not a new team, and the customer is adding a new product, select New Product. 3) If not a new team, nor a new product, and the customer is simply increasing quantities for products they currently use, select Add-on.</inlineHelpText>
+    <label>Expansion Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Type</controllingField>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>New product</fullName>
+                <default>false</default>
+                <label>New product</label>
+            </value>
+            <value>
+                <fullName>Add-on</fullName>
+                <default>false</default>
+                <label>Add-on</label>
+            </value>
+            <value>
+                <fullName>New Team - Same Instance</fullName>
+                <default>false</default>
+                <label>New Team - Same Instance</label>
+            </value>
+            <value>
+                <fullName>New Team - New Instance</fullName>
+                <default>false</default>
+                <label>New Team - New Instance</label>
+            </value>
+            <value>
+                <fullName>Migration</fullName>
+                <default>false</default>
+                <label>Migration</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Expansion</controllingFieldValue>
+            <valueName>New product</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Expansion</controllingFieldValue>
+            <valueName>Add-on</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Expansion</controllingFieldValue>
+            <valueName>New Team - Same Instance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Expansion</controllingFieldValue>
+            <valueName>New Team - New Instance</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Expansion</controllingFieldValue>
+            <valueName>Migration</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

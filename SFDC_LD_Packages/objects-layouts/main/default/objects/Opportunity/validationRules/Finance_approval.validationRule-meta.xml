@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Finance_approval</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND ( 
+CONTAINS($Profile.Name, &quot;Sales&quot;),  
+NOT(ISPICKVAL(Type, &quot;Trial&quot;)),
+Incremental_ARR__c + Account.ARR__c  &gt;=150000,
+NOT(ISPICKVAL(Order_Source__c,&quot;DealHub&quot;)),
+
+OR(Finance_Approval_Requested_deals_150__c  = FALSE,
+Finance_Approved__c = FALSE
+
+), 
+ISPICKVAL(StageName, &quot;5 - Sales Closed Won&quot;))</errorConditionFormula>
+    <errorDisplayField>Finance_Approval_Requested_deals_150__c</errorDisplayField>
+    <errorMessage>Please make sure both Finance Approval checkboxes are checked (one for you and one for finance) before moving to Signature</errorMessage>
+</ValidationRule>

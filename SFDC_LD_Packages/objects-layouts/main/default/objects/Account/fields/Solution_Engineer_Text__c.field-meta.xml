@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Solution_Engineer_Text__c</fullName>
+    <description>Text for SE, used for Zendesk Mapping</description>
+    <externalId>false</externalId>
+    <formula>Solution_Engineer__r.FirstName +&quot; &quot;+ Solution_Engineer__r.LastName</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Solution Engineer Text</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

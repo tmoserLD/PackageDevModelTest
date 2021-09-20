@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>AB_Testing__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Does the use case include AB testing?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Does the use case include AB testing?</inlineHelpText>
+    <label>Experimentation included in contract</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

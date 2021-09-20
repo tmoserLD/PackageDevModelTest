@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Milestones_Completed__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( A_Customer_confirmed_interest__c = TRUE,
+&quot;A. Customer confirmed interest&quot;+BR(),NULL)+
+IF( B_Customer_attended_meeting__c = TRUE,
+&quot;B. Customer attended meeting&quot;+BR(),NULL)+ 
+IF(Do_they_have_a_pain_we_can_solve__c = TRUE,
+&quot;C. Customer confirmed pain (why change?)&quot;+BR(),NULL)+
+IF( Start_an_eval_within_6_months__c = TRUE,
+&quot;D. Customer confirmed urgency (why now?)&quot;+BR(),NULL)+
+IF( E_Customer_agreed_to_begin_tech_eval__c = TRUE,
+&quot;E. Customer agreed to begin tech. eval&quot;+BR(),NULL)+
+IF( F_Customer_agreed_to_mutual_plan__c = TRUE,
+&quot;F. Customer agreed to mutual plan&quot;+BR(),NULL)+
+IF( G_Access_given_to_key_stakeholders__c = TRUE,
+&quot;G. Access given to key stakeholders&quot;+BR(),NULL)+
+IF( H_Technical_Evaluation_POV_completed__c = TRUE,
+&quot;H. Technical Evaluation/POV completed&quot;+BR(),NULL)+
+IF( I_Info_secured_to_develop_proposal__c = TRUE,
+&quot;I. Info secured to develop proposal&quot;+BR(),NULL)+
+IF( J_Customer_completed_a_BVA_or_BVA_lite__c = TRUE,
+&quot;J. Customer completed a BVA or BVA-lite&quot;+BR(),NULL)+
+IF( K_Customer_validated_LD_met_tech_reqs__c = TRUE,
+&quot;K. Customer validated LD met tech req&quot;+BR(),NULL)+
+IF( L_Customer_validate_BVA_assessment__c = TRUE,
+&quot;L. Customer validated BVA assessment&quot;+BR(),NULL)+
+IF( M_LD_verbally_named_as_preferred_vendor__c = TRUE,
+&quot;M. LD verbally named as preferred vendor&quot;+BR(),NULL)+
+IF( N_Security_Review_Complete__c = TRUE,
+&quot;N. Security Review Complete&quot;+BR(),NULL)+
+IF( O_Customer_agrees_to_contract__c = TRUE,
+&quot;O. Customer agrees to contract&quot;+BR(),NULL)+
+IF( P_Customer_initiated_signing_process__c = TRUE,
+&quot;P. Customer initiated signing process&quot;+BR(),NULL)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Milestones Completed</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

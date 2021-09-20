@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BDR_Unmatched_Leads_greater_equal_250_Lead</fullName>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>FULL_NAME</columns>
+    <columns>Account_Match_Name__c</columns>
+    <columns>Account_Match_Owner_Name__c</columns>
+    <columns>Account_Match_Assigned_BDR__c</columns>
+    <columns>LEAD.STATE</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>LEAD.EMPLOYEES</columns>
+    <filterScope>Queue</filterScope>
+    <label>BDR Unmatched Leads &gt;=250 Queue Owned</label>
+    <queue>BDR_Unmatched_Leads_greater_equal_250</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

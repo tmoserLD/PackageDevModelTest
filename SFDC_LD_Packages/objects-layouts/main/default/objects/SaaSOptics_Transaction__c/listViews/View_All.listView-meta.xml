@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>View_All</fullName>
+    <columns>NAME</columns>
+    <columns>SaaSOptics_Customer_Salesforce_Id__c</columns>
+    <columns>SaaSOptics_Tx_Order_Date__c</columns>
+    <columns>SaaSOptics_Item_Name__c</columns>
+    <columns>SaaSOptics_Tx_Quantity__c</columns>
+    <columns>SaaSOptics_Tx_Amount__c</columns>
+    <columns>SaaSOptics_Tx_Start_Date__c</columns>
+    <columns>SaaSOptics_Tx_End_Date__c</columns>
+    <columns>SaaSOptics_Tx_MRR__c</columns>
+    <columns>SaaSOptics_Tx_ARR__c</columns>
+    <columns>SaaSOptics_Tx_Salesforce_Opp_ID__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>View All</label>
+</ListView>

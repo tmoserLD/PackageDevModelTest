@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FieldSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closed_Won_Needed_Fields</fullName>
+    <description>These fields are required to move an opportunity into Closed-Won stage.</description>
+    <displayedFields>
+        <field>Order_Source__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <displayedFields>
+        <field>Launch_Darkly_Billing_Email__c</field>
+        <isFieldManaged>false</isFieldManaged>
+        <isRequired>false</isRequired>
+    </displayedFields>
+    <label>Closed Won Needed Fields</label>
+</FieldSet>

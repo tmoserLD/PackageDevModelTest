@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DQ_Description_Required_to_DQ_an_Opp</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( contains( 
+$Profile.Name, &quot;Sales&quot;), 
+
+OR( 
+ISBLANK(DQ_Description__c)
+
+), 
+CONTAINS(TEXT(StageName), &quot;Disqualification&quot;) 
+)</errorConditionFormula>
+    <errorDisplayField>DQ_Description__c</errorDisplayField>
+    <errorMessage>Why did the meeting not work out?</errorMessage>
+</ValidationRule>

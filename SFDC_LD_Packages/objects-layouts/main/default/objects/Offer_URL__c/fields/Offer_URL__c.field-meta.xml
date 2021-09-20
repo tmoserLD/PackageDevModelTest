@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Offer_URL__c</fullName>
+    <description>The URL of the offer, stripped of any querystring parameters. This should be the URL of a page containing a form.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The URL of the offer with no UTMs or querystrings at the end. Remove &apos;https://&apos; from the beginning as well.</inlineHelpText>
+    <label>Offer URL</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

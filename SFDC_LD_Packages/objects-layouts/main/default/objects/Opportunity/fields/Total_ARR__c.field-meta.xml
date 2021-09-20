@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_ARR__c</fullName>
+    <description>Sum of the current account&apos;s ARR and opp amount. This is for expansion and to keep track of upcoming total contract value.</description>
+    <externalId>false</externalId>
+    <formula>Incremental_ARR__c +  Account.ARR__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>Sum of the current Account ARR and opp Incremental ARR</inlineHelpText>
+    <label>Potential ARR</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Territory_Rating_Value__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+ ISBLANK( Account_Structure_Parent_Account__c ),
+  TEXT(Rating), 
+IF(
+ ISPICKVAL( Account_Structure_Parent_Account__r.Rating, &quot;&quot; ),
+  TEXT(Rating), 
+  TEXT(Account_Structure_Parent_Account__r.Rating)
+))</formula>
+    <label>Territory Rating Value</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

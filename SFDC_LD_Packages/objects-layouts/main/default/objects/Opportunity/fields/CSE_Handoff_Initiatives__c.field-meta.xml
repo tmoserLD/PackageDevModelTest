@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSE_Handoff_Initiatives__c</fullName>
+    <description>Paragraph on goals and initiatives of the team in using LaunchDarkly</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Paragraph on goals and initiatives of the team in using LaunchDarkly</inlineHelpText>
+    <label>Initiatives</label>
+    <length>10000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Html</type>
+    <visibleLines>25</visibleLines>
+</CustomField>

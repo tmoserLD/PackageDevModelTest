@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Finance_Approval_Requested_deals_150__c</fullName>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <inlineHelpText>Check once you have sent the contract to finance. This is mandatory for all deals $150k+. If this is an expansion opp, it includes the additional current ARR plus the expansion opp amount.</inlineHelpText>
+    <label>AE sent contract to Finance(deals&gt;=150k)</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

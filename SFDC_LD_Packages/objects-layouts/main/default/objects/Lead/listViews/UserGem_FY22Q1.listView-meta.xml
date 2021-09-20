@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UserGem_FY22Q1</fullName>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>CORE.USERS.LAST_NAME</columns>
+    <columns>Account_Match_Owner_Name__c</columns>
+    <columns>Account_Match_Assigned_BDR__c</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.TITLE</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>UserGems__PastAccount__c</columns>
+    <columns>UG_User_Usage__c</columns>
+    <columns>LEAD.STATUS</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Last_Campaign__c</field>
+        <operation>contains</operation>
+        <value>21-06 Usergem</value>
+    </filters>
+    <label>BDR Manager: UserGem FY22Q2</label>
+    <sharedTo>
+        <role>BDR</role>
+        <role>BDR_Manager_East</role>
+        <role>BDR_Manager_West</role>
+    </sharedTo>
+</ListView>

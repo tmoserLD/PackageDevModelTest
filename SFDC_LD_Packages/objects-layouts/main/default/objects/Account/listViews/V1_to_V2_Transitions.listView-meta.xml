@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>V1_to_V2_Transitions</fullName>
+    <columns>CORE.USERS.FIRST_NAME</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>ARR__c</columns>
+    <columns>Default_Rating__c</columns>
+    <columns>LD_Account_ID__c</columns>
+    <columns>LD_Version__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ACCOUNT.TYPE</field>
+        <operation>equals</operation>
+        <value>Customer</value>
+    </filters>
+    <filters>
+        <field>LD_Version__c</field>
+        <operation>equals</operation>
+        <value>V1</value>
+    </filters>
+    <label>V1 to V2 Transitions</label>
+</ListView>

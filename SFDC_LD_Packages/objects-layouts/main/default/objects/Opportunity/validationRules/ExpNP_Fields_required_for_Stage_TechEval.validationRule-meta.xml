@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ExpNP_Fields_required_for_Stage_TechEval</fullName>
+    <active>false</active>
+    <description>This rule ensures that all Discovery fields are filled before we can update the Opportunity stage to Tech Eval</description>
+    <errorConditionFormula>AND(
+NOT(ISPICKVAL( Type , &quot;Trial&quot;)),
+contains( 
+$Profile.Name, &quot;Sales&quot;),
+NOT(ISPICKVAL(Plan__c, &quot;Startup&quot;)),
+NOT(ISPICKVAL(Plan__c, &quot;Pro&quot;)),
+NOT(ISPICKVAL(Type, &quot;New Business&quot;)),
+NOT(ISPICKVAL(Type, &quot;Expansion Add-on&quot;)),
+NOT(ISPICKVAL(Type, &quot;Churn&quot;)),
+NOT(ISPICKVAL(Type, &quot;Contraction&quot;)),
+NOT(ISPICKVAL(Type, &quot;Renewal&quot;)),
+NOT(ISPICKVAL(Type, &quot;Services&quot;)),
+
+
+    OR(
+  ISBLANK(Use_Case__c),
+  ISBLANK(Pain__c),
+  ISBLANK(Compelling_Event__c),
+  ISBLANK(Evaluation_timeline__c),
+  ISBLANK(Teams_that_will_utilize_LD__c)
+
+    ),
+    CONTAINS(TEXT(StageName), &quot;Technical&quot;), 
+
+  Stage_Number__c &gt; PRIORVALUE(Stage_Number__c)
+)</errorConditionFormula>
+    <errorMessage>Please fill all &quot;Discovery&quot; fields before moving Stage to Technical Evaluation to move this Expansion opp.</errorMessage>
+</ValidationRule>

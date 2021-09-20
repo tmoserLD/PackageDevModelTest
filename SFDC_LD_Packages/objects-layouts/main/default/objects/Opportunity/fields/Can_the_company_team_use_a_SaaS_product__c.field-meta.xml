@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Can_the_company_team_use_a_SaaS_product__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Do they have a pain we can solve?? (Yes / No)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Do they have a pain we can solve?? (Yes / No)</inlineHelpText>
+    <label>Can the company/team use a SaaS product</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

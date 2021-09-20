@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Has_Security_been_completed_and_signed__c</fullName>
+    <description>Has Security been completed and signed off on?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Has Security been completed and signed off on?</inlineHelpText>
+    <label>Has Security been completed and signed</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

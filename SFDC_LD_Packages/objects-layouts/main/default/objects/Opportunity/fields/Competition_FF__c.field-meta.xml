@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Competition_FF__c</fullName>
+    <description>Who are we competing against? (Multi-select, if Other please specify)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Who are we competing against? (Multi-select, if Other please specify)</inlineHelpText>
+    <label>Competition picklist</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Competitors_FF</valueSetName>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Match_Created_From_ZoomInfo__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>This indicates that the lead was enriched by ZoomInfo but did not originally have a LeanData match and therefore an Account was created to match against this lead.</description>
+    <externalId>false</externalId>
+    <label>Account Match Created From ZoomInfo</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

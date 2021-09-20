@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebLink xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>valt__valooto_prod</fullName>
+    <availability>online</availability>
+    <displayType>button</displayType>
+    <linkType>javascript</linkType>
+    <masterLabel>Create Quote</masterLabel>
+    <openType>onClickJavaScript</openType>
+    <protected>false</protected>
+    <url>location.href = &apos;/apex/valt__beforeCanvasPrep?param=CreateQuoteFromOpp&amp;Id={!Opportunity.Id}&apos; ;
+
+//location.href = &apos;/apex/valt__canvasApp?param=CreateQuoteFromOpp&amp;Id={!Opportunity.Id}&apos; ;</url>
+</WebLink>

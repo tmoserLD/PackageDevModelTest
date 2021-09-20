@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MSA_missing__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Flag for if the MSA is missing so we can backfill as necessary</description>
+    <externalId>false</externalId>
+    <label>MSA missing</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Renewals</fullName>
+    <description>Renewals opps are automatically created after all Sales Touch CW opportunity</description>
+    <isActive>true</isActive>
+    <values>
+        <fullName>5 - Sales Closed Won</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Duplicate</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>R - Renewals</fullName>
+        <default>false</default>
+    </values>
+</BusinessProcess>

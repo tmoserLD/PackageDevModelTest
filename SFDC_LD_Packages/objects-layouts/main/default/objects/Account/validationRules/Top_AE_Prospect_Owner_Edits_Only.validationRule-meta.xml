@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Top_AE_Prospect_Owner_Edits_Only</fullName>
+    <active>false</active>
+    <description>Only the owner of an account can edit the Top AE Prospect Field</description>
+    <errorConditionFormula>AND( ISCHANGED( AE_Top_10__c ), 
+$User.Id &lt;&gt; OwnerId,
+$Profile.Name &lt;&gt; &quot;Operations&quot;, 
+$Profile.Name &lt;&gt; &quot;Marketing&quot;,
+$Profile.Name &lt;&gt; &quot;System Administrator&quot;)</errorConditionFormula>
+    <errorMessage>Cannot add Top AE Prospect if you are not the account owner. Please open a case.</errorMessage>
+</ValidationRule>

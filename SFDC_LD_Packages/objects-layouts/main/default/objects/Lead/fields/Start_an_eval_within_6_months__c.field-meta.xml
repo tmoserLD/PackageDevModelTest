@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Start_an_eval_within_6_months__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Would the company/team like to start an evaluation within the next 6 months?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Would the company/team like to start an evaluation within the next 6 months?</inlineHelpText>
+    <label>Start an eval within 6 months?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

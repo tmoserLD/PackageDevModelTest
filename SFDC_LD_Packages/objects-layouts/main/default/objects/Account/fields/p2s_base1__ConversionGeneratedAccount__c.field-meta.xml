@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>p2s_base1__ConversionGeneratedAccount__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <description>This field should be mapped using Lead Conversion Mapping from the Lead.ConversionGeneratedAccount__c field</description>
+    <externalId>false</externalId>
+    <inlineHelpText>This field should be mapped using Lead Conversion Mapping from the Lead.ConversionGeneratedAccount__c field</inlineHelpText>
+    <label>ConversionGeneratedAccount</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

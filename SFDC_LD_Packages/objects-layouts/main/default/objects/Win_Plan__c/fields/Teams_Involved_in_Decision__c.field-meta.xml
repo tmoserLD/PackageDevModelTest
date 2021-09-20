@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Teams_Involved_in_Decision__c</fullName>
+    <description>What teams are involved in the decision?</description>
+    <externalId>false</externalId>
+    <inlineHelpText>What teams are involved in the decision?</inlineHelpText>
+    <label>Teams Involved in Decision</label>
+    <length>1000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

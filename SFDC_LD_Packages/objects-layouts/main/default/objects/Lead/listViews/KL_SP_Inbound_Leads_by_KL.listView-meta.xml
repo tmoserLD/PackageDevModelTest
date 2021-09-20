@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>KL_SP_Inbound_Leads_by_KL</fullName>
+    <booleanFilter>1 AND 2 AND 3 AND 4 AND 5</booleanFilter>
+    <columns>LEAD.CREATED_DATE</columns>
+    <columns>FULL_NAME</columns>
+    <columns>LEAD.EMAIL</columns>
+    <columns>mkto_si__Last_Interesting_Moment__c</columns>
+    <columns>LEAD.COMPANY</columns>
+    <columns>Account_Match_Type__c</columns>
+    <columns>Account_Match_Rating__c</columns>
+    <columns>Account_Match_Owner_Name__c</columns>
+    <columns>Account_Match_Assigned_BDR__c</columns>
+    <columns>LEAD.STATUS</columns>
+    <columns>Campaigns__c</columns>
+    <columns>Description__c</columns>
+    <columns>LEAD.LEAD_SOURCE</columns>
+    <columns>CORE.USERS.ALIAS</columns>
+    <columns>MQL_Score__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>CORE.USERS.ALIAS</field>
+        <operation>notEqual</operation>
+        <value>lstro,rwinches,iorti,czhai,rdinh,jbatc,kmont,achon,gcisn,sberk,fphan,aahma,BDR Unmatched Leads &lt;250</value>
+    </filters>
+    <filters>
+        <field>LEAD.CREATED_DATE</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/29/2020 12:00 AM</value>
+    </filters>
+    <filters>
+        <field>LEAD.LEAD_SOURCE</field>
+        <operation>notContain</operation>
+        <value>Apollo,Content,LeadIQ,Usergem,Zendesk,ZoomInfo</value>
+    </filters>
+    <filters>
+        <field>LEAD.STATUS</field>
+        <operation>equals</operation>
+        <value>Open</value>
+    </filters>
+    <filters>
+        <field>mkto_si__Last_Interesting_Moment__c</field>
+        <operation>notContain</operation>
+        <value>LaunchDarkly 101</value>
+    </filters>
+    <label>KL &amp; SP Inbound Leads - by KL</label>
+</ListView>

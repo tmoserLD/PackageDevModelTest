@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Milestones_Stage_2</fullName>
+    <active>false</active>
+    <description>Milestones required for NB opps stage 2</description>
+    <errorConditionFormula>AND(
+contains($Profile.Name, &quot;Sales&quot;),
+ISPICKVAL(Plan__c, &quot;Enterprise&quot;),
+ISPICKVAL(Type, &quot;New Business&quot;),
+ISPICKVAL(StageName, &quot;2 - Develop Opportunity&quot;),
+Stage_Number__c &gt; PRIORVALUE(Stage_Number__c),
+
+OR(
+ Do_they_have_a_pain_we_can_solve__c  = FALSE,
+ Start_an_eval_within_6_months__c = FALSE,
+ E_Customer_agreed_to_begin_tech_eval__c = FALSE,
+ F_Customer_agreed_to_mutual_plan__c = FALSE,
+ G_Access_given_to_key_stakeholders__c = FALSE
+))</errorConditionFormula>
+    <errorMessage>Please check milestones C, D, E, F, &amp; G to advance to stage 2</errorMessage>
+</ValidationRule>

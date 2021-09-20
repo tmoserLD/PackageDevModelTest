@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>West_Minor__c</fullName>
+    <description>NAMER northwest minors</description>
+    <externalId>false</externalId>
+    <formula>IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=940 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;941,
+&quot;Peninsula&quot;,
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=943 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;944,
+&quot;Peninsula&quot;,
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=950 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;952,
+&quot;Peninsula&quot;,
+
+IF(VALUE(LEFT(BillingPostalCode, 5))&gt;=94100 &amp;&amp;
+VALUE(LEFT(BillingPostalCode, 5))&lt;94108,
+&quot;DowntownSF&quot;,
+
+
+IF(VALUE(LEFT(BillingPostalCode, 5))&gt;=94109 &amp;&amp;
+VALUE(LEFT(BillingPostalCode, 5))&lt;94200,
+&quot;SF&quot;,
+
+
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=942 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;943,
+&quot;Jefferson&quot;,
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=944 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;950,
+&quot;Jefferson&quot;,
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=952 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;962,
+&quot;Jefferson&quot;,
+IF(VALUE(LEFT(BillingPostalCode, 3))&gt;=939 &amp;&amp;
+   VALUE(LEFT(BillingPostalCode, 3))&lt;940,
+&quot;Jefferson&quot;,
+
+
+
+IF(LEFT(BillingPostalCode, 5)=&quot;93426&quot; || LEFT(BillingPostalCode, 5)=&quot;93450&quot; || LEFT(BillingPostalCode, 5)=&quot;93512&quot; || LEFT(BillingPostalCode, 5)=&quot;93517&quot; || LEFT(BillingPostalCode, 5)=&quot;93529&quot; || LEFT(BillingPostalCode, 5)=&quot;93541&quot; || LEFT(BillingPostalCode, 5)=&quot;93546&quot; || LEFT(BillingPostalCode, 5)=&quot;93620&quot; || LEFT(BillingPostalCode, 5)=&quot;93635&quot; || LEFT(BillingPostalCode, 5)=&quot;93661&quot; || LEFT(BillingPostalCode, 5)=&quot;93665&quot;, 
+&quot;Jefferson&quot;, 
+
+IF(VALUE(LEFT(BillingPostalCode, 3))&lt;939 &amp;&amp; VALUE(LEFT(BillingPostalCode, 3))&gt;899, 
+&quot;SoCal&quot;, 
+
+
+IF(OR(BillingState=&quot;Washington&quot;,
+      BillingState=&quot;Oregon&quot;,
+      BillingState=&quot;Alaska&quot;,
+      BillingState=&quot;Hawaii&quot;,
+      BillingState=&quot;British Columbia&quot;),
+&quot;WOAH&quot;,
+
+
+
+&quot;&quot;
+
+
+))))))))))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>West Minor Region</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

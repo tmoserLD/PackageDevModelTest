@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_AB_Test_Events__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Total licensed AB test events</inlineHelpText>
+    <label>Total AB Test Events</label>
+    <summarizedField>Opportunity.A_B_Tests_Concurrent__c</summarizedField>
+    <summaryFilterItems>
+        <field>Opportunity.StageName</field>
+        <operation>equals</operation>
+        <value>CW - Closed Won</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Opportunity.Type</field>
+        <operation>notEqual</operation>
+        <value>POV, Renewal, Test, Auto Renewal</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

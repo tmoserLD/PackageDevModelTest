@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Legal_MSA_Name__c</fullName>
+    <description>This field is &apos;Read Only&apos; and needs to be updated in CPQ</description>
+    <externalId>false</externalId>
+    <label>Legal MSA Name</label>
+    <length>225</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

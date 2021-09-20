@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ACV__c</fullName>
+    <description>All Commodity Volume</description>
+    <externalId>false</externalId>
+    <inlineHelpText>All Commodity Volume (software and services)</inlineHelpText>
+    <label>ACV</label>
+    <summarizedField>Opportunity.Incremental_ARR__c</summarizedField>
+    <summaryFilterItems>
+        <field>Opportunity.IsWon</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Opportunity.Type</field>
+        <operation>notEqual</operation>
+        <value>Renewal, Test, POV, Auto Renewal</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Opportunity.AccountId</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

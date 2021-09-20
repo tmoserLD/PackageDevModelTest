@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Account__c</columns>
+    <columns>Snapshot_Run_Date__c</columns>
+    <columns>Current_Incremental_ARR__c</columns>
+    <columns>CSM_Assigned__c</columns>
+    <columns>Recalculated_Starting_ARR__c</columns>
+    <columns>Starting_ARR_Manual__c</columns>
+    <columns>Starting_ARR__c</columns>
+    <columns>Closed_Under_Current_CSM__c</columns>
+    <columns>Target_Account_ARR__c</columns>
+    <columns>Target_Account_Growth__c</columns>
+    <columns>ARR__c</columns>
+    <columns>Ultimate_Parent__c</columns>
+    <columns>Ultimate_Parent_Account__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>Account__c</field>
+        <operation>notEqual</operation>
+    </filters>
+    <filters>
+        <field>Snapshot_Run_Date__c</field>
+        <operation>equals</operation>
+        <value>THIS_MONTH</value>
+    </filters>
+    <filters>
+        <field>NAME</field>
+        <operation>notEqual</operation>
+        <value>Monthly Retention Snapshot</value>
+    </filters>
+    <label>All</label>
+</ListView>

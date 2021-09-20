@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ultimate_Parent_Account_Match__c</fullName>
+    <externalId>false</externalId>
+    <formula>Id = Ult_Parent_Lookup_del__r.Id</formula>
+    <label>Ultimate Parent Account Match</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

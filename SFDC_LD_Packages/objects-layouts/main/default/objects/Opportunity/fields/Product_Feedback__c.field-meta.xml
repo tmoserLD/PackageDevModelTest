@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Feedback__c</fullName>
+    <description>Please include any product-related feedback that you hear that relates to this Opportunity here.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Please include any product-related feedback that you hear that relates to this Opportunity here.</inlineHelpText>
+    <label>Product Feedback</label>
+    <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Direct_Request__c</fullName>
+    <description>Flag to classify whether a Contact is &quot;Direct Source.&quot; Based on criteria of either of the key phrases &quot;Demo&quot;, &quot;Contact Us&quot;, or &quot;Contact Sales&quot; being present in the Last Campaign Name.</description>
+    <externalId>false</externalId>
+    <formula>OR(
+
+CONTAINS( Last_Campaign__r.Name, &quot;Demo&quot; ),
+CONTAINS( Last_Campaign__r.Name, &quot;Contact Us&quot; ),
+CONTAINS( Last_Campaign__r.Name, &quot;Contact Sales&quot; )
+)</formula>
+    <inlineHelpText>Flag to classify whether a Contact is currently considered &quot;Direct Source.&quot;</inlineHelpText>
+    <label>Direct Request</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

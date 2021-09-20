@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DB_Current_CSM_Assigned_FY_End__c</fullName>
+    <externalId>false</externalId>
+    <formula>(IF(CSM_Assigned__c &lt; (DATE(2020,2,1)),(DATE(2021,2,1))-(DATE(2020,2,1)),(DATE(2021,2,1) - CSM_Assigned__c)))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>DB Current CSM Assigned &amp; FY End</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

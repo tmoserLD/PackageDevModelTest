@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Locks_Original_Contact_Method</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+ISCHANGED( Original_Contact_Method__c ), 
+NOT(ISBLANK(TEXT(PRIORVALUE(Original_Contact_Method__c)))) 
+)</errorConditionFormula>
+    <errorDisplayField>Original_Contact_Method__c</errorDisplayField>
+    <errorMessage>Field cannot be overridden.</errorMessage>
+</ValidationRule>

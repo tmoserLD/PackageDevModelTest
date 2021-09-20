@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Account_Category__c</fullName>
+    <externalId>false</externalId>
+    <label>Account Category</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Strategic Account</fullName>
+                <default>false</default>
+                <label>Strategic Account</label>
+            </value>
+            <value>
+                <fullName>Key Account</fullName>
+                <default>false</default>
+                <label>Key Account</label>
+            </value>
+            <value>
+                <fullName>General</fullName>
+                <default>true</default>
+                <label>General</label>
+            </value>
+            <value>
+                <fullName>Field</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Field</label>
+            </value>
+            <value>
+                <fullName>Regional</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Regional</label>
+            </value>
+            <value>
+                <fullName>Targeted Account</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Targeted Account</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Can_use_SaaS_product_AWS__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Can the company/team use a SaaS product (on AWS)?</description>
+    <externalId>false</externalId>
+    <label>Can use SaaS product (AWS)?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Trial_Leads</fullName>
+    <columns>Status__c</columns>
+    <columns>FULL_NAME</columns>
+    <columns>CONTACT.EMAIL</columns>
+    <columns>CONTACT.TITLE</columns>
+    <columns>ACCOUNT.NAME</columns>
+    <columns>mkto_si__Last_Interesting_Moment__c</columns>
+    <columns>mkto_si__Last_Interesting_Moment_Date__c</columns>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>mkto_si__Last_Interesting_Moment__c</field>
+        <operation>contains</operation>
+        <value>Trial Request (work email) - Direct Response</value>
+    </filters>
+    <filters>
+        <field>mkto_si__Last_Interesting_Moment_Date__c</field>
+        <operation>greaterOrEqual</operation>
+        <value>5/11/2021 12:00 AM</value>
+    </filters>
+    <label>Trial Contacts - Sequence Now!</label>
+</ListView>

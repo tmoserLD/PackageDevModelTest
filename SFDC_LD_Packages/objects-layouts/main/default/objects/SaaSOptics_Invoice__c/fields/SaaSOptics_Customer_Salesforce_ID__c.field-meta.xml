@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SaaSOptics_Customer_Salesforce_ID__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>18 digit Salesforce ID of the Account stored in the SaaSOptics Customer</description>
+    <externalId>false</externalId>
+    <label>Account</label>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>SaaSOptics Invoices</relationshipLabel>
+    <relationshipName>SaaSOptics_Invoices</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
