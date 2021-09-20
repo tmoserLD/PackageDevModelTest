@@ -44,6 +44,7 @@
         <members>Quote</members>
         <members>QuoteLineItem</members>
         <members>Task</members>
+        <members>User</members>
         <name>CustomObject</name>
     </types>
     <!-- <types>
@@ -61,8 +62,12 @@
     <types>
         <members>*</members>
         <name>EmailTemplate</name>
-    </types>
+    </types>-->
     <types>
+        <members>*</members>
+        <name>FlexiPage</name>
+    </types>
+    <!-- <types>
         <members>*</members>
         <name>Flow</name>
     </types>

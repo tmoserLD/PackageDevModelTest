@@ -9,3 +9,8 @@ package.xml
 **/__tests__/**
 # Profiles
 **/profiles
+# Non-Field level info on Objects
+**/listViews
+**/recordTypes
+**/validationRules
+**/webLinks
