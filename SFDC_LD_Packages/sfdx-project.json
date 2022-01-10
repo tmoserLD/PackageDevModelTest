@@ -8,6 +8,9 @@
             "versionNumber": "1.0.0.NEXT"
         },
         {
+            "path": "Generic"
+        },
+        {
             "path": "CPQ",
             "default": true
         }
