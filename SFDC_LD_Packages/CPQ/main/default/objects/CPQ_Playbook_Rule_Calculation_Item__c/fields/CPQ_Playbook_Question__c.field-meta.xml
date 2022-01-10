@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPQ_Playbook_Question__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Question in which answer is taken for calculation</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Question in which answer is taken for calculation</inlineHelpText>
+    <label>CPQ Playbook Question</label>
+    <referenceTo>CPQ_Playbook_Question__c</referenceTo>
+    <relationshipLabel>CPQ Playbook Rule Calculation Items</relationshipLabel>
+    <relationshipName>CPQ_Playbook_Rule_Calculation_Items</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

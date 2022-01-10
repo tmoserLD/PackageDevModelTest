@@ -1,0 +1,103 @@
+<template>
+    <div
+        class={mainCSS}
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <!-- Label -->
+        <div class="slds-col slds-size_1-of-4 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            {approval.CPQ_Playbook_Approval__r.Label__c}
+        </div>
+
+        <!-- Reason -->
+        <div class="slds-col slds-size_1-of-4 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            <lightning-formatted-text
+                value={approval.CPQ_Playbook_Approval__r.Reason__c}
+            >
+            </lightning-formatted-text>
+        </div>
+
+        <!-- Approvers -->
+        <div class="slds-col slds-size_1-of-4 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            <ol class="slds-list_ordered">
+                <template
+                    for:each={approversByStep}
+                    for:item="approvers"
+                >
+                    <template if:true={approvers.approved}>
+                        <li
+                            key={approvers.key}
+                            style="color: rgb(26, 109, 26)"
+                        >
+                            <ul class="slds-list_horizontal">
+                                <li class="slds-m-right_x-small">
+                                    <lightning-icon
+                                        icon-name="utility:check"
+                                        alternative-text="Approved"
+                                        title="Approved"
+                                        size="x-small"
+                                        variant="success"
+                                    >
+                                    </lightning-icon>
+                                </li>
+                                <li>
+                                    {approvers.text}
+                                </li>
+                            </ul>
+                        </li>
+                    </template>
+                    <template if:false={approvers.approved}>
+
+                        <template if:true={approvers.rejected}>
+                            <li
+                                key={approvers.key}
+                                style="color: rgb(167, 45, 45)"
+                            >
+                                <ul class="slds-list_horizontal">
+                                    <li class="slds-m-right_x-small">
+                                        <lightning-icon
+                                            icon-name="utility:close"
+                                            alternative-text="Rejected"
+                                            title="Rejected"
+                                            size="x-small"
+                                            variant="error"
+                                        >
+                                        </lightning-icon>
+                                    </li>
+                                    <li>
+                                        {approvers.text}
+                                    </li>
+                                </ul>
+                            </li>
+                        </template>
+
+                        <template if:false={approvers.rejected}>
+                            <li key={approvers.key}>
+                                {approvers.text}
+                            </li>
+                        </template>
+                    </template>
+                </template>
+            </ol>
+        </div>
+
+        <!-- Status -->
+        <div class="slds-col slds-size_1-of-4 slds-p-horizontal_xx-small">
+            <ul class="slds-list_horizontal">
+                <li class="slds-p-top_xx-small">
+                    {approval.Status__c}
+                </li>
+                <template if:true={approvalSubmitted}>
+                    <li class="slds-m-left_x-small">
+                        <lightning-button
+                            onclick={recallApproval}
+                            variant="destructive-text"
+                            label="Recall"
+                        > 
+                        </lightning-button>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+</template>

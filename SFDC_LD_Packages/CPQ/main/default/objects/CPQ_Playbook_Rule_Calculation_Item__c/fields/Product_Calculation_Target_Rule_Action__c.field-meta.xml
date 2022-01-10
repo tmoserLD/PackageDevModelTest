@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Calculation_Target_Rule_Action__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>If populated, the product value will only be considered in the calculation for the desired product added by the action specified here. If not populated, all occurances of the desired product will have their values considered.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If populated, the product value will only be considered in the calculation for the desired product added by the action specified here. If not populated, all occurances of the desired product will have their values considered.</inlineHelpText>
+    <label>Product Calculation Target Rule Action</label>
+    <referenceTo>CPQ_Playbook_Rule_Action__c</referenceTo>
+    <relationshipLabel>Product Calculation Targets</relationshipLabel>
+    <relationshipName>Product_Calculation_Targets</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

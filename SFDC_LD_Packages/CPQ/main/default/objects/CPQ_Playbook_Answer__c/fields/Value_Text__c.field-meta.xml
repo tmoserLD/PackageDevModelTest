@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Value_Text__c</fullName>
+    <description>If related question answer type is &apos;Picklist&apos;, &apos;Multi-Select Picklist&apos;, &apos;Text&apos;, or &apos;Text Area&apos;, value for answer stored here</description>
+    <externalId>false</externalId>
+    <label>Value (Text)</label>
+    <length>32768</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

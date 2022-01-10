@@ -1,0 +1,71 @@
+<template>
+
+    <template if:true={showOrderModal}>
+        <c-list-orderer
+            title={orderLabelTitle}
+            initial-options={selectedOptions}
+            onupdate={orderUpdate}
+            onclose={closeOrder}
+        >
+        </c-list-orderer>
+    </template>
+
+    <div class="slds-grid_vertical slds-m-bottom_x-small">
+        <div class="slds-col slds-grid">
+            <div class="slds-col slds-size_7-of-8">
+                <lightning-input
+                    type="text"
+                    label={label}
+                    field-level-help={helpText}
+                    placeholder={placeholder}
+                >
+                </lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-8 slds-m-left_xx-small slds-p-top_large slds-m-top_xx-small">
+                <ul class="slds-list_horizontal">
+                    <li>
+                        <lightning-icon
+                            icon-name="utility:add"
+                            alternative-text="Add"
+                            title="Add"
+                            size="x-small"
+                            onclick={addOption}
+                            style="cursor:pointer"
+                        >
+                        </lightning-icon>
+                    </li>
+                    <li class="slds-m-left_x-small">
+                        <lightning-icon
+                            icon-name="utility:drag_and_drop"
+                            alternative-text="Reorder"
+                            title="Reorder"
+                            size="x-small"
+                            onclick={showOrder}
+                            style="cursor:pointer"
+                        >
+                        </lightning-icon>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="slds-col">
+            <ul class="slds-list_horizontal slds-wrap">
+                <template
+                    for:each={selectedOptions}
+                    for:item="option"
+                >
+                    <li
+                        class="slds-m-top_xx-small slds-p-horizontal_xxx-small"
+                        key={option}    
+                    >
+                        <lightning-pill
+                            label={option}
+                            onremove={removeOption}
+                        >
+                        </lightning-pill>
+                    </li>
+                </template> 
+            </ul>  
+        </div>
+    </div>
+</template>

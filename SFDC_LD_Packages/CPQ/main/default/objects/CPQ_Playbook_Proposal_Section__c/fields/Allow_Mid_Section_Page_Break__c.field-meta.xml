@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allow_Mid_Section_Page_Break__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If true, the section may appear split between the bottom of one page and the top of the next. If false, all attempts to keep the section on the same page are made</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If true, the section may appear split between the bottom of one page and the top of the next. If false, all attempts to keep the section on the same page are made</inlineHelpText>
+    <label>Allow Mid-Section Page Break</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

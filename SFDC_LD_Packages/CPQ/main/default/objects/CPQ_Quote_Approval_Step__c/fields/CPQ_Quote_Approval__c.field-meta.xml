@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPQ_Quote_Approval__c</fullName>
+    <description>Approval for which record is a step</description>
+    <externalId>false</externalId>
+    <label>CPQ Quote Approval</label>
+    <referenceTo>CPQ_Quote_Approval__c</referenceTo>
+    <relationshipLabel>CPQ Quote Approval Steps</relationshipLabel>
+    <relationshipName>CPQ_Quote_Approval_Steps</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

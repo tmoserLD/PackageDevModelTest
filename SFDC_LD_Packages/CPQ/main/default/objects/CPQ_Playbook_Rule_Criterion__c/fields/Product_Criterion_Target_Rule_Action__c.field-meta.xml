@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Criterion_Target_Rule_Action__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>If populated, the product criterion will only be evaluated on the desired product added by the action specified here. If not populated, all occurances of the desired product will be evaluated.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If populated, the product criterion will only be evaluated on the desired product added by the action specified here. If not populated, all occurances of the desired product will be evaluated.</inlineHelpText>
+    <label>Product Criterion Target Rule Action</label>
+    <referenceTo>CPQ_Playbook_Rule_Action__c</referenceTo>
+    <relationshipLabel>Product Rule Criterion Targets</relationshipLabel>
+    <relationshipName>Product_Rule_Criterion_Targets</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

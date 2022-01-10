@@ -1,0 +1,77 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectApprover}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:people"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={approver.approverInfo.Name}
+                >
+                    <b class="slds-truncate">
+                        {approver.approverInfo.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={approver.approverInfo.IsActive__c}
+                >
+                    Active: {approver.approverInfo.IsActive__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Approver Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Approver Info"
+                    value="approver"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_x-small">
+
+                        <!-- Approver Edit Form -->
+                        <c-cpq_-admin-approver-form
+                            button-label="Save"
+                            card-title="Edit Approver"
+                            approver={approver}
+                            approver-id={approver.approverInfo.Id}
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-approver-form>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

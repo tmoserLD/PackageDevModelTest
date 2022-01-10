@@ -1,0 +1,27 @@
+<template>
+    <lightning-record-view-form
+        object-api-name={sobjectType}
+        record-id={record.Id}
+    >
+        <div
+            class={mainCSS}
+            style="border-bottom: 0.25px solid gray"
+        >
+            <template
+                for:each={fields}
+                for:item="field"
+            >
+                <div
+                    key={field.field}
+                    class={fieldCSS}
+                >
+                    <lightning-output-field
+                        field-name={field.field}
+                        variant="label-hidden"
+                    >
+                    </lightning-output-field>
+                </div>
+            </template>
+        </div>
+    </lightning-record-view-form>
+</template>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Field_Value_Currency__c</fullName>
+    <description>If product field type is &apos;Currency&apos; and Action Type is &apos;Adjust product field&apos;, new value for product field stored here</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If product field type is &apos;Boolean&apos; and Action Type is &apos;Adjust product field&apos;, new value for product field stored here</inlineHelpText>
+    <label>Product Field Value (Currency)</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

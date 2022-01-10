@@ -1,0 +1,67 @@
+<template>
+
+    <template if:true={isSelected}>
+
+        <!-- Error Modal -->
+        <c-error-modal>
+        </c-error-modal>
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Question Group Tabs -->
+        <lightning-tabset>
+            <lightning-tab
+                label="Question Group Info"
+                value="group"
+                onactive={handleTabChange}
+            >
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    style="height: 60vh;overflow:auto;"
+                >
+                    <!-- Question Group Edit Form -->
+                    <c-cpq_-admin-question-group-form
+                        button-label="Save"
+                        card-title="Edit Question Group"
+                        group={group}
+                        group-id={group.groupInfo.Id}
+                        selected={selected}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-question-group-form>
+
+                    <!-- Questions -->
+                    <c-cpq_-admin-questions
+                        questions={group.questions}
+                        selected={selected}
+                        onselect={updateSelections}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-questions>
+
+                    <!-- Rule Actions that reference Question Group -->
+                    <c-item-selector
+                        items={group.groupInfo.CPQ_Playbook_Rule_Actions__r}
+                        list-style="row"
+                        header-attribute="Name"
+                        footer-attribute1="IsActive__c"
+                        footer-label1="Active: "
+                        icon-name="standard:actions_and_buttons"
+                        show-search="false"
+                        show-create="false"
+                        header="Rule Actions referencing this Question Group"
+                        onselect={actionSelected}
+                    >
+                    </c-item-selector>
+                </div>
+            </lightning-tab>
+        </lightning-tabset>
+    </template>
+</template>

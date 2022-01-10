@@ -1,0 +1,34 @@
+<template>
+    <div
+        class={mainCSS}
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <!-- Label -->
+        <div class="slds-col slds-size_1-of-3 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            {approval.approvalInfo.Label__c}
+        </div>
+
+        <!-- Reason -->
+        <div class="slds-col slds-size_1-of-3 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            <lightning-formatted-text
+                value={approval.approvalInfo.Reason__c}
+            >
+            </lightning-formatted-text>
+        </div>
+
+        <!-- Approvers -->
+        <div class="slds-col slds-size_1-of-3 slds-p-top_xx-small slds-p-horizontal_xx-small">
+            <ol class="slds-list_ordered">
+                <template
+                    for:each={approversByGroup}
+                    for:item="approvers"
+                >
+                    <li key={approvers.key}>
+                        {approvers.text}
+                    </li>
+                </template>
+            </ol>
+        </div>
+    </div>
+</template>

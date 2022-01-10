@@ -1,0 +1,78 @@
+<template>
+
+    <div class="slds-grid">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Record selection -->
+        <div
+            class="slds-col slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-5"
+            style="height: calc(60vh + 50px);overflow:auto;border-right: 0.5px solid gray"
+        >
+            <c-item-selector
+                items={rules}
+                selected-value={selected.rule}
+                selected-attribute={selectedAttribute}
+                list-style="column"
+                obj-accessor="ruleInfo"
+                header-attribute="Name"
+                footer-attribute1="IsActive__c"
+                footer-label1="Active: "
+                footer-attribute2="Execution_Order__c"
+                footer-label2="Execution Order: "
+                icon-name="standard:work_plan_rule"
+                show-search="true"
+                show-create="true"
+                onselect={recordSelected}
+                oncreate={createNewRecord}
+            >
+            </c-item-selector>
+        </div>
+
+        <div
+            class="slds-col"
+            style="max-width: 100%;overflow:hidden"
+        >
+            <!-- New Record -->
+            <template if:true={createNew}>
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    style="height: 60vh;overflow:auto;"
+                >
+                    <c-cpq_-admin-rule-form
+                        button-label="Create"
+                        card-title="Create New Rule"
+                        selected={selected}
+                        onchildsaved={childSaved}
+                        oncancel={cancelCreateNewRecord}
+                    >
+                    </c-cpq_-admin-rule-form>
+                </div>
+            </template>
+
+            <!-- Record Data -->
+            <template if:false={createNew}>
+                <template
+                    for:each={rules}
+                    for:item="rule"
+                >
+                    <c-cpq_-admin-rule
+                        key={rule.ruleInfo.Id}
+                        rule={rule}
+                        selected={selected}
+                        onselect={updateSelections}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-rule>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

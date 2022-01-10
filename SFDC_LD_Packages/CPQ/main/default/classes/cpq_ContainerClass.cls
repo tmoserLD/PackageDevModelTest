@@ -1,0 +1,654 @@
+public class cpq_ContainerClass {
+
+    // /////////////////////////////////////////////////////
+    // Retrievals
+
+    @AuraEnabled
+    public static CPQInfo getCPQInfo(Id oppId) {
+
+        // Get Object Fields for Default Field Values and Product Cacluations
+        Boolean multiCurrency = System.UserInfo.isMultiCurrencyOrganization();
+        Map<String, String> objFieldsStrings = getObjectFields(multiCurrency);
+
+        // Return wrapper obj
+        CPQInfo cpqObj = new CPQInfo();
+        if (multiCurrency == true) {
+            List<sObject> currencies = Database.query('SELECT Id, ConversionRate, IsoCode FROM CurrencyType WHERE IsActive = TRUE AND IsCorporate = TRUE');
+            if (currencies.size() > 0) {
+                cpqObj.defaultCurrency = (String) currencies[0].get('IsoCode');
+            }   
+        }
+        
+        if (cpqObj.defaultCurrency == null) {
+            cpqObj.defaultCurrency = System.UserInfo.getDefaultCurrency();
+        }
+
+        // Opportunity and parent info
+        Opportunity opp = new Opportunity();
+        String oppQuery = 'SELECT ' + objFieldsStrings.get('Opportunity') + ', (SELECT Id, UserId FROM OpportunityTeamMembers) FROM Opportunity WHERE Id=\'' + oppId + '\''; 
+        opp = Database.query(oppQuery);
+        cpqObj.oppInfo = opp;
+
+        // Verify User can access opp
+        cpqObj.hasOppAccess = false;
+        // Check if User is Opportunity Owner
+        if (System.UserInfo.getUserId() == opp.OwnerId) {
+            cpqObj.hasOppAccess = true;
+        }
+        if (cpqObj.hasOppAccess == false) {
+            // Check if User is Opportunity Team Member
+            for (OpportunityTeamMember otm : opp.OpportunityTeamMembers) {
+                if (otm.UserId == System.UserInfo.getUserId()) {
+                    cpqObj.hasOppAccess = true;
+                }
+            }
+        }
+        if (cpqObj.hasOppAccess == false) {
+            // Check if User is CPQ Admin
+            for (PermissionSetAssignment permSetAssignment : [
+                SELECT
+                    Id
+                FROM PermissionSetAssignment
+                WHERE PermissionSet.Name = 'CPQ_Admin' AND
+                    AssigneeId=:System.UserInfo.getUserId()
+            ]) {
+                cpqObj.hasOppAccess = true;
+            }
+        }
+
+        // Only proceed if User has opp access
+        if (cpqObj.hasOppAccess == true) {
+
+            // Contracts
+            List<Contract> contracts = new List<Contract>();
+            String contractsSubQueries = ', ('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,'
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
+                + '),'
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Rule_Action__c,'
+                        + 'Discount__c,'
+                        + 'End_Date__c,'
+                        + 'List_Price__c,'
+                        + 'Product__c,'
+                        + 'Quantity__c,'
+                        + 'Start_Date__c,'
+                        + 'Total_Price__c,'
+                        + 'Unit_Price__c'
+                    + ' FROM Contract_Entitlements__r'
+                + ')';
+            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' AND Contract_Status__c != \'Replaced\' AND Contract_Status__c != \'Void\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC'; 
+            contracts = Database.query(contractsQuery);
+            cpqObj.contracts = contracts;
+
+            // Quotes with child records
+            List<Quote> quotes = new List<Quote>();
+            String quotesSubQueries = ', ('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,'
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
+                        + 'HasBeenTouched__c,'
+                        + 'Quote__c,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM CPQ_Playbook_Answers__r'
+                + '), '
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Rule_Action__c,'
+                        + 'Discount__c,'
+                        + 'End_Date__c,'
+                        + 'List_Price__c,'
+                        + 'PricebookEntryId,'
+                        + 'Product2Id,'
+                        + 'Product2.Name,'
+                        + 'Quantity__c,'
+                        + 'Quoted_Price__c,'
+                        + 'Start_Date__c'
+                    + ' FROM QuoteLineItems'
+                + '), '
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Approval__r.Label__c,'
+                        + 'CPQ_Playbook_Approval__r.Reason__c,'
+                        + 'Status__c'
+                    + ' FROM CPQ_Quote_Approvals__r'
+                + ')';
+            String quotesQuery = 'SELECT ' + objFieldsStrings.get('Quote') + quotesSubQueries + ' FROM Quote WHERE OpportunityId=\'' + oppId + '\' ORDER BY CreatedDate DESC'; 
+            quotes = Database.query(quotesQuery);
+            cpqObj.quotes = quotes;
+
+            // Approval steps
+            List<CPQ_Quote_Approval_Step__c> approvalSteps = new List<CPQ_Quote_Approval_Step__c>();
+            approvalSteps = [
+                SELECT Id,
+                    CPQ_Quote_Approval__c,
+                    CPQ_Quote_Approval__r.Quote__c,
+                    Status__c,
+                    (
+                        SELECT Id,
+                            Approver__c,
+                            Approver__r.Name,
+                            CPQ_Playbook_Approver__r.Approver__c,
+                            CPQ_Playbook_Approver__r.Approver__r.Name,
+                            CPQ_Playbook_Approver__r.Manager_Approver__c,
+                            Status__c
+                        FROM CPQ_Quote_Approvers__r
+                        ORDER BY CPQ_Playbook_Approver__r.Manager_Approver__c DESC
+                    )
+                FROM CPQ_Quote_Approval_Step__c
+                WHERE CPQ_Quote_Approval__r.Quote__r.OpportunityId=:oppId
+            ];
+            cpqObj.approvalSteps = approvalSteps;
+
+            // User
+            String userQuery = 'SELECT ' + objFieldsStrings.get('User') + ' FROM User WHERE Id=\'' + System.UserInfo.getUserId() + '\''; 
+            User userInfo = Database.query(userQuery);
+            cpqObj.userInfo = userInfo;
+
+        }
+
+        return cpqObj;
+    }
+
+    public class CPQInfo {
+        @AuraEnabled public Opportunity oppInfo;
+        @AuraEnabled public List<Contract> contracts;
+        @AuraEnabled public List<Quote> quotes;
+        @AuraEnabled public List<CPQ_Quote_Approval_Step__c> approvalSteps;
+        @AuraEnabled public User userInfo;
+        @AuraEnabled public Boolean hasOppAccess;
+        @AuraEnabled public String defaultCurrency;
+    }
+
+    public static Map<String, String> getObjectFields(Boolean multiCurrency) {
+
+        Map<String, String> objFieldQueryStrings = new Map<String, String>();
+        Map<String, Set<String>> objFieldSets = new Map<String, Set<String>>();
+
+        // Quote
+        Set<String> quoteFields = new Set<String>{
+            'Id',
+            'Adjustment_of_Contract__c',
+            'Adjustment_Type__c',
+            'CPQ_Playbook__c',
+            'CPQ_Playbook__r.Default_Term_in_Months__c',
+            'CPQ_Playbook__r.Label__c',
+            'CPQ_Playbook__r.Price_Book__c',
+            'IsSyncing',
+            'Name',
+            'Playbook_Status__c',
+            'TotalPrice',
+            'Total_Price__c'
+        };
+        objFieldSets.put('Quote', quoteFields);
+
+        // Opportunity
+        Set<String> oppFields = new Set<String>{
+            'Id',
+            'Lock_CPQ__c',
+            'Name',
+            'OwnerId',
+            'Account.Id',
+            'Account.Name'
+        };
+        if (multiCurrency == true) {
+            oppFields.add('CurrencyIsoCode');
+        }
+        objFieldSets.put('Opportunity', oppFields);
+
+        // Account
+        objFieldSets.put('Account', new Set<String>());
+
+        // User
+        Set<String> userFields = new Set<String>{
+            'Id',
+            'Name',
+            'ManagerId',
+            'Manager.Name',
+            'Profile.Id',
+            'Profile.Name'
+        };
+        objFieldSets.put('User', userFields);
+
+        // Profile
+        objFieldSets.put('Profile', new Set<String>());
+
+        // UserRole
+        objFieldSets.put('UserRole', new Set<String>());
+
+        // Contract
+        Set<String> contractFields = new Set<String>{
+            'Id',
+            'Contract_End_Date__c',
+            'Contract_Start_Date__c',
+            'Contract_Status__c',
+            'Contract_Total__c',
+            'CPQ_Playbook__c',
+            'CPQ_Playbook__r.Default_Term_in_Months__c',
+            'CPQ_Playbook__r.Label__c',
+            'CPQ_Playbook__r.Price_Book__c',
+            'Opportunity__c',
+            'Opportunity__r.Name',
+            'Quote__c'
+        };
+        if (multiCurrency == true) {
+            contractFields.add('CurrencyIsoCode');
+        }
+        objFieldSets.put('Contract', contractFields);
+
+        // Query all active questions from active groups from active playbooks
+        for (CPQ_Playbook_Question__c question : [
+            SELECT Id,
+                Default_Field_Value__c
+            FROM CPQ_Playbook_Question__c
+            WHERE IsActive__c=true AND
+                CPQ_Playbook_Question_Group__r.IsActive__c=true AND
+                CPQ_Playbook_Question_Group__r.CPQ_Playbook__r.IsActive__c=true AND
+                Default_Field_Value__c != null
+        ]) {
+            // Valid field values are formatted as obj.field
+            if (question.Default_Field_Value__c.split('\\.').size() > 0) {
+
+                String obj = question.Default_Field_Value__c.split('\\.')[0];
+                String field = question.Default_Field_Value__c.split('\\.')[1];
+
+                // Only add fields from valid objects
+                if (objFieldSets.containsKey(obj)) {
+
+
+                    // NEED TO BE REMOVED ONCE OUT OF SCRATCH ORGS
+                    // if (field.endsWith('__c') != true) {
+
+                    // Base level queries: Quote, Opportunity, User
+                    if (obj == 'Quote' ||
+                        obj == 'Opportunity' ||
+                        obj == 'User'
+                    ) {
+                        objFieldSets.get(obj).add(field);
+                    }
+                    // Related level queries: Account, Profile
+                    else if (obj == 'Account') {
+                        objFieldSets.get('Opportunity').add('Account.' + field);
+                    }
+                    else if (obj == 'Profile') {
+                        objFieldSets.get('User').add('Profile.' + field);
+                    }
+                    else if (obj == 'UserRole') {
+                        objFieldSets.get('User').add('UserRole.' + field);
+                    }
+
+                    // }
+                }
+            }
+        }
+
+        // Convert sets to comma delineated strings
+        for (String obj : objFieldSets.keySet()) {
+            String fieldsString = '';
+            for (String field : objFieldSets.get(obj)) {
+                fieldsString += field + ',';
+            }
+            fieldsString = fieldsString.removeEnd(',');
+            objFieldQueryStrings.put(obj, fieldsString);
+        }
+
+        return objFieldQueryStrings;
+    }
+
+    // /////////////////////////////////////////////////////
+    // Actions
+
+    @AuraEnabled
+    public static void deleteRecords(List<sObject> records) {
+        delete records;
+    }
+
+    @AuraEnabled
+    public static void updateRecords(List<sObject> records) {
+        update records;
+    }
+
+    @AuraEnabled
+    public static void submitForApproval(Id quoteId) {
+
+        // Incomplete approvals
+        List<CPQ_Quote_Approval__c> incompleteApprovals = new List<CPQ_Quote_Approval__c>();
+        incompleteApprovals = [
+            SELECT Id,
+                Status__c
+            FROM CPQ_Quote_Approval__c
+            WHERE Quote__c=:quoteId AND
+                Status__c!='Approved' AND
+                Status__c!='Submitted'
+        ];
+
+        Set<Id> approvalIDs = new Set<Id>();
+        for (CPQ_Quote_Approval__c approval : incompleteApprovals) {
+            approval.Status__c = 'Submitted';
+            approvalIDs.add(approval.Id);
+        }
+
+        // Update approvals
+        update incompleteApprovals;
+
+        // Associated Approval Steps
+        List<CPQ_Quote_Approval_Step__c> steps = new List<CPQ_Quote_Approval_Step__c>();
+        steps = [
+            SELECT Id,
+                Approval_Order__c,
+                CPQ_Quote_Approval__c,
+                Status__c
+            FROM CPQ_Quote_Approval_Step__c
+            WHERE CPQ_Quote_Approval__c IN:approvalIDs
+            ORDER BY Approval_Order__c ASC
+        ];
+
+        // Determine first step for each approval
+        Map<Id, CPQ_Quote_Approval_Step__c> firstStepMap = new Map<Id, CPQ_Quote_Approval_Step__c>();
+        for (CPQ_Quote_Approval_Step__c step : steps) {
+            if (!firstStepMap.containsKey(step.CPQ_Quote_Approval__c)) {
+                firstStepMap.put(step.CPQ_Quote_Approval__c, step);
+            } else {
+                if (step.Approval_Order__c < firstStepMap.get(step.CPQ_Quote_Approval__c).Approval_Order__c) {
+                    firstStepMap.put(step.CPQ_Quote_Approval__c, step);
+                }
+            }
+        }
+
+        // Submit steps
+        Set<Id> stepIDs = new Set<Id>();
+        for (CPQ_Quote_Approval_Step__c step : firstStepMap.values()) {
+            step.Status__c = 'Submitted';
+            stepIDs.add(step.Id);
+        }
+
+        // Update approval steps
+        update steps;
+
+        // Associated Approvers
+        List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
+        approvers = [
+            SELECT Id,
+                Status__c
+            FROM CPQ_Quote_Approver__c
+            WHERE CPQ_Quote_Approval_Step__c IN:stepIDs
+        ];
+
+        for (CPQ_Quote_Approver__c approver : approvers) {
+            approver.Status__c = 'Submitted';
+        }
+
+        // Update approvers
+        update approvers;
+
+    }
+
+    @AuraEnabled
+    public static void recallApproval(Id approvalId) {
+
+        // Associated Approvers
+        List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
+        approvers = [
+            SELECT Id,
+                Status__c
+            FROM CPQ_Quote_Approver__c
+            WHERE CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__c =:approvalId AND
+                Status__c != 'Approved' AND
+                Status__c != 'Rejected'
+        ];
+
+        for (CPQ_Quote_Approver__c approver : approvers) {
+            approver.Status__c = 'Recalled';
+        }
+
+        // Update approvers
+        update approvers;
+    }
+
+    @AuraEnabled
+    public static void generatePDF(String txtValue, Quote quoteInfo, Opportunity oppInfo){
+        
+        Pagereference pg = Page.cpq_ProposalVF;
+        pg.getParameters().put('quoteId', quoteInfo.Id);
+
+        // PDF File
+        ContentVersion pdfAttachment = new ContentVersion();
+        pdfAttachment.Title = 'Quote Proposal ' + Date.today().format();
+        pdfAttachment.PathOnClient = 'Quote Proposal ' + Date.today().format() + '.pdf';
+        pdfAttachment.VersionData = pg.getContentaspdf();
+        pdfAttachment.Description = 'Quote Proposal submitted on ' + Date.today().format() + '. Quote: ' + quoteInfo.Name + ' (' + quoteInfo.Id + '), Opportunity: ' + oppInfo.Name + ' (' + oppInfo.Id + ').';
+
+        insert pdfAttachment;
+
+        // Chatter Post
+        FeedItem post = new FeedItem(
+            Body = 'Quote Proposal created from: ' + quoteInfo.Name + ' (' + quoteInfo.Id + ').',
+            ParentId = oppInfo.Id
+        );
+
+        insert post;
+
+        // PDF Attachment
+        FeedAttachment postAttachment = new FeedAttachment(
+            FeedEntityId = post.Id,
+            RecordId = pdfAttachment.Id,
+            Type = 'CONTENT'
+        );
+
+        insert postAttachment;
+    }
+
+    @AuraEnabled
+    public static void cloneQuoteData(Id quoteId) {
+
+        // Quote Fields
+        String quoteFields = '';
+        SObjectType quoteType = ((SObject)(Type.forName('Schema.Quote').newInstance())).getSObjectType();
+        DescribeSObjectResult quoteObject = quoteType.getDescribe();
+        for (String field : quoteObject.fields.getMap().keySet()) {
+            quoteFields += field + ',';
+        }
+        quoteFields = quoteFields.removeEnd(',');
+
+        // Query Quote
+        Quote q = Database.query('SELECT ' + quoteFields + ' FROM Quote WHERE Id=:quoteId');
+
+        // Prep for clone
+        q.Id = null;
+        if (q.Name.left(7) != 'Clone: ') {
+            q.Name = 'CLONE: ' + q.Name.left(245);
+        }
+        q.IsClone__c = true;
+
+        // Insert new clone
+        insert q;
+
+
+        // Quote Line Item Fields
+        String qliFields = '';
+        SObjectType qliType = ((SObject)(Type.forName('Schema.QuoteLineItem').newInstance())).getSObjectType();
+        DescribeSObjectResult qliObject = qliType.getDescribe();
+        for (String field : qliObject.fields.getMap().keySet()) {
+            qliFields += field + ',';
+        }
+        qliFields = qliFields.removeEnd(',');
+
+        // Query Quote Line Items
+        List<QuoteLineItem> qlis = new List<QuoteLineItem>();
+        qlis = Database.query('SELECT ' + qliFields + ' FROM QuoteLineItem WHERE QuoteId=:quoteId');
+
+        // Prep for clone
+        for (QuoteLineItem qli : qlis) {
+            qli.Id = null;
+            qli.QuoteId = q.Id;
+        }
+
+        // Insert new clones, if qlis exist
+        if (qlis.size() > 0) {
+            insert qlis;
+        }
+
+
+        // Query Playbook Answers
+        List<CPQ_Playbook_Answer__c> answers = new List<CPQ_Playbook_Answer__c>();
+        answers = [
+            SELECT Id,
+                CPQ_Playbook_Question__c,
+                HasBeenTouched__c,
+                Quote__c,
+                Value_Boolean__c,
+                Value_Currency__c,
+                Value_Date__c,
+                Value_Decimal__c,
+                Value_Integer__c,
+                Value_Text__c
+            FROM CPQ_Playbook_Answer__c
+            WHERE Quote__c=:quoteId
+        ];
+
+        // Prep for clone
+        for (CPQ_Playbook_Answer__c answer : answers) {
+            answer.Id = null;
+            answer.Quote__c = q.Id;
+        }
+
+        // Insert new clones, if answers exist
+        if (answers.size() > 0) {
+            insert answers;
+        }
+
+
+        // Query Quote Approvals
+        List<CPQ_Quote_Approval__c> approvals = new List<CPQ_Quote_Approval__c>();
+        approvals = [
+            SELECT Id,
+                CPQ_Playbook_Approval__c,
+                Name,
+                Quote__c,
+                Status__c
+            FROM CPQ_Quote_Approval__c
+            WHERE Quote__c=:quoteId
+        ];
+
+        // Store old approval IDs
+        List<Id> oldApprovalIDs = new List<Id>();
+
+        // Prep for clone
+        for (CPQ_Quote_Approval__c approval : approvals) {
+            // Store old Id
+            oldApprovalIDs.add(approval.Id);
+
+            approval.Id = null;
+            approval.Quote__c = q.Id;
+        }
+
+        // Insert new clones, if approvals exists
+        if (approvals.size() > 0) {
+            insert approvals;
+
+            // Store new approval IDs
+            List<Id> newApprovalIDs = new List<Id>();
+            for (CPQ_Quote_Approval__c approval : approvals) {
+                // Store old Id
+                newApprovalIDs.add(approval.Id);
+            } 
+
+
+            // Query Quote Approval Steps
+            List<CPQ_Quote_Approval_Step__c> steps = new List<CPQ_Quote_Approval_Step__c>();
+            steps = [
+                SELECT Id,
+                    CPQ_Quote_Approval__c,
+                    CPQ_Playbook_Approver_Group__c,
+                    Name,
+                    Status__c
+                FROM CPQ_Quote_Approval_Step__c
+                WHERE CPQ_Quote_Approval__r.Quote__c=:quoteId
+            ];
+
+            // Store old approval step IDs
+            List<Id> oldStepIDs = new List<Id>();
+
+            // Prep for clone
+            for (CPQ_Quote_Approval_Step__c step : steps) {
+                // Store old Id
+                oldStepIDs.add(step.Id);
+
+                step.Id = null;
+                step.CPQ_Quote_Approval__c = newApprovalIds[oldApprovalIDs.indexOf(step.CPQ_Quote_Approval__c)];
+            }
+
+            // Insert new clones, if steps exists
+            if (steps.size() > 0) {
+                insert steps;
+
+                // Store new approval step IDs
+                List<Id> newStepIDs = new List<Id>();
+                for (CPQ_Quote_Approval_Step__c step : steps) {
+                    // Store old Id
+                    newStepIDs.add(step.Id);
+                } 
+
+                // Query Quote Approvers
+                List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
+                approvers = [
+                    SELECT Id,
+                        Approver__c,
+                        CPQ_Playbook_Approver__c,
+                        CPQ_Quote_Approval_Step__c,
+                        Name,
+                        Status__c
+                    FROM CPQ_Quote_Approver__c
+                    WHERE CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__c=:quoteId
+                ];
+
+                // Store old approver statuses
+                List<String> oldApproverStatuses = new List<String>();
+
+                // Prep for clone
+                for (CPQ_Quote_Approver__c approver : approvers) {
+                    approver.Id = null;
+                    approver.CPQ_Quote_Approval_Step__c = newStepIds[oldStepIDs.indexOf(approver.CPQ_Quote_Approval_Step__c)];
+                    oldApproverStatuses.add(approver.Status__c);
+                    if (approver.Status__c == 'Submitted') {
+                        approver.Status__c = 'Pending';
+                    }
+                }
+
+                // Insert new clones, if approvers exists
+                if (approvers.size() > 0) {
+                    insert approvers;
+
+                    // Submit 'Submitted' approvers
+                    List<CPQ_Quote_Approver__c> approversToSubmit = new List<CPQ_Quote_Approver__c>();
+                    for (Integer index=0;index < approvers.size();index++) {
+                        if (oldApproverStatuses[index] == 'Submitted') {
+                            approvers[index].Status__c = 'Submitted';
+                            approversToSubmit.add(approvers[index]);
+                        }
+                    }
+
+                    if (approversToSubmit.size() > 0) {
+                        update approversToSubmit;
+                    }
+                }
+            }
+        }
+    }
+}

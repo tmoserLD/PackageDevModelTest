@@ -4,6 +4,12 @@
   "settings": {
     "mobileSettings": {
       "enableS1EncryptedStoragePref2": false
+    },
+    "quoteSettings": {
+      "enableQuote" : true
+    },
+    "opportunitySettings": {
+      "enableOpportunityTeam": true
     }
   }
 }

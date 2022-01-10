@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Question_Adjustment_Field__c</fullName>
+    <description>Field on question that should be adjusted</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Field on question that should be adjusted</inlineHelpText>
+    <label>Question Adjustment Field</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>answer</fullName>
+                <default>false</default>
+                <label>answer</label>
+            </value>
+            <value>
+                <fullName>IsHidden__c</fullName>
+                <default>false</default>
+                <label>IsHidden__c</label>
+            </value>
+            <value>
+                <fullName>IsRequired__c</fullName>
+                <default>false</default>
+                <label>IsRequired__c</label>
+            </value>
+            <value>
+                <fullName>IsReadOnly__c</fullName>
+                <default>false</default>
+                <label>IsReadOnly__c</label>
+            </value>
+            <value>
+                <fullName>Picklist_Answers__c</fullName>
+                <default>false</default>
+                <label>Picklist_Answers__c</label>
+            </value>
+            <value>
+                <fullName>Minimum_Value__c</fullName>
+                <default>false</default>
+                <label>Minimum_Value__c</label>
+            </value>
+            <value>
+                <fullName>Maximum_Value__c</fullName>
+                <default>false</default>
+                <label>Maximum_Value__c</label>
+            </value>
+            <value>
+                <fullName>Step_Value__c</fullName>
+                <default>false</default>
+                <label>Step_Value__c</label>
+            </value>
+            <value>
+                <fullName>Quote_Save_Field__c</fullName>
+                <default>false</default>
+                <label>Quote_Save_Field__c</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

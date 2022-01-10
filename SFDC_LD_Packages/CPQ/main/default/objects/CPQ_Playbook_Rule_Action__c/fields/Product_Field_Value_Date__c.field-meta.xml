@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Field_Value_Date__c</fullName>
+    <description>If product field type is &apos;Date&apos; and Action Type is &apos;Adjust product field&apos;, new value for product field stored here</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If product field type is &apos;Date&apos; and Action Type is &apos;Adjust product field&apos;, new value for product field stored here</inlineHelpText>
+    <label>Product Field Value (Date)</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

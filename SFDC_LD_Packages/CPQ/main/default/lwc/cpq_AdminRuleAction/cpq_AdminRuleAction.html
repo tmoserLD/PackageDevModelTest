@@ -1,0 +1,170 @@
+<template>
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectAction}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:actions_and_buttons"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={action.actionInfo.Name}
+                >
+                    <b class="slds-truncate">
+                        {action.actionInfo.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={action.actionInfo.IsActive__c}
+                >
+                    Active: {action.actionInfo.IsActive__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={action.actionInfo.Execution_Order__c}
+                >
+                    Execution Logic: {action.actionInfo.Execution_Order__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Action Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Action Info"
+                    value="action"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_x-small">
+
+                        <!-- Action Edit Form -->
+                        <c-cpq_-admin-rule-action-form
+                            action={action}
+                            action-id={action.actionInfo.Id}
+                            button-label="Save"
+                            card-title="Edit Action"
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-rule-action-form>
+
+                        <template if:true={dynamicSource}>
+                            <c-cpq_-admin-rule-calculation-items
+                                items={action.calculationItems}
+                                selected={selected}
+                                onselect={updateSelections}
+                                onchildsaved={childSaved}
+                            >
+                            </c-cpq_-admin-rule-calculation-items>
+                        </template>
+
+                        <!-- Rule Criteria that reference Action -->
+                        <c-item-selector
+                            items={action.actionInfo.CPQ_Playbook_Rule_Criteria__r}
+                            list-style="row"
+                            header-attribute="Name"
+                            footer-attribute1="IsActive__c"
+                            footer-label1="Active: "
+                            icon-name="standard:filter_criteria_rule"
+                            show-search="false"
+                            show-create="false"
+                            header="Rule Criteria referencing this Action"
+                            onselect={ruleCriterionSelected}
+                        >
+                        </c-item-selector>
+
+                        <!-- Approval Criteria that reference Action -->
+                        <c-item-selector
+                            items={action.actionInfo.CPQ_Playbook_Approval_Criteria__r}
+                            list-style="row"
+                            header-attribute="Name"
+                            footer-attribute1="IsActive__c"
+                            footer-label1="Active: "
+                            icon-name="standard:filter_criteria_rule"
+                            show-search="false"
+                            show-create="false"
+                            header="Approval Criteria referencing this Action"
+                            onselect={approvalCriterionSelected}
+                        >
+                        </c-item-selector>
+
+                        <!-- Proposal Criteria that reference Action -->
+                        <c-item-selector
+                            items={action.actionInfo.CPQ_Playbook_Proposal_Criteria__r}
+                            list-style="row"
+                            header-attribute="Name"
+                            footer-attribute1="IsActive__c"
+                            footer-label1="Active: "
+                            icon-name="standard:filter_criteria_rule"
+                            show-search="false"
+                            show-create="false"
+                            header="Proposal Criteria referencing this Action"
+                            onselect={proposalCriterionSelected}
+                        >
+                        </c-item-selector>
+
+                        <!-- Rule Actions that reference Action -->
+                        <c-item-selector
+                            items={action.actionInfo.CPQ_Playbook_Rule_Actions__r}
+                            list-style="row"
+                            header-attribute="Name"
+                            footer-attribute1="IsActive__c"
+                            footer-label1="Active: "
+                            icon-name="standard:actions_and_buttons"
+                            show-search="false"
+                            show-create="false"
+                            header="Rule Actions referencing this Action"
+                            onselect={actionSelected}
+                        >
+                        </c-item-selector>
+
+                        <!-- Rule Calculation Items that reference Action -->
+                        <c-item-selector
+                            items={action.actionInfo.CPQ_Playbook_Rule_Calculation_Items__r}
+                            list-style="row"
+                            header-attribute="Name"
+                            footer-attribute1="IsActive__c"
+                            footer-label1="Active: "
+                            footer-attribute2="Action_Name__c"
+                            footer-label2="Action: "
+                            icon-name="standard:calculated_insights"
+                            show-search="false"
+                            show-create="false"
+                            header="Rule Calculation Items referencing this Action"
+                            onselect={calcItemSelected}
+                        >
+                        </c-item-selector>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

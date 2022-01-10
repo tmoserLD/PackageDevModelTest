@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Force_Page_Break_After__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Determines if the next section after should be placed at the top of a new page</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Determines if the next section after should be placed at the top of a new page</inlineHelpText>
+    <label>Force Page Break After</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,88 @@
+<template>
+    <div class="slds-grid_vertical slds-m-top_small">
+
+        <div class="slds-col slds-grid slds-grid_align-spread slds-p-horizontal_small slds-wrap">
+            <template if:true={showSearchBar}>
+                <div class="slds-col">
+                    <div class="slds-p-horizontal_x-small slds-m-top_x-small">
+                        <lightning-input
+                            label=""
+                            placeholder="Search"
+                            type="search"
+                            variant="label-hidden"
+                            style={searchCSS}
+                            value={searchTerm}
+                            onchange={searchTermChange}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+            <template if:true={showCreateButton}>
+                <div class="slds-col slds-p-horizontal_x-small slds-m-top_x-small">
+                    <!-- Create New -->
+                    <lightning-button
+                        label="Create New"
+                        onclick={createNew}
+                    >
+                    </lightning-button>
+                </div>
+            </template>
+        </div>
+
+        <template if:true={hasHeader}>
+            <div
+                class="slds-col slds-text-heading_small slds-p-around_x-small slds-m-horizontal_x-small"
+                style="border-radius: 10px;background-color: rgb(163, 206, 241);max-width: 100%;overflow: hidden;"
+            >
+                <p
+                    class="slds-truncate"
+                    title={header}
+                    style="max-width: 100%;overflow: hidden;"
+                >
+                    {header}
+                </p>
+            </div>
+        </template>
+
+        <div class="slds-col slds-grid slds-wrap slds-m-top_medium slds-p-horizontal_small">
+
+            <template
+                for:each={filteredItems}
+                for:item="item"
+            >
+                <div
+                    class={itemCSS}
+                    key={item.Id}
+                >
+                    <c-item-selector-item
+                        item={item}
+                        selected-value={selectedValue}
+                        selected-attribute={selectedAttribute}
+                        obj-accessor={objAccessor}
+                        header-attribute={headerAttribute}
+                        footer-attribute1={footerAttribute1}
+                        footer-label1={footerLabel1}
+                        footer-attribute2={footerAttribute2}
+                        footer-label2={footerLabel2}
+                        icon-name={iconName}
+                        search-term={searchTerm}
+                        onselect={selectItem}
+                    >
+                    </c-item-selector-item>
+                </div>
+            </template>
+
+            <template if:true={noFilteredItems}>
+                <p
+                    class="slds-align_absolute-center slds-text-heading_small slds-p-horizontal_small"
+                    style="color: rgb(87, 88, 88);"
+                >
+                    <span>
+                        No records found. <template if:true={showCreateButton}>Click 'Create New' to create one.</template>
+                    </span>
+                </p>
+            </template>
+        </div>
+    </div>
+</template>

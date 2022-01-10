@@ -1,0 +1,26 @@
+<template>
+
+    <div
+        class="slds-grid"
+        style="height: 50px;"
+    >
+        <template
+            for:each={columnsToDisplay}
+            for:item="col"
+        >
+            <div
+                class={colCSS}
+                style="border-bottom: 0.25px solid gray"
+                key={col.field}
+            >
+                <c-cpq_-quote-product-column
+                    column={col}
+                    opp-currency={oppCurrency}
+                    product={product}
+                    onupdate={updateColumn}
+                >
+                </c-cpq_-quote-product-column>
+            </div>
+        </template>
+    </div>
+</template>

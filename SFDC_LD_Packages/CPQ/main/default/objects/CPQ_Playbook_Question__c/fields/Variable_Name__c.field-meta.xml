@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Variable_Name__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description>Variable Name used to identify piped text in Proposal PDF</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Unique Variable Name used to identify piped text in Proposal PDF</inlineHelpText>
+    <label>Variable Name</label>
+    <length>255</length>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

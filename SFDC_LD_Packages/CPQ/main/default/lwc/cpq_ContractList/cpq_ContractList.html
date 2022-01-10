@@ -1,0 +1,137 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <div class="slds-grid_vertical slds-m-top_medium">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+                
+        <!-- Header -->
+        <div
+            class="slds-grid slds-theme_shade slds-p-around_x-small"
+            style="border-radius: 10px;"
+        >
+            <div class="slds-text-heading_medium">
+                Account Contracts ({numberOfContracts})
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="slds-theme_default slds-p-around_x-small">
+
+            <lightning-tabset active-tab-value="active">
+                <lightning-tab label="Active/Upcoming" value="active">
+
+                    <!-- No Contracts -->
+                    <template if:true={noActiveContractsToDisplay}>
+                        <div class="slds-align_absolute-center">
+                            No Active/Upcoming Contracts exist on this Account.
+                        </div>
+                    </template>
+
+                    <!-- Contract List -->
+                    <template if:false={noActiveContractsToDisplay}>
+
+                        <!-- List Header -->
+                        <div
+                            class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                            style="border-bottom: 1px double gray;font-weight: bold;"
+                        >
+                            <div class="slds-col slds-size_1-of-3">
+                                Source Opportunity
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                Playbook
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                Start Date
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                End Date
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                            </div>
+                        </div>
+
+                        <!-- Contracts -->
+                        <template
+                            for:each={activeContracts}
+                            for:item="contract"
+                        >
+                        <div key={contract.Id}>
+                            <c-cpq_-contract-list-item
+                                all-contracts={activeContracts}
+                                contract={contract}
+                                opp-info={oppInfo}
+                                onreplacecontract={replaceContract}
+                                onrenewcontract={renewContract}
+                            >
+                            </c-cpq_-contract-list-item>
+                        </div>
+                        </template>
+                    </template>
+                </lightning-tab>
+                <lightning-tab label="Past" value="past">
+
+                    <!-- No Contracts -->
+                    <template if:true={noPastContractsToDisplay}>
+                        <div class="slds-align_absolute-center">
+                            No Past Contracts exist on this Account.
+                        </div>
+                    </template>
+
+                    <!-- Contract List -->
+                    <template if:false={noPastContractsToDisplay}>
+
+                        <!-- List Header -->
+                        <div
+                            class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                            style="border-bottom: 1px double gray;font-weight: bold;"
+                        >
+                            <div class="slds-col slds-size_1-of-3">
+                                Source Opportunity
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                Playbook
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                Start Date
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                                End Date
+                            </div>
+                            <div class="slds-col slds-size_1-of-6">
+                            </div>
+                        </div>
+
+                        <!-- Contracts -->
+                        <template
+                            for:each={pastContracts}
+                            for:item="contract"
+                        >
+                        <div key={contract.Id}>
+                            <c-cpq_-contract-list-item
+                                all-contracts={pastContracts}
+                                contract={contract}
+                                opp-info={oppInfo}
+                                onreplacecontract={replaceContract}
+                                onrenewcontract={renewContract}
+                            >
+                            </c-cpq_-contract-list-item>
+                        </div>
+                        </template>
+                    </template>
+                </lightning-tab>
+            </lightning-tabset>
+        </div>
+    </div>
+</template>

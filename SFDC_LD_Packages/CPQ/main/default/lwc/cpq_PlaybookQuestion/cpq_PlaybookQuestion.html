@@ -1,0 +1,55 @@
+<template>
+    <template if:false={question.questionInfo.IsHidden__c}>
+        <div
+            class={mainCSS}
+            style="border-bottom: 0.25px solid gray"
+        >
+            <div class="slds-col slds-size_8-of-12 slds-p-horizontal_x-small slds-p-vertical_small">
+                {question.questionInfo.Label__c}
+                <template if:true={hasHelpText}>
+                    <lightning-helptext
+                        class="slds-m-left_small"
+                        content={question.questionInfo.Help_Text__c}
+                    >
+                    </lightning-helptext>
+                </template>
+            </div>
+            <div class="slds-col slds-size_3-of-12 slds-p-horizontal_x-small">
+                <c-cpq_-playbook-question-answer
+                    action-set={question.questionInfo.actionSet}
+                    opp-currency={oppCurrency}
+                    question-info={question.questionInfo}
+                    ontouch={answerTouch}
+                >
+                </c-cpq_-playbook-question-answer>
+            </div>
+            <div class="slds-col slds-size_1-of-12 slds-p-horizontal_x-small slds-p-vertical_small">
+                <div class="slds-align_absolute-center">
+                    <!-- Completed -->
+                    <template if:true={completed}>
+                        <lightning-icon
+                            icon-name="utility:check"
+                            alternative-text="Complete"
+                            title="Complete"
+                            size="xx-small"
+                            variant="success"
+                        >
+                        </lightning-icon>
+                    </template>
+
+                    <!-- Completed -->
+                    <template if:true={needsAttention}>
+                        <lightning-icon
+                            icon-name="utility:warning"
+                            alternative-text="Needs Attention"
+                            title="Needs Attention"
+                            size="xx-small"
+                            variant="error"
+                        >
+                        </lightning-icon>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

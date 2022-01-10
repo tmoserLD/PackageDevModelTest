@@ -1,0 +1,28 @@
+<template>
+    <lightning-card
+        title="Open CPQ for a given Opportunity"
+        variant="narrow"
+    >
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-6 slds-p-around_small">
+                <c-search-component
+                    obj-name="Opportunity"
+                    icon-name="standard:opportunity"
+                    label-name="Opportunity"
+                    placeholder="Search" 
+                    fields={fields}
+                    display-fields={displayFields}
+                    onlookup={handleLookup} >
+                </c-search-component>
+            </div>
+            <div class="slds-col slds-size_5-of-6 slds-p-around_small">
+                <template if:true={hasOppId}>
+                    <c-cpq_-container
+                        record-id={oppId}
+                    >
+                    </c-cpq_-container>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPQ_Playbook_Rule_Action__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Action that added this Entitlement Line Item</description>
+    <externalId>false</externalId>
+    <label>CPQ Playbook Rule Action</label>
+    <referenceTo>CPQ_Playbook_Rule_Action__c</referenceTo>
+    <relationshipLabel>Contract Entitlements</relationshipLabel>
+    <relationshipName>Contract_Entitlements</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

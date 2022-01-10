@@ -1,0 +1,98 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <div class="slds-grid_vertical">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+                
+        <!-- Header -->
+        <div
+            class="slds-grid slds-theme_shade slds-p-around_x-small"
+            style="border-radius: 10px;"
+        >
+            <div class="slds-text-heading_medium">
+                Quotes ({numberOfQuotes})
+            </div>
+            <div class="slds-col_bump-left">
+                <lightning-button
+                    variant="brand"
+                    label="Create Quote"
+                    title="Create Quote"
+                    disabled={cannotCreateQuote}
+                    onclick={clickCreateQuote}
+                >
+                </lightning-button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="slds-theme_default slds-p-around_x-small">
+
+            <!-- No Quotes -->
+            <template if:true={noQuotesToDisplay}>
+                <div class="slds-align_absolute-center">
+                    No Quotes have been configured on this Opportunity. Click "Create Quote" to configure a Quote.
+                </div>
+            </template>
+
+            <!-- Quote List -->
+            <template if:false={noQuotesToDisplay}>
+
+                <!-- List Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 1px double gray;font-weight: bold;"
+                >
+                    <div class="slds-col slds-size_1-of-3">
+                        Name
+                    </div>
+                    <div class="slds-col slds-size_1-of-6">
+                        Playbook
+                    </div>
+                    <div class="slds-col slds-size_1-of-6">
+                        Playbook Status
+                    </div>
+                    <div class="slds-col slds-size_1-of-6">
+                        Total
+                    </div>
+                    <div class="slds-col slds-size_1-of-6">
+                    </div>
+                </div>
+
+                <!-- Quotes -->
+                <template
+                    for:each={oppInfo.Quotes}
+                    for:item="quote"
+                >
+                <div key={quote.Id}>
+                    <c-cpq_-quote-list-item
+                        all-quotes={oppInfo.Quotes}
+                        opp-info={oppInfo}
+                        quote={quote}
+                        user-info={userInfo}
+                        onclonequote={cloneQuote}
+                        ondeletequote={deleteQuote}
+                        oneditquote={editQuote}
+                        onrecallapproval={recallApproval}
+                        onsyncquote={syncQuote}
+                        onunsyncquote={unsyncQuote}
+                        onsubmittedapprovals={submittedApprovals}
+                        onsavedproposal={savedProposal}
+                    >
+                    </c-cpq_-quote-list-item>
+                </div>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

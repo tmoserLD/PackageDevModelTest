@@ -1,0 +1,269 @@
+<template>
+    <!-- Read Only -->
+    <template if:true={isReadOnly}>
+
+        <div
+            class="slds-p-vertical_small slds-wrap"
+            style="overflow:auto;"
+            title={questionInfo.answer}
+        >
+            <!-- Text formatting -->
+            <template if:false={isNumber}>
+
+                <template if:true={isDate}>
+                    <lightning-formatted-date-time
+                        value={questionInfo.answer}
+                    >
+                    </lightning-formatted-date-time>
+                </template>
+
+                <template if:false={isDate}>
+                    <lightning-formatted-text
+                        value={questionInfo.answer}
+                    >
+                    </lightning-formatted-text>
+                </template>
+            </template>
+
+            <!-- Formatting needed -->
+            <template if:true={isNumber}>
+
+                <!-- Currency -->
+                <template if:true={isCurrency}>
+                    <lightning-formatted-number
+                        value={questionInfo.answer}
+                        format-style="currency"
+                        currency-code={oppCurrency}
+                    >
+                    </lightning-formatted-number>
+                </template>
+
+                <!-- Non-Currency -->
+                <template if:false={isCurrency}>
+                    <lightning-formatted-number
+                        value={questionInfo.answer}
+                        maximum-fraction-digits="2"
+                    >
+                    </lightning-formatted-number>
+                </template>
+
+            </template>
+        </div>
+    </template>
+
+    <!-- Input Allowed -->
+    <template if:false={isReadOnly}>
+
+        <div class="slds-p-vertical_x-small">
+
+            <!-- Boolean -->
+            <template if:true={isBoolean}>
+                <lightning-input
+                    type="checkbox"
+                    name="Answer Input"
+                    label=""
+                    variant="label-hidden"
+                    value={questionInfo.answer}
+                    checked={questionInfo.answer}
+                    onchange={answerChange}
+                >
+                </lightning-input>
+            </template>
+
+            <!-- Currency -->
+            <template if:true={isCurrency}>
+                <div class="slds-grid">
+                    <div class="slds-size_11-of-12">
+                        <lightning-input
+                            type="number"
+                            step={questionInfo.Step_Value__c}
+                            min={questionInfo.Minimum_Value__c}
+                            max={questionInfo.Maximum_Value__c}
+                            name="Answer Input"
+                            formatter="currency"
+                            label=""
+                            variant="label-hidden"
+                            value={questionInfo.answer}
+                            onblur={answerChange}
+                        >
+                        </lightning-input>
+                    </div>
+                    <div class="slds-size_1-of-12 slds-p-left_x-small">
+                        <lightning-icon
+                            icon-name="utility:chevronup"
+                            alternative-text="Increase"
+                            title="Increase"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={increase}
+                        >
+                        </lightning-icon>
+                        <lightning-icon
+                            icon-name="utility:chevrondown"
+                            alternative-text="Decrease"
+                            title="Decrease"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={decrease}
+                        >
+                        </lightning-icon>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Date -->
+            <template if:true={isDate}>
+                <lightning-input
+                    type="date"
+                    name="Answer Input"
+                    label=""
+                    variant="label-hidden"
+                    value={questionInfo.answer}
+                    onchange={answerChange}
+                    onblur={answerChange}
+                >
+                </lightning-input>
+            </template>
+
+            <!-- Decimal -->
+            <template if:true={isDecimal}>
+                <div class="slds-grid">
+                    <div class="slds-size_11-of-12">
+                        <lightning-input
+                            type="number"
+                            step={questionInfo.Step_Value__c}
+                            min={questionInfo.Minimum_Value__c}
+                            max={questionInfo.Maximum_Value__c}
+                            name="Answer Input"
+                            label=""
+                            variant="label-hidden"
+                            value={questionInfo.answer}
+                            onblur={answerChange}
+                        >
+                        </lightning-input>
+                    </div>
+                    <div class="slds-size_1-of-12 slds-p-left_x-small">
+                        <lightning-icon
+                            icon-name="utility:chevronup"
+                            alternative-text="Increase"
+                            title="Increase"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={increase}
+                        >
+                        </lightning-icon>
+                        <lightning-icon
+                            icon-name="utility:chevrondown"
+                            alternative-text="Decrease"
+                            title="Decrease"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={decrease}
+                        >
+                        </lightning-icon>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Integer -->
+            <template if:true={isInteger}>
+                <div class="slds-grid">
+                    <div class="slds-size_11-of-12">
+                        <lightning-input
+                            type="number"
+                            step={questionInfo.Step_Value__c}
+                            min={questionInfo.Minimum_Value__c}
+                            max={questionInfo.Maximum_Value__c}
+                            name="Answer Input"
+                            label=""
+                            variant="label-hidden"
+                            value={questionInfo.answer}
+                            onblur={answerChange}
+                        >
+                        </lightning-input>
+                    </div>
+                    <div class="slds-size_1-of-12 slds-p-left_x-small">
+                        <lightning-icon
+                            icon-name="utility:chevronup"
+                            alternative-text="Increase"
+                            title="Increase"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={increase}
+                        >
+                        </lightning-icon>
+                        <lightning-icon
+                            icon-name="utility:chevrondown"
+                            alternative-text="Decrease"
+                            title="Decrease"
+                            size="xx-small"
+                            style="cursor: pointer;"
+                            onclick={decrease}
+                        >
+                        </lightning-icon>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Picklist -->
+            <template if:true={isPicklist}>
+
+                <!-- Single Select -->
+                <template if:true={isSinglePicklist}>
+                    <lightning-combobox
+                        name="Answer Input"
+                        label=""
+                        value={questionInfo.answer}
+                        variant="label-hidden"
+                        placeholder=""
+                        options={picklistOptions}
+                        onchange={answerChange}
+                        onblur={answerChange}
+                    >
+                    </lightning-combobox>
+                </template>
+
+                <!-- Multiple Select -->
+                <template if:false={isSinglePicklist}>
+                    <c-multi-picklist
+                        options={mulitPicklistOptions}
+                        onitemselected={answerChange}
+                        onclickout={answerChange}
+                    >
+                    </c-multi-picklist>
+                </template>
+            </template>
+
+            <!-- Text -->
+            <template if:true={isText}>
+                <lightning-input
+                    type="text"
+                    name="Answer Input"
+                    label=""
+                    variant="label-hidden"
+                    value={questionInfo.answer}
+                    onblur={answerChange}
+                >
+                </lightning-input>
+            </template>
+
+            <!-- Text Area -->
+            <template if:true={isTextArea}>
+                <lightning-textarea
+                    name="Answer Input"
+                    label=""
+                    variant="label-hidden"
+                    value={questionInfo.answer}
+                    onblur={answerChange}
+                >
+                </lightning-textarea>
+            </template>
+
+            <span style="color:gray;font-size: 10px;">
+                <i>
+                    {answerFieldInfo}
+                </i>
+            </span>
+        </div>
+    </template>
+</template>

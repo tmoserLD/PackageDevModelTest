@@ -1,0 +1,84 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectItem}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:calculated_insights"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={item.itemInfo.Name}
+                >
+                    <b class="slds-truncate">
+                        {item.itemInfo.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={item.itemInfo.IsActive__c}
+                >
+                    Active: {item.itemInfo.IsActive__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={item.itemInfo.Execution_Order__c}
+                >
+                    Execution Logic: {item.itemInfo.Execution_Order__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Calculation Item Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Calculation Item Info"
+                    value="item"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_x-small">
+
+                        <!-- Calculation Item Edit Form -->
+                        <c-cpq_-admin-calculation-item-form
+                            button-label="Save"
+                            card-title="Edit Calculation Item"
+                            item={item}
+                            item-id={item.itemInfo.Id}
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-calculation-item-form>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,103 @@
+<template>
+
+    <div
+        class={mainCSS}
+        style="border-bottom: 0.25px solid gray"
+    >
+        <div class="slds-col slds-size_1-of-3">
+            <a href={oppLink}>
+                {contract.Opportunity__r.Name}
+            </a>
+        </div>
+        <div class="slds-col slds-size_1-of-6">
+            {contract.CPQ_Playbook__r.Label__c}
+        </div>
+        <div class="slds-col slds-size_1-of-6">
+            <lightning-formatted-date-time
+                value={contract.Contract_Start_Date__c}
+            >
+            </lightning-formatted-date-time>
+        </div>
+        <div class="slds-col slds-size_1-of-6">
+            <lightning-formatted-date-time
+                value={contract.Contract_End_Date__c}
+            >
+            </lightning-formatted-date-time>
+        </div>
+        <!-- <div class="slds-col slds-size_1-of-6">
+            <lightning-formatted-number
+                value={contract.Contract_Total__c}
+                format-style="currency"
+                currency-code={contract.CurrencyIsoCode}
+            >
+            </lightning-formatted-number>  
+        </div> -->
+        <div class="slds-col slds-size_1-of-6">
+            <ul class="slds-list_horizontal">
+
+                <!-- Replace Contract -->
+                <template if:true={canReplace}>
+                    <li
+                        class="slds-m-right_small"
+                        style="cursor:pointer"
+                        onclick={replaceContract}
+                    >
+                        <lightning-icon
+                            icon-name="utility:replace"
+                            alternative-text={replaceTitle}
+                            title={replaceTitle}
+                            size="x-small"
+                            variant="error"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+                <template if:false={canReplace}>
+                    <li
+                        class="slds-m-right_small"
+                        style="opacity: 0.5"
+                    >
+                        <lightning-icon
+                            icon-name="utility:replace"
+                            alternative-text={replaceTitle}
+                            title={replaceTitle}
+                            size="x-small"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+
+                <!-- Renew Contract -->
+                <template if:true={canRenew}>
+                    <li
+                        style="cursor:pointer"
+                        onclick={renewContract}
+                    >
+                        <lightning-icon
+                            icon-name="utility:clock"
+                            alternative-text={renewTitle}
+                            title={renewTitle}
+                            size="x-small"
+                            variant="success"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+                <template if:false={canRenew}>
+                    <li
+                        class="slds-m-right_small"
+                        style="opacity: 0.5"
+                    >
+                        <lightning-icon
+                            icon-name="utility:clock"
+                            alternative-text={renewTitle}
+                            title={renewTitle}
+                            size="x-small"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+</template>

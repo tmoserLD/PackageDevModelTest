@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Help_Text__c</fullName>
+    <description>Extra information about question to be displayed in a help text tooltip</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Extra information about question to be displayed to Users in a help text tooltip</inlineHelpText>
+    <label>Help Text</label>
+    <length>32768</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

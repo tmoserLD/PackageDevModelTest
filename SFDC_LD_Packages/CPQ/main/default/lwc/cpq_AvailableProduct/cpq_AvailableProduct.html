@@ -1,0 +1,25 @@
+<template>
+    <li
+        class={mainCSS}
+        style="cursor:pointer;"
+        onclick={addProduct}
+        onmouseenter={toggleShade}
+        onmouseleave={toggleShade}
+    >
+        <ul class="slds-list_horizontal">
+            <li class="slds-m-right_x-small">
+                <lightning-icon
+                    icon-name="utility:add"
+                    alternative-text="Add to Quote"
+                    title="Add to Quote"
+                    size="x-small"
+                    variant="success"
+                >
+                </lightning-icon>
+            </li>
+            <li>
+                {entry.Product2.Name}
+            </li>
+        </ul>
+    </li>
+</template>

@@ -1,0 +1,134 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Header -->
+    <div
+        class="slds-grid slds-theme_shade slds-p-around_x-small"
+        style="border-radius: 10px;"
+    >
+        <div class="slds-text-heading_medium">
+            {configTitle}
+        </div>
+        <div class="slds-col_bump-left">
+            <ul class="slds-list_horizontal">
+                <li class="slds-m-right_x-small">
+                    <lightning-button
+                        label="Cancel"
+                        title="Cancel"
+                        onclick={cancel}
+                        disabled={disableCancelButton}
+                    >
+                    </lightning-button>            
+                </li>
+                <li>
+                    <lightning-button
+                        variant="brand"
+                        label="Save"
+                        title="Save"
+                        onclick={saveQuote}
+                        disabled={disableSaveButton}
+                    >
+                    </lightning-button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Body -->
+    <div class="slds-grid_vertical slds-theme_default">
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <div
+                class="slds-align_absolute-center"
+                style="height:15vh"    
+            >
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={loading}>
+
+            <div class="slds-col slds-grid slds-gutters slds-m-top_x-small">
+
+                <!-- Quote Name -->
+                <div class="slds-col slds-size_3-of-4">
+                    <lightning-input
+                        type="text"
+                        label="Name"
+                        value={quoteName}
+                        onchange={nameChange}
+                    >
+                    </lightning-input>
+                </div>
+
+                <!-- Playbook -->
+                <div class="slds-col slds-size_1-of-4">
+                    <lightning-combobox
+                        name="Playbook"
+                        label="Playbook"
+                        value={selectedPlaybookId}
+                        placeholder="Select Playbook"
+                        options={playbookOptions}
+                        onchange={playbookChange}
+                    >
+                    </lightning-combobox>
+                </div>
+
+            </div>
+
+            <div class="slds-col slds-grid slds-gutters slds-m-top_x-small">
+
+                <!-- Start Date -->
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        type="date"
+                        label="StartDate"
+                        readonly="true"
+                        value={quoteStartDate}
+                        onchange={startDateChange}
+                    >
+                    </lightning-input>
+                </div>
+
+                <!-- End Date -->
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input
+                        type="date"
+                        label="EndDate"
+                        readonly="true"
+                        value={quoteEndDate}
+                        onchange={endDateChange}
+                    >
+                    </lightning-input>
+                </div>
+
+            </div>
+
+            <template if:true={playbookSelected}>
+                <c-cpq_-playbook
+                    playbook={selectedPlaybookObj}
+                    pricebook={selectedPricebook}
+                    product-columns={productColumns}
+                    entitlement-columns={entitlementColumns}
+                    entitlements={contractInfo.Contract_Entitlements__r}
+                    opp-currency={oppCurrency}
+                    quote-approvals={quoteApprovals}
+                    quote-products={quoteProducts}
+                    user-info={userInfo}
+                    ontouch={answerTouch}
+                    onaddproducts={addProducts}
+                    onupdateproduct={updateProduct}
+                    onremoveproduct={removeProduct}
+                >
+                </c-cpq_-playbook>
+            </template>
+        </template>
+    </div>
+</template>

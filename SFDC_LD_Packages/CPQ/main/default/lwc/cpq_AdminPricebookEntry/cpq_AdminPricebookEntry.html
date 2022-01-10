@@ -1,0 +1,84 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectEntry}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:price_book_entries"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={entry.Product2.Name}
+                >
+                    <b class="slds-truncate">
+                        {entry.Product2.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={entry.IsActive}
+                >
+                    Active: {entry.IsActive}
+                </p>
+                <!-- <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={entry.UnitPrice}
+                >
+                    Base Price: {entry.UnitPrice}
+                </p> -->
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Pricebook Entry Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Pricebook Entry Info"
+                    value="entry"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_medium">
+                        
+                        <!-- Pricebook Entry Edit Form -->
+                        <c-cpq_-admin-pricebook-entry-form
+                            button-label="Save"
+                            card-title="Edit Pricebook Entry"
+                            entry={entry}
+                            entry-id={entry.Id}
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-pricebook-entry-form>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

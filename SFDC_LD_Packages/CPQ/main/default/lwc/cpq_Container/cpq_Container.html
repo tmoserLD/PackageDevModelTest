@@ -1,0 +1,84 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Loading Spinner -->
+    <template if:true={loading}>
+        <div
+            class="slds-align_absolute-center"
+            style="height:20vh"    
+        >
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </div>
+    </template>
+
+    <template if:false={loading}>
+
+        <!-- User has NO access -->
+        <template if:false={hasOppAccess}>
+            <lightning-card>
+                <p class="slds-align_absolute-center slds-text-heading_medium">
+                    Whoops! Unauthorized Access
+                </p>
+                <p class="slds-align_absolute-center slds-p-horizontal_small">
+                    You do not have authorization to access CPQ on this opportunity.
+                </p>
+            </lightning-card>
+        </template>
+
+        <!-- User has access -->
+        <template if:true={hasOppAccess}>
+
+            <!-- Playbook Quote Configuration -->
+            <template if:true={showQuoteConfig}>
+                <c-cpq_-config-quote
+                    config-type={configType}
+                    default-currency={defaultCurrency}
+                    existing-quote-data={quoteForConfig}
+                    opp-info={oppInfo}
+                    user-info={userInfo}
+                    oncancel={reload}
+                    onsave={reload}
+                >
+                </c-cpq_-config-quote>
+            </template>
+
+            <template if:false={showQuoteConfig}>
+
+                <template if:true={oppInfo.Lock_CPQ__c}>
+                    <h1
+                        class="slds-p-vertical_medium"
+                        style="color:red;text-align:center"
+                    >
+                        Opportunity is locked
+                    </h1>
+                </template>
+
+                <!-- Quote List -->
+                <c-cpq_-quote-list
+                    opp-info={oppInfo}
+                    user-info={userInfo}
+                    oncreatequote={createQuote}
+                    oneditquote={editQuote}
+                    onreload={reload}
+                >
+                </c-cpq_-quote-list>
+
+                <!-- Contract List -->
+                <c-cpq_-contract-list
+                    opp-info={oppInfo}
+                    onreplacecontract={replaceContract}
+                    onrenewcontract={renewContract}
+                    onreload={reload}
+                >
+                </c-cpq_-contract-list>
+            </template>
+        </template>
+    </template>
+</template>

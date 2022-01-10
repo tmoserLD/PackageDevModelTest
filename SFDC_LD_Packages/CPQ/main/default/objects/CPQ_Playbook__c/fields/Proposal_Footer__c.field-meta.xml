@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Proposal_Footer__c</fullName>
+    <description>Footer display for Proposal PDF</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Footer display for Proposal PDF (Will not appear on the first page)</inlineHelpText>
+    <label>Proposal Footer</label>
+    <length>32768</length>
+    <trackTrending>false</trackTrending>
+    <type>Html</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

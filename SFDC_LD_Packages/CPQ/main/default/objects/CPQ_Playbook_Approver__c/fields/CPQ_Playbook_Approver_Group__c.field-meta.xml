@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPQ_Playbook_Approver_Group__c</fullName>
+    <description>CPQ Playbook Approver Group in which Approver is needed</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Playbook Approver Group in which Approver is needed</inlineHelpText>
+    <label>CPQ Playbook Approver Group</label>
+    <referenceTo>CPQ_Playbook_Approver_Group__c</referenceTo>
+    <relationshipLabel>CPQ Playbook Approvers</relationshipLabel>
+    <relationshipName>CPQ_Playbook_Approvers</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>true</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

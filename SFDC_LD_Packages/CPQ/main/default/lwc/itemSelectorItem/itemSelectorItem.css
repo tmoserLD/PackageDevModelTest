@@ -1,0 +1,20 @@
+.item {
+  border: 1px solid gray;
+  border-radius: 7px;
+  box-shadow: 0 2px 3px 0 rgb(0 0 0 / 20%), 0 2px 3px 0 rgb(0 0 0 / 19%) !important;
+  cursor: pointer;
+  opacity: 1;
+  transition: 0.3s;
+}
+  
+.item:hover {opacity: 0.6}
+
+.selectedItem {
+  background-color: rgb(194, 215, 233);
+  border: 1px solid black;
+  border-radius: 7px;
+  box-shadow: 0 2px 3px 0 rgb(0 0 0 / 20%), 0 2px 3px 0 rgb(0 0 0 / 19%) !important;
+  cursor: default;
+  opacity: 0.8;
+  transition: 0.3s;
+}

@@ -1,0 +1,90 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <lightning-card
+        title="CPQ Data Configuration"
+        variant="narrow"    
+    >
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <lightning-tabset active-tab-value="playbooks">
+            <lightning-tab label="Playbooks" value="playbooks">
+
+                <!-- Architecture Manager -->
+                <c-cpq_-admin-architecture-manager
+                    type="Playbook"
+                    selected={playbookSelected}
+                    selected-history={playbookSelectedHistory}
+                    onselect={updatePlaybookSelections}
+                    onrefresh={reloadPlaybooks}
+                    onundo={undoPlaybookSelections}
+                >
+                </c-cpq_-admin-architecture-manager>
+
+                <!-- Data -->
+                <c-cpq_-admin-playbooks
+                    playbooks={playbooks}
+                    selected={playbookSelected}
+                    onchildsaved={reloadPlaybooks}
+                    onselect={updatePlaybookSelections}
+                >
+                </c-cpq_-admin-playbooks>
+            </lightning-tab>
+            <lightning-tab label="Pricebooks" value="pricebooks" onactive={pricebooksClick}>
+
+                <!-- Architecture Manager -->
+                <c-cpq_-admin-architecture-manager
+                    type="Pricebook"
+                    selected={pricebookSelected}
+                    selected-history={pricebookSelectedHistory}
+                    onselect={updatePricebookSelections}
+                    onrefresh={reloadPricebooks}
+                    onundo={undoPricebookSelections}
+                >
+                </c-cpq_-admin-architecture-manager>
+
+                <c-cpq_-admin-pricebooks
+                    pricebooks={pricebooks}
+                    selected={pricebookSelected}
+                    onchildsaved={reloadPricebooks}
+                    onselect={updatePricebookSelections}
+                    onplaybookselect={crossPlaybookSelectionUpdate}
+                >
+                </c-cpq_-admin-pricebooks>
+            </lightning-tab>
+            <lightning-tab label="Products" value="products" onactive={productsClick}>
+
+                <!-- Architecture Manager -->
+                <c-cpq_-admin-architecture-manager
+                    type="Product"
+                    selected={productSelected}
+                    selected-history={productSelectedHistory}
+                    onselect={updateProductSelections}
+                    onrefresh={reloadProducts}
+                    onundo={undoProductSelections}
+                >
+                </c-cpq_-admin-architecture-manager>
+
+                <c-cpq_-admin-products
+                    products={products}
+                    selected={productSelected}
+                    onchildsaved={reloadProducts}
+                    onselect={updateProductSelections}
+                    onplaybookselect={crossPlaybookSelectionUpdate}
+                >
+                </c-cpq_-admin-products>
+            </lightning-tab>
+        </lightning-tabset>
+    </lightning-card>
+</template>

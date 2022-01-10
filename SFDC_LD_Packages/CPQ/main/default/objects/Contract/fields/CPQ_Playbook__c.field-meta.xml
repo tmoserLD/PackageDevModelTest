@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CPQ_Playbook__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Playbook used to configure contract</description>
+    <externalId>false</externalId>
+    <label>CPQ Playbook</label>
+    <referenceTo>CPQ_Playbook__c</referenceTo>
+    <relationshipLabel>Contracts</relationshipLabel>
+    <relationshipName>Contracts</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

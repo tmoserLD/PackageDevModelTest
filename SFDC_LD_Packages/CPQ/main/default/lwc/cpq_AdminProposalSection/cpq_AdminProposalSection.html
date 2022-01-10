@@ -1,0 +1,52 @@
+<template>
+
+    <template if:true={isSelected}>
+
+        <!-- Error Modal -->
+        <c-error-modal>
+        </c-error-modal>
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Proposal Section Tabs -->
+        <lightning-tabset>
+            <lightning-tab
+                label="Proposal Section Info"
+                value="section"
+                onactive={handleTabChange}
+            >
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    style="height: 60vh;overflow:auto;"
+                >
+                    <!-- Proposal Section Edit Form -->
+                    <c-cpq_-admin-proposal-section-form
+                        button-label="Save"
+                        card-title="Edit Proposal Section"
+                        section={section}
+                        section-id={section.sectionInfo.Id}
+                        selected={selected}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-proposal-section-form>
+
+                    <!-- Criteria Groups -->
+                    <c-cpq_-admin-proposal-criteria-groups
+                        groups={section.criteriaGroups}
+                        selected={selected}
+                        onselect={updateSelections}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-proposal-criteria-groups>
+                </div>
+            </lightning-tab>
+        </lightning-tabset>
+    </template>
+</template>

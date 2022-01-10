@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>System_Value_Source__c</fullName>
+    <description>Which System Value Source should be referenced for criterion evaluation</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Which System Value Source should be referenced for criterion evaluation</inlineHelpText>
+    <label>System Value Source</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Is Edit</fullName>
+                <default>false</default>
+                <label>Is Edit</label>
+            </value>
+            <value>
+                <fullName>Is Contract Replacement</fullName>
+                <default>false</default>
+                <label>Is Contract Replacement</label>
+            </value>
+            <value>
+                <fullName>Is Contract Renewal</fullName>
+                <default>false</default>
+                <label>Is Contract Renewal</label>
+            </value>
+            <value>
+                <fullName>Contract Is Active</fullName>
+                <default>false</default>
+                <label>Contract Is Active</label>
+            </value>
+            <value>
+                <fullName>Contract Is Upcoming</fullName>
+                <default>false</default>
+                <label>Contract Is Upcoming</label>
+            </value>
+            <value>
+                <fullName>Contract Is Past</fullName>
+                <default>false</default>
+                <label>Contract Is Past</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

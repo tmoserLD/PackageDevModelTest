@@ -1,0 +1,1058 @@
+
+public class cpq_AdminContainerClass {
+
+    // /////////////////////////////////////////////////////
+    // Retrievals
+
+    @AuraEnabled
+    public static List<PlaybookInfo> getPlaybooks() {
+
+        // PLAYBOOKS
+
+        // All Playbooks
+        List<CPQ_Playbook__c> playbooks = new List<CPQ_Playbook__c>();
+        playbooks = [
+            SELECT Id,
+                Default_Term_in_Months__c,
+                Entitlement_Summary_Columns__c,
+                IsActive__c,
+                Label__c,
+                Name,
+                Price_Book__c,
+                Product_Summary_Columns__c,
+                Proposal_Header__c,
+                Proposal_Header_Type__c,
+                Proposal_Footer__c,
+                (
+                    SELECT Id,
+                        ContentDocument.LatestPublishedVersionId
+                    FROM AttachedContentDocuments
+                )
+            FROM CPQ_Playbook__c
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        Set<Id> playbookIDs = new Set<Id>();
+        Set<Id> playbookQuestionGroupIDs = new Set<Id>();
+        Set<Id> pricebookIDs = new Set<Id>();
+
+        // Set Map of playbook object
+        Map<Id, PlaybookInfo> playbookInfoSets = new Map<Id, PlaybookInfo>();
+        for (CPQ_Playbook__c playbook : playbooks) {
+            // Track all playbook IDs
+            playbookIDs.add(playbook.Id);
+
+            // Track all pricebooks associated to playbooks
+            pricebookIDs.add(playbook.Price_Book__c);
+
+            // Configure PlaybookInfo class object 
+            PlaybookInfo playbookInfoSet = new PlaybookInfo();
+            playbookInfoSet.playbookInfo = playbook;
+            playbookInfoSet.questionGroups = new List<QuestionGroupInfo>();
+            playbookInfoSet.rules = new List<RuleInfo>();
+            playbookInfoSet.approvals = new List<ApprovalInfo>();
+            playbookInfoSet.proposalSections = new List<SectionInfo>();
+
+            // Add to map
+            playbookInfoSets.put(playbook.ID, playbookInfoSet);
+        }
+
+        // All Question Groups
+        List<CPQ_Playbook_Question_Group__c> playbookQuestionGroups = new List<CPQ_Playbook_Question_Group__c>();
+        playbookQuestionGroups = [
+            SELECT Id,
+                CPQ_Playbook__c,
+                Display_Order__c,
+                IsActive__c,
+                IsHidden__c,
+                Label__c,
+                Name,
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Actions__r
+                    ORDER BY IsActive__c DESC, Name
+                )
+            FROM CPQ_Playbook_Question_Group__c
+            WHERE CPQ_Playbook__c IN:playbookIDs
+            ORDER BY IsActive__c DESC,
+                Display_Order__c ASC
+        ];
+
+        // Update Map of playbook object
+        for (CPQ_Playbook_Question_Group__c questionGroup : playbookQuestionGroups) {
+
+            // Track all question group IDs
+            playbookQuestionGroupIDs.add(questionGroup.Id);
+
+            // Configure QuestionGroupInfo class object 
+            QuestionGroupInfo questionGroupInfoSet = new QuestionGroupInfo();
+            questionGroupInfoSet.groupInfo = questionGroup;
+            questionGroupInfoSet.questions = new List<QuestionInfo>();
+
+            // Update map
+            PlaybookInfo playbookInfoSet = playbookInfoSets.get(questionGroup.CPQ_Playbook__c);
+            playbookInfoSet.questionGroups.add(questionGroupInfoSet);
+        }
+
+        // All Questions
+        List<CPQ_Playbook_Question__c> playbookQuestions = new List<CPQ_Playbook_Question__c>();
+        playbookQuestions = [
+            SELECT Id,
+                Answer_Type__c,
+                CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,
+                Default_Field_Value__c,
+                Default_Value_Boolean__c,
+                Default_Value_Currency__c,
+                Default_Value_Date__c,
+                Default_Value_Decimal__c,
+                Default_Value_Integer__c,
+                Default_Value_Text__c,
+                Display_Order__c,
+                Help_Text__c,
+                IsActive__c,
+                IsHidden__c,
+                IsReadOnly__c,
+                IsRequired__c,
+                Label__c,
+                Maximum_Value__c,
+                Minimum_Value__c,
+                Name,
+                Picklist_Answers__c,
+                Proposal_Label__c,
+                Quote_Save_Field__c,
+                Step_Value__c,
+                Variable_Name__c,
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule_Criteria_Group__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.Name,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Approval_Criteria_Group__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.Name,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.Name,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Approval_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.Name,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.Name,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Proposal_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Actions__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Action_Name__c,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule_Action__c,
+                        CPQ_Playbook_Rule_Action__r.Name,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Calculation_Items__r
+                    ORDER BY IsActive__c DESC, Name
+                )
+            FROM CPQ_Playbook_Question__c
+            WHERE CPQ_Playbook_Question_Group__c IN:playbookQuestionGroupIDs
+            ORDER BY IsActive__c DESC,
+                Display_Order__c ASC
+        ];
+
+        // Update Map of playbook object
+        for (CPQ_Playbook_Question__c question : playbookQuestions) {
+
+            // Configure QuestionInfo class object 
+            QuestionInfo questionInfoSet = new QuestionInfo();
+            questionInfoSet.questionInfo = question;
+
+            // Update map
+            PlaybookInfo playbookInfoSet = playbookInfoSets.get(question.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c);
+            for (QuestionGroupInfo questionGroup : playbookInfoSet.questionGroups) {
+                if (questionGroup.groupInfo.Id == question.CPQ_Playbook_Question_Group__c) {
+                    questionGroup.questions.add(questionInfoSet);
+                    break;
+                }
+            }
+        }
+
+
+        // RULES
+
+        // All Rules
+        List<CPQ_Playbook_Rule__c> rules = new List<CPQ_Playbook_Rule__c>();
+        rules = [
+            SELECT Id,
+                CPQ_Playbook__c,
+                Execution_Order__c,
+                Evaluate_When__c,
+                IsActive__c,
+                Name
+            FROM CPQ_Playbook_Rule__c
+            WHERE CPQ_Playbook__c IN:playbookIDs
+            ORDER BY IsActive__c DESC,
+                Execution_Order__c ASC,
+                Name
+        ];
+
+        Set<Id> ruleIDs = new Set<Id>();
+        Set<Id> ruleCriteriaGroupIDs = new Set<Id>();
+        Set<Id> ruleActionIDs = new Set<Id>();
+
+        // Set Map of rule object
+        Map<Id, RuleInfo> ruleInfoSets = new Map<Id, RuleInfo>();
+        for (CPQ_Playbook_Rule__c rule : rules) {
+            // Track all rule IDs
+            ruleIDs.add(rule.Id);
+
+            // Configure RuleInfo class object 
+            RuleInfo ruleInfoSet = new RuleInfo();
+            ruleInfoSet.ruleInfo = rule;
+            ruleInfoSet.criteriaGroups = new List<CriteriaGroupInfo>();
+            ruleInfoSet.actions = new List<ActionInfo>();
+
+            // Add to map
+            ruleInfoSets.put(rule.Id, ruleInfoSet);
+        }
+
+        // All Criteria Groups
+        List<CPQ_Playbook_Rule_Criteria_Group__c> ruleCriteriaGroups = new List<CPQ_Playbook_Rule_Criteria_Group__c>();
+        ruleCriteriaGroups = [
+            SELECT Id,
+                CPQ_Playbook_Rule__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name
+            FROM CPQ_Playbook_Rule_Criteria_Group__c
+            WHERE CPQ_Playbook_Rule__c IN:ruleIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of rule object
+        for (CPQ_Playbook_Rule_Criteria_Group__c criteriaGroup : ruleCriteriaGroups) {
+
+            // Track all criteria group IDs
+            ruleCriteriaGroupIDs.add(criteriaGroup.Id);
+
+            // Configure CriteriaGroupInfo class object 
+            CriteriaGroupInfo criteriaGroupInfoSet = new CriteriaGroupInfo();
+            criteriaGroupInfoSet.groupInfo = criteriaGroup;
+            criteriaGroupInfoSet.criteria = new List<CriterionInfo>();
+
+            // Update map
+            RuleInfo ruleInfoSet = ruleInfoSets.get(criteriaGroup.CPQ_Playbook_Rule__c);
+            ruleInfoSet.criteriaGroups.add(criteriaGroupInfoSet);
+        }
+
+        // All Criteria
+        List<CPQ_Playbook_Rule_Criterion__c> criteria = new List<CPQ_Playbook_Rule_Criterion__c>();
+        criteria = [
+            SELECT Id,
+                Comparison_Operator__c,
+                Comparison_Value_Boolean__c,
+                Comparison_Value_Currency__c,
+                Comparison_Value_Date__c,
+                Comparison_Value_Decimal__c,
+                Comparison_Value_Integer__c,
+                Comparison_Value_Text__c,
+                CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Rule_Criteria_Group__c,
+                CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__c,
+                Criterion_Source__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name,
+                Product__c,
+                Product_Criterion_Target_Rule_Action__c,
+                Product_Field__c,
+                Product_Is_Entitlement__c,
+                System_Value_Source__c,
+                Target_Manual_Addition_Only__c
+            FROM CPQ_Playbook_Rule_Criterion__c
+            WHERE CPQ_Playbook_Rule_Criteria_Group__c IN:ruleCriteriaGroupIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of rule object
+        for (CPQ_Playbook_Rule_Criterion__c criterion : criteria) {
+
+            // Configure CriterionInfo class object 
+            CriterionInfo criterionInfoSet = new CriterionInfo();
+            criterionInfoSet.criterionInfo = criterion;
+
+            // Update map
+            RuleInfo ruleInfoSet = ruleInfoSets.get(criterion.CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__c);
+            for (CriteriaGroupInfo criteriaGroup : ruleInfoSet.criteriaGroups) {
+                if (criteriaGroup.groupInfo.Id == criterion.CPQ_Playbook_Rule_Criteria_Group__c) {
+                    criteriaGroup.criteria.add(criterionInfoSet);
+                    break;
+                }
+            }
+        }
+
+        // All Actions
+        List<CPQ_Playbook_Rule_Action__c> actions = new List<CPQ_Playbook_Rule_Action__c>();
+        actions = [
+            SELECT Id,
+                Action_Type__c,
+                Calculation_Type__c,
+                CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Rule__c,
+                Execution_Order__c,
+                IsActive__c,
+                Name,
+                Numeric_Math_Operator__c,
+                Product__c,
+                Product_Adjustment_Field__c,
+                Product_Adjustment_Field_Type__c,
+                Product_Adjustment_Target_Rule_Action__c,
+                Product_Field_Value_Boolean__c,
+                Product_Field_Value_Currency__c,
+                Product_Field_Value_Date__c,
+                Product_Field_Value_Decimal__c,
+                Product_Field_Value_Integer__c,
+                Product_Field_Value_Text__c,
+                Question_Adjustment_Field__c,
+                Question_Group_Adjustment_Field__c,
+                Question_Field_Value_Boolean__c,
+                Question_Field_Value_Currency__c,
+                Question_Field_Value_Date__c,
+                Question_Field_Value_Decimal__c,
+                Question_Field_Value_Integer__c,
+                Question_Field_Value_Text__c,
+                Target_Manual_Addition_Only__c,
+                Value_Source_Type__c,
+                (
+                    SELECT Id
+                    FROM Product_Rule_Criterion_Targets__r
+                ),
+                (
+                    SELECT Id
+                    FROM Product_Approval_Criterion_Targets__r
+                ),
+                (
+                    SELECT Id
+                    FROM Product_Proposal_Criterion_Targets__r
+                ),
+                (
+                    SELECT Id
+                    FROM Product_Calculation_Targets__r
+                ),
+                (
+                    SELECT Id
+                    FROM Product_Adjustment_Targets__r
+                )
+            FROM CPQ_Playbook_Rule_Action__c
+            WHERE CPQ_Playbook_Rule__c IN:ruleIDs
+            ORDER BY IsActive__c DESC,
+                Execution_Order__c ASC
+        ];
+
+        // Update Map of rule object
+        for (CPQ_Playbook_Rule_Action__c action : actions) {
+
+            // Track all action IDs
+            ruleActionIDs.add(action.Id);
+
+            // Configure ActionInfo class object 
+            ActionInfo actionInfoSet = new ActionInfo();
+            actionInfoSet.actionInfo = action;
+            actionInfoSet.calculationItems = new List<CalculationItemInfo>();
+
+            // Update map
+            RuleInfo ruleInfoSet = ruleInfoSets.get(action.CPQ_Playbook_Rule__c);
+            ruleInfoSet.actions.add(actionInfoSet);
+        }
+
+        // All Calculation Items
+        List<CPQ_Playbook_Rule_Calculation_Item__c> calulationItems = new List<CPQ_Playbook_Rule_Calculation_Item__c>();
+        calulationItems = [
+            SELECT Id,
+                Calculation_Source__c,
+                CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Rule_Action__c,
+                CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__c,
+                Entitlement_Calculation_Field__c,
+                Execution_Order__c,
+                IsActive__c,
+                Name,
+                Product__c,
+                Product_Calculation_Field__c,
+                Product_Calculation_Target_Rule_Action__c,
+                Product_Is_Entitlement__c,
+                Static_Value_Boolean__c,
+                Static_Value_Currency__c,
+                Static_Value_Date__c,
+                Static_Value_Decimal__c,
+                Static_Value_Integer__c,
+                Static_Value_Text__c,
+                Static_Value_Type__c
+            FROM CPQ_Playbook_Rule_Calculation_Item__c
+            WHERE CPQ_Playbook_Rule_Action__c IN:ruleActionIDs
+            ORDER BY IsActive__c DESC,
+                Execution_Order__c ASC
+        ];
+
+        // Update Map of rule object
+        for (CPQ_Playbook_Rule_Calculation_Item__c item : calulationItems) {
+
+            // Configure ActionInfo class object 
+            CalculationItemInfo calculationItemInfoSet = new CalculationItemInfo();
+            calculationItemInfoSet.itemInfo = item;
+
+            // Update map
+            RuleInfo ruleInfoSet = ruleInfoSets.get(item.CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__c);
+            for (ActionInfo action : ruleInfoSet.actions) {
+                if (action.actionInfo.Id == item.CPQ_Playbook_Rule_Action__c) {
+                    action.calculationItems.add(calculationItemInfoSet);
+                    break;
+                }
+            }
+        }
+
+        // Update playbook map
+        for (RuleInfo ruleInfoSet : ruleInfoSets.values()) {
+            PlaybookInfo playbookInfoSet = playbookInfoSets.get(ruleInfoSet.ruleInfo.CPQ_Playbook__c);
+            playbookInfoSet.rules.add(ruleInfoSet);
+        }
+
+
+        // Approvals
+
+        // All Approvals
+        List<CPQ_Playbook_Approval__c> approvals = new List<CPQ_Playbook_Approval__c>();
+        approvals = [
+            SELECT Id,
+                CPQ_Playbook__c,
+                IsActive__c,
+                Label__c,
+                Name,
+                Reason__c
+            FROM CPQ_Playbook_Approval__c
+            WHERE CPQ_Playbook__c IN:playbookIDs
+            ORDER BY IsActive__c DESC,
+                Label__c
+        ];
+
+        Set<Id> approvalIDs = new Set<Id>();
+        Set<Id> approvalCriteriaGroupIDs = new Set<Id>();
+        Set<Id> approverGroupIDs = new Set<Id>();
+
+        // Set Map of approval object
+        Map<Id, ApprovalInfo> approvalInfoSets = new Map<Id, ApprovalInfo>();
+        for (CPQ_Playbook_Approval__c approval : approvals) {
+            // Track all approval IDs
+            approvalIDs.add(approval.Id);
+
+            // Configure ApprovalInfo class object 
+            ApprovalInfo approvalInfoSet = new ApprovalInfo();
+            approvalInfoSet.approvalInfo = approval;
+            approvalInfoSet.criteriaGroups = new List<ApprovalCriteriaGroupInfo>();
+            approvalInfoSet.approverGroups = new List<ApproverGroupInfo>();
+
+            // Add to map
+            approvalInfoSets.put(approval.Id, approvalInfoSet);
+        }
+
+        // All Criteria Groups
+        List<CPQ_Playbook_Approval_Criteria_Group__c> approvalCriteriaGroups = new List<CPQ_Playbook_Approval_Criteria_Group__c>();
+        approvalCriteriaGroups = [
+            SELECT Id,
+                CPQ_Playbook_Approval__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name
+            FROM CPQ_Playbook_Approval_Criteria_Group__c
+            WHERE CPQ_Playbook_Approval__c IN:approvalIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of approval object
+        for (CPQ_Playbook_Approval_Criteria_Group__c criteriaGroup : approvalCriteriaGroups) {
+
+            // Track all criteria group IDs
+            approvalCriteriaGroupIDs.add(criteriaGroup.Id);
+
+            // Configure ApprovalCriteriaGroupInfo class object 
+            ApprovalCriteriaGroupInfo approvalCriteriaGroupInfoSet = new ApprovalCriteriaGroupInfo();
+            approvalCriteriaGroupInfoSet.groupInfo = criteriaGroup;
+            approvalCriteriaGroupInfoSet.criteria = new List<ApprovalCriterionInfo>();
+
+            // Update map
+            ApprovalInfo approvalInfoSet = approvalInfoSets.get(criteriaGroup.CPQ_Playbook_Approval__c);
+            approvalInfoSet.criteriaGroups.add(approvalCriteriaGroupInfoSet);
+        }
+
+        // All Criteria
+        List<CPQ_Playbook_Approval_Criterion__c> approvalCriteria = new List<CPQ_Playbook_Approval_Criterion__c>();
+        approvalCriteria = [
+            SELECT Id,
+                Comparison_Operator__c,
+                Comparison_Value_Boolean__c,
+                Comparison_Value_Currency__c,
+                Comparison_Value_Date__c,
+                Comparison_Value_Decimal__c,
+                Comparison_Value_Integer__c,
+                Comparison_Value_Text__c,
+                CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Approval_Criteria_Group__c,
+                CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__c,
+                Criterion_Source__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name,
+                Product__c,
+                Product_Criterion_Target_Rule_Action__c,
+                Product_Field__c,
+                System_Value_Source__c,
+                Target_Manual_Addition_Only__c
+            FROM CPQ_Playbook_Approval_Criterion__c
+            WHERE CPQ_Playbook_Approval_Criteria_Group__c IN:approvalCriteriaGroupIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of approval object
+        for (CPQ_Playbook_Approval_Criterion__c criterion : approvalCriteria) {
+
+            // Configure ApprovalCriterionInfo class object 
+            ApprovalCriterionInfo approvalCriterionInfoSet = new ApprovalCriterionInfo();
+            approvalCriterionInfoSet.criterionInfo = criterion;
+
+            // Update map
+            ApprovalInfo approvalInfoSet = approvalInfoSets.get(criterion.CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__c);
+            for (ApprovalCriteriaGroupInfo criteriaGroup : approvalInfoSet.criteriaGroups) {
+                if (criteriaGroup.groupInfo.Id == criterion.CPQ_Playbook_Approval_Criteria_Group__c) {
+                    criteriaGroup.criteria.add(approvalCriterionInfoSet);
+                    break;
+                }
+            }
+        }
+
+
+        // All Approver Groups
+        List<CPQ_Playbook_Approver_Group__c> approverGroups = new List<CPQ_Playbook_Approver_Group__c>();
+        approverGroups = [
+            SELECT Id,
+                Approval_Order__c,
+                Approvers_Required__c,
+                CPQ_Playbook_Approval__c,
+                IsActive__c,
+                Name
+            FROM CPQ_Playbook_Approver_Group__c
+            WHERE CPQ_Playbook_Approval__c IN:approvalIDs
+            ORDER BY IsActive__c DESC,
+                Approval_Order__c ASC
+        ];
+
+        // Update Map of approval object
+        for (CPQ_Playbook_Approver_Group__c approverGroup : approverGroups) {
+
+            // Track all approver group IDs
+            approverGroupIDs.add(approverGroup.Id);
+
+            // Configure ApproverGroupInfo class object 
+            ApproverGroupInfo approverGroupInfoSet = new ApproverGroupInfo();
+            approverGroupInfoSet.groupInfo = approverGroup;
+            approverGroupInfoSet.approvers = new List<ApproverInfo>();
+
+            // Update map
+            ApprovalInfo approvalInfoSet = approvalInfoSets.get(approverGroup.CPQ_Playbook_Approval__c);
+            approvalInfoSet.approverGroups.add(approverGroupInfoSet);
+        }
+
+        // All Approvers
+        List<CPQ_Playbook_Approver__c> approvers = new List<CPQ_Playbook_Approver__c>();
+        approvers = [
+            SELECT Id,
+                Approver__c,
+                Approver__r.Name,
+                CPQ_Playbook_Approver_Group__c,
+                CPQ_Playbook_Approver_Group__r.CPQ_Playbook_Approval__c,
+                IsActive__c,
+                Manager_Approver__c,
+                Name
+            FROM CPQ_Playbook_Approver__c
+            WHERE CPQ_Playbook_Approver_Group__c IN:approverGroupIDs
+            ORDER BY IsActive__c DESC,
+                Name,
+                Manager_Approver__c DESC
+        ];
+
+        // Update Map of approval object
+        for (CPQ_Playbook_Approver__c approver : approvers) {
+
+            // Configure ApproverInfo class object 
+            ApproverInfo approverInfoSet = new ApproverInfo();
+            approverInfoSet.approverInfo = approver;
+
+            // Update map
+            ApprovalInfo approvalInfoSet = approvalInfoSets.get(approver.CPQ_Playbook_Approver_Group__r.CPQ_Playbook_Approval__c);
+            for (ApproverGroupInfo approverGroup : approvalInfoSet.approverGroups) {
+                if (approverGroup.groupInfo.Id == approver.CPQ_Playbook_Approver_Group__c) {
+                    approverGroup.approvers.add(approverInfoSet);
+                    break;
+                }
+            }
+        }
+
+        // Update playbook map
+        for (ApprovalInfo approvalInfoSet : approvalInfoSets.values()) {
+            PlaybookInfo playbookInfoSet = playbookInfoSets.get(approvalInfoSet.approvalInfo.CPQ_Playbook__c);
+            playbookInfoSet.approvals.add(approvalInfoSet);
+        }
+
+
+        // Proposal Sections
+
+        // All Proposal Sections
+        List<CPQ_Playbook_Proposal_Section__c> sections = new List<CPQ_Playbook_Proposal_Section__c>();
+        sections = [
+            SELECT Id,
+                Allow_Mid_Section_Page_Break__c,
+                Answer_Table_Questions__c,
+                Body_Text_Block_1__c,
+                Body_Text_Block_2__c,
+                Body_Text_Block_3__c,
+                CPQ_Playbook__c,
+                Display_Order__c,
+                Entitlement_Table_Fields__c,
+                Force_Page_Break_After__c,
+                Force_Page_Break_Before__c,
+                Inputs_Column_1__c,
+                Inputs_Column_2__c,
+                Inputs_Column_3__c,
+                Inputs_Font_Color__c,
+                Inputs_Font_Size__c,
+                IsActive__c,
+                Name,
+                Product_Table_QLI_Fields__c,
+                Record_Table_Order_By_Clause__c,
+                Record_Table_Where_Clause__c,
+                Section_Type__c,
+                Table_Entries_Font_Color__c,
+                Table_Entries_Font_Size__c,
+                Table_Headers_Font_Color__c,
+                Table_Headers_Font_Size__c,
+                (
+                    SELECT Id,
+                        ContentDocument.LatestPublishedVersionId
+                    FROM AttachedContentDocuments
+                )
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE CPQ_Playbook__c IN:playbookIDs
+            ORDER BY IsActive__c DESC,
+                Display_Order__c ASC
+        ];
+
+        Set<Id> sectionIDs = new Set<Id>();
+        Set<Id> sectionCriteriaGroupIDs = new Set<Id>();
+
+        // Set Map of proposal section object
+        Map<Id, SectionInfo> sectionInfoSets = new Map<Id, SectionInfo>();
+        for (CPQ_Playbook_Proposal_Section__c section : sections) {
+            // Track all section IDs
+            sectionIDs.add(section.Id);
+
+            // Configure SectionInfo class object 
+            SectionInfo sectionInfoSet = new SectionInfo();
+            sectionInfoSet.sectionInfo = section;
+            sectionInfoSet.criteriaGroups = new List<SectionCriteriaGroupInfo>();
+
+            // Add to map
+            sectionInfoSets.put(section.Id, sectionInfoSet);
+        }
+
+        // All Criteria Groups
+        List<CPQ_Playbook_Proposal_Criteria_Group__c> proposalCriteriaGroups = new List<CPQ_Playbook_Proposal_Criteria_Group__c>();
+        proposalCriteriaGroups = [
+            SELECT Id,
+                CPQ_Playbook_Proposal_Section__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name
+            FROM CPQ_Playbook_Proposal_Criteria_Group__c
+            WHERE CPQ_Playbook_Proposal_Section__c IN:sectionIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of section object
+        for (CPQ_Playbook_Proposal_Criteria_Group__c criteriaGroup : proposalCriteriaGroups) {
+
+            // Track all criteria group IDs
+            sectionCriteriaGroupIDs.add(criteriaGroup.Id);
+
+            // Configure SectionCriteriaGroupInfo class object 
+            SectionCriteriaGroupInfo sectionCriteriaGroupInfoSet = new SectionCriteriaGroupInfo();
+            sectionCriteriaGroupInfoSet.groupInfo = criteriaGroup;
+            sectionCriteriaGroupInfoSet.criteria = new List<SectionCriterionInfo>();
+
+            // Update map
+            SectionInfo sectionInfoSet = sectionInfoSets.get(criteriaGroup.CPQ_Playbook_Proposal_Section__c);
+            sectionInfoSet.criteriaGroups.add(sectionCriteriaGroupInfoSet);
+        }
+
+        // All Criteria
+        List<CPQ_Playbook_Proposal_Criterion__c> sectionCriteria = new List<CPQ_Playbook_Proposal_Criterion__c>();
+        sectionCriteria = [
+            SELECT Id,
+                Comparison_Operator__c,
+                Comparison_Value_Boolean__c,
+                Comparison_Value_Currency__c,
+                Comparison_Value_Date__c,
+                Comparison_Value_Decimal__c,
+                Comparison_Value_Integer__c,
+                Comparison_Value_Text__c,
+                CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
+                CPQ_Playbook_Proposal_Criteria_Group__c,
+                CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c,
+                Criterion_Source__c,
+                Evaluation_Logic__c,
+                IsActive__c,
+                N__c,
+                Name,
+                Product__c,
+                Product_Criterion_Target_Rule_Action__c,
+                Product_Field__c,
+                Target_Manual_Addition_Only__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__c IN:sectionCriteriaGroupIDs
+            ORDER BY IsActive__c DESC,
+                Name
+        ];
+
+        // Update Map of section object
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : sectionCriteria) {
+
+            // Configure SectionCriterionInfo class object 
+            SectionCriterionInfo sectionCriterionInfoSet = new SectionCriterionInfo();
+            sectionCriterionInfoSet.criterionInfo = criterion;
+
+            // Update map
+            SectionInfo sectionInfoSet = sectionInfoSets.get(criterion.CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c);
+            for (SectionCriteriaGroupInfo criteriaGroup : sectionInfoSet.criteriaGroups) {
+                if (criteriaGroup.groupInfo.Id == criterion.CPQ_Playbook_Proposal_Criteria_Group__c) {
+                    criteriaGroup.criteria.add(sectionCriterionInfoSet);
+                    break;
+                }
+            }
+        }
+
+        // Update playbook map
+        for (SectionInfo sectionInfoSet : sectionInfoSets.values()) {
+            PlaybookInfo playbookInfoSet = playbookInfoSets.get(sectionInfoSet.sectionInfo.CPQ_Playbook__c);
+            playbookInfoSet.proposalSections.add(sectionInfoSet);
+        }
+
+        return playbookInfoSets.values();
+    }
+
+    public class PlaybookInfo {
+        @AuraEnabled public CPQ_Playbook__c playbookInfo;
+        @AuraEnabled public List<QuestionGroupInfo> questionGroups;
+        @AuraEnabled public List<RuleInfo> rules;
+        @AuraEnabled public List<ApprovalInfo> approvals;
+        @AuraEnabled public List<SectionInfo> proposalSections;
+    }
+
+    public class QuestionGroupInfo {
+        @AuraEnabled public CPQ_Playbook_Question_Group__c groupInfo;
+        @AuraEnabled public List<QuestionInfo> questions;
+    }
+
+    public class QuestionInfo {
+        @AuraEnabled public CPQ_Playbook_Question__c questionInfo;
+    }
+
+    public class RuleInfo {
+        @AuraEnabled public CPQ_Playbook_Rule__c ruleInfo;
+        @AuraEnabled public List<CriteriaGroupInfo> criteriaGroups;
+        @AuraEnabled public List<ActionInfo> actions;
+    }
+
+    public class CriteriaGroupInfo {
+        @AuraEnabled public CPQ_Playbook_Rule_Criteria_Group__c groupInfo;
+        @AuraEnabled public List<CriterionInfo> criteria;
+    }
+
+    public class CriterionInfo {
+        @AuraEnabled public CPQ_Playbook_Rule_Criterion__c criterionInfo;
+    }
+
+    public class ActionInfo {
+        @AuraEnabled public CPQ_Playbook_Rule_Action__c actionInfo;
+        @AuraEnabled public List<CalculationItemInfo> calculationItems;
+    }
+
+    public class CalculationItemInfo {
+        @AuraEnabled public CPQ_Playbook_Rule_Calculation_Item__c itemInfo;
+    }
+
+    public class ApprovalInfo {
+        @AuraEnabled public CPQ_Playbook_Approval__c approvalInfo;
+        @AuraEnabled public List<ApprovalCriteriaGroupInfo> criteriaGroups;
+        @AuraEnabled public List<ApproverGroupInfo> approverGroups;
+    }
+
+    public class ApprovalCriteriaGroupInfo {
+        @AuraEnabled public CPQ_Playbook_Approval_Criteria_Group__c groupInfo;
+        @AuraEnabled public List<ApprovalCriterionInfo> criteria;
+    }
+
+    public class ApprovalCriterionInfo {
+        @AuraEnabled public CPQ_Playbook_Approval_Criterion__c criterionInfo;
+    }
+
+    public class ApproverGroupInfo {
+        @AuraEnabled public CPQ_Playbook_Approver_Group__c groupInfo;
+        @AuraEnabled public List<ApproverInfo> approvers;
+    }
+
+    public class ApproverInfo {
+        @AuraEnabled public CPQ_Playbook_Approver__c approverInfo;
+    }
+
+    public class SectionInfo {
+        @AuraEnabled public CPQ_Playbook_Proposal_Section__c sectionInfo;
+        @AuraEnabled public List<SectionCriteriaGroupInfo> criteriaGroups;
+    }
+
+    public class SectionCriteriaGroupInfo {
+        @AuraEnabled public CPQ_Playbook_Proposal_Criteria_Group__c groupInfo;
+        @AuraEnabled public List<SectionCriterionInfo> criteria;
+    }
+
+    public class SectionCriterionInfo {
+        @AuraEnabled public CPQ_Playbook_Proposal_Criterion__c criterionInfo;
+    }
+
+    @AuraEnabled
+    public static List<Pricebook2> getPricebooks() {
+
+        // All Pricebooks
+        List<Pricebook2> pricebooks = new List<Pricebook2>();
+        pricebooks = [
+            SELECT Id,
+                Description,
+                IsActive,
+                IsStandard,
+                Name,
+                (
+                    SELECT Id,
+                        IsActive,
+                        Dates_Editable__c,
+                        Discountable__c,
+                        UnitPrice,
+                        List_Price_Editable__c,
+                        Manually_Addible__c,
+                        Pricebook2Id,
+                        Product2Id,
+                        Product2.Name,
+                        Quantity__c,
+                        Quantity_Editable__c,
+                        Removable__c
+                    FROM PricebookEntries
+                ),
+                (
+                    SELECT Id,
+                        IsActive__c,
+                        Name
+                    FROM CPQ_Playbooks__r
+                    ORDER BY IsActive__c DESC, Name
+                )
+            FROM Pricebook2
+            ORDER BY IsActive DESC,
+                Name
+        ];
+
+        return pricebooks;
+    }
+
+    @AuraEnabled
+    public static List<Product2> getProducts() {
+
+        // All Products
+        List<Product2> products = new List<Product2>();
+        products = [
+            SELECT Id,
+                Description,
+                Family,
+                IsActive,
+                Name,
+                ProductCode,
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule_Criteria_Group__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.Name,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule_Criteria_Group__r.CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Approval_Criteria_Group__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.Name,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.Name,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Approval_Criteria_Group__r.CPQ_Playbook_Approval__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Approval_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.Name,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.Name,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Proposal_Criteria__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Actions__r
+                    ORDER BY IsActive__c DESC, Name
+                ),
+                (
+                    SELECT Id,
+                        Action_Name__c,
+                        Name,
+                        IsActive__c,
+                        CPQ_Playbook_Rule_Action__c,
+                        CPQ_Playbook_Rule_Action__r.Name,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__c,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.Name,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.CPQ_Playbook__c,
+                        CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name
+                    FROM CPQ_Playbook_Rule_Calculation_Items__r
+                    ORDER BY IsActive__c DESC, Name
+                )
+            FROM Product2
+            ORDER BY IsActive DESC,
+                Name
+        ];
+
+        return products;
+    }
+
+    @AuraEnabled
+    public static String getQuestionType(Id questionId) {
+        return [
+            SELECT Answer_Type__c
+            FROM CPQ_Playbook_Question__c
+            WHERE Id=:questionId
+        ].Answer_Type__c;
+    }
+
+
+    // /////////////////////////////////////////////////////
+    // Actions
+
+    @AuraEnabled
+    public static void deleteRecords(List<sObject> records) {
+        delete records;
+    }
+
+    @AuraEnabled
+    public static sObject cloneRecord(String recordId, String objectAPI) {
+        SObjectType objType = ((SObject)(Type.forName('Schema.' + objectAPI).newInstance())).getSObjectType();
+        DescribeSObjectResult obj = objType.getDescribe();
+        List<String> fields = new List<String>();
+        for (String field : obj.fields.getMap().keySet()) {
+            fields.add(field);
+        }
+        String qry = 'SELECT ' + string.join(fields, ',') + ' FROM ' + objectAPI + ' WHERE Id =:recordId';
+        sObject existingRecord = Database.query(qry);
+        sObject clonedRecord = existingRecord.clone(false, false, false, false);
+
+        if (objectAPI == 'CPQ_Playbook_Question__c') {
+            clonedRecord.put('Variable_Name__c', '*' + clonedRecord.get('Variable_Name__c'));
+        }
+
+        String currentName = (String) clonedRecord.get('Name');
+
+        clonedRecord.put('Name', 'CLONE: ' + currentName.left(73));
+
+        insert clonedRecord;
+
+        return clonedRecord;
+    }
+
+}

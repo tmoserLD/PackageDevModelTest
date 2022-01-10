@@ -1,0 +1,75 @@
+<template>
+
+    <div class="slds-grid">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Record selection -->
+        <div
+            class="slds-col slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-5"
+            style="height: calc(60vh + 50px);overflow:auto;border-right: 0.5px solid gray"
+        >
+            <c-item-selector
+                items={products}
+                selected-value={selectedProduct}
+                selected-attribute={selectedAttribute}
+                list-style="column"
+                header-attribute="Name"
+                footer-attribute1="IsActive"
+                footer-label1="Active: "
+                icon-name="standard:product"
+                show-search="true"
+                show-create="true"
+                onselect={recordSelected}
+                oncreate={createNewRecord}
+            >
+            </c-item-selector>
+        </div>
+
+        <div
+            class="slds-col"
+            style="max-width: 100%;overflow:hidden"
+        >
+            <!-- New Record -->
+            <template if:true={createNew}>
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    style="height: 60vh;overflow:auto;"
+                >
+                    <c-cpq_-admin-product-form
+                        button-label="Create"
+                        card-title="Create New Product"
+                        onchildsaved={childSaved}
+                        oncancel={cancelCreateNewRecord}
+                    >
+                    </c-cpq_-admin-product-form>
+                </div>
+            </template>
+
+            <!-- Record Data -->
+            <template if:false={createNew}>
+                <template
+                    for:each={products}
+                    for:item="product"
+                >
+                    <c-cpq_-admin-product
+                        key={product.Id}
+                        product={product}
+                        selected={selected}
+                        onchildsaved={childSaved}
+                        onselect={updateSelections}
+                        onplaybookselect={playbookSelect}
+                    >
+                    </c-cpq_-admin-product>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

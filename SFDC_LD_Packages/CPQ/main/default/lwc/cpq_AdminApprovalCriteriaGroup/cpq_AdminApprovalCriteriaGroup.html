@@ -1,0 +1,92 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectGroup}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:capacity_plan"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={group.groupInfo.Name}
+                >
+                    <b class="slds-truncate">
+                        {group.groupInfo.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={group.groupInfo.IsActive__c}
+                >
+                    Active: {group.groupInfo.IsActive__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={group.groupInfo.Evaluation_Logic__c}
+                >
+                    Evaluation Logic: {group.groupInfo.Evaluation_Logic__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Criteria Group Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Criteria Group Info"
+                    value="group"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_x-small">
+
+                        <!-- Criteria Group Edit Form -->
+                        <c-cpq_-admin-approval-criteria-group-form
+                            button-label="Save"
+                            card-title="Edit Criteria Group"
+                            group={group}
+                            group-id={group.groupInfo.Id}
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-approval-criteria-group-form>
+
+                        <c-cpq_-admin-approval-criteria
+                            criteria={group.criteria}
+                            selected={selected}
+                            onselect={updateSelections}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-approval-criteria>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

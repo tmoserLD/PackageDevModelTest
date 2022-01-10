@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default_Value_Boolean__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If related question answer type is &apos;Boolean&apos;, value to use for default value for answer. If Default Field Value is populated, that takes precedence over this value.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Default value for question&apos;s answer. If Default Field Value is populated, that takes precedence over this value.</inlineHelpText>
+    <label>Default Value (Boolean)</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

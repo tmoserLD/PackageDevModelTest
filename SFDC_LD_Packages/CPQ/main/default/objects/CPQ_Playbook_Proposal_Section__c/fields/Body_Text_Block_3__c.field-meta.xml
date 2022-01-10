@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Body_Text_Block_3__c</fullName>
+    <description>Body text for block 3</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Text for the third column of text of the section</inlineHelpText>
+    <label>Body (Column 3)</label>
+    <length>32768</length>
+    <trackTrending>false</trackTrending>
+    <type>Html</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

@@ -2,10 +2,14 @@
     "packageDirectories": [
         {
             "path": "ld-catfood",
-            "default": true,
+            "default": false,
             "package": "LaunchDarklyCatFood",
             "versionName": "ver 1.0",
             "versionNumber": "1.0.0.NEXT"
+        },
+        {
+            "path": "CPQ",
+            "default": true
         }
     ],
     "name": "SFDC_LD_Packages",

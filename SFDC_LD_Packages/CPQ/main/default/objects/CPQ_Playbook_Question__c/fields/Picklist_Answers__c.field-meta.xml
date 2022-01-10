@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Picklist_Answers__c</fullName>
+    <description>Semi-colon delineated list of answer choices when Answer Type is Picklist or Multi-Select Picklist</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Semi-colon delineated list of answer choices</inlineHelpText>
+    <label>Picklist Answers</label>
+    <length>1000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>2</visibleLines>
+</CustomField>

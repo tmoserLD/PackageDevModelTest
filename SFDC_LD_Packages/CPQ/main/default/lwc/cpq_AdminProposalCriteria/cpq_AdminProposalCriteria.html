@@ -1,0 +1,110 @@
+<template>
+
+    <div class="slds-grid_vertical slds-m-top_x-small slds-p-horizontal_x-small slds-m-bottom_small">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Header -->
+        <div
+            class="slds-col slds-grid slds-p-around_x-small slds-theme_shade"
+            style="border-radius: 10px;cursor:pointer;"
+            onclick={toggleCollapse} 
+        >
+            <div>
+                <ul class="slds-list_horizontal">
+                    <li class="slds-m-right_small"   >
+                        <template if:true={collapsed}>
+                            <lightning-icon
+                                icon-name="utility:chevronright"
+                                alternative-text="Expand"
+                                title="Expand"
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </template>
+                        <template if:false={collapsed}>
+                            <lightning-icon
+                                icon-name="utility:chevrondown"
+                                alternative-text="Collapse"
+                                title="Collapse"
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </template>
+                    </li>
+                    <li class="slds-text-heading_small">
+                        Criteria
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <template if:false={collapsed}>
+
+            <div class="slds-col slds-grid slds-p-horizontal_x-small slds-wrap">
+                <div class="slds-col">
+                    <div class="slds-m-top_x-small slds-m-right_x-small">
+                        <lightning-input
+                            label=""
+                            placeholder="Search"
+                            type="search"
+                            variant="label-hidden"
+                            style="max-width: 425px;"
+                            value={searchTerm}
+                            onchange={searchTermChange}
+                        >
+                        </lightning-input>
+                    </div>
+                </div>
+                <div class="slds-col_bump-left slds-m-top_x-small">
+                    <!-- Create New -->
+                    <lightning-button
+                        label="Create New"
+                        onclick={createNewRecord}
+                    >
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- New Record -->
+            <template if:true={createNew}>
+                <div class="slds-col slds-p-horizontal_x-small">
+                    <c-cpq_-admin-proposal-criterion-form
+                        button-label="Create"
+                        card-title="Create New Criterion"
+                        selected={selected}
+                        onchildsaved={childSaved}
+                        oncancel={cancelCreateNewRecord}
+                    >
+                    </c-cpq_-admin-proposal-criterion-form>
+                </div>
+            </template>
+
+            <!-- Criteria -->
+            <template if:false={createNew}>
+                <div class="slds-grid_vertical slds-p-horizontal_x-small">
+                    <template
+                        for:each={filteredCriteria}
+                        for:item="criterion"
+                    >
+                        <c-cpq_-admin-proposal-criterion
+                            key={criterion.criterionInfo.Id}
+                            criterion={criterion}
+                            selected={selected}
+                            onselect={updateSelections}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-proposal-criterion>
+                    </template>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

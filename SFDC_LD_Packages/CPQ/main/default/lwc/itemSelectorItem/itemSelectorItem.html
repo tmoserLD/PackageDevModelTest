@@ -1,0 +1,39 @@
+<template>
+    <div
+        class={itemCSS}
+        onclick={selectItem}
+    >
+        <ul class="slds-list_horizontal">
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name={iconName}
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={header}
+                >
+                    <b class="slds-truncate">
+                        {header}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={footer1}
+                >
+                    {footer1}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={footer2}
+                >
+                    {footer2}
+                </p>
+            </li>
+        </ul>
+    </div>
+</template>

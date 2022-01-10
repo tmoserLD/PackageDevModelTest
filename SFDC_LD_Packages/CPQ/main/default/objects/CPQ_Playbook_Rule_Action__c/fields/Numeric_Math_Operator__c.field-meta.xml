@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Numeric_Math_Operator__c</fullName>
+    <description>If populated, Math operation to be performed on calculated value for Numeric Calculations</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If populated, Math operation to be performed on calculated value for Numeric Calculations</inlineHelpText>
+    <label>Numberic Math Operator</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Floor</fullName>
+                <default>false</default>
+                <label>Floor</label>
+            </value>
+            <value>
+                <fullName>Ceiling</fullName>
+                <default>false</default>
+                <label>Ceiling</label>
+            </value>
+            <value>
+                <fullName>Truncate</fullName>
+                <default>false</default>
+                <label>Truncate</label>
+            </value>
+            <value>
+                <fullName>Round</fullName>
+                <default>false</default>
+                <label>Round</label>
+            </value>
+            <value>
+                <fullName>Absolute Value</fullName>
+                <default>false</default>
+                <label>Absolute Value</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

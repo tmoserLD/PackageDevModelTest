@@ -1,0 +1,59 @@
+<template>
+    <div class="slds-grid_vertical slds-m-vertical_small slds-p-horizontal_x-small">
+        <!-- Header Label -->
+        <div
+            class="slds-col slds-text-heading_small slds-p-around_x-small"
+            style="border-radius: 10px;background-color: rgb(163, 206, 241)"
+        >
+            {label}
+        </div>
+
+        <template if:true={hasRecords}>
+            <!-- Records Header -->
+            <div class="slds-col">
+                <div
+                    class="slds-grid slds-p-vertical_small"
+                    style="border-bottom: 0.5px solid gray"
+                >
+                    <template
+                        for:each={fields}
+                        for:item="field"
+                    >
+                        <div
+                            key={field.field}
+                            class={fieldCSS}
+                        >
+                            <b>
+                                {field.label}
+                            </b>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Records -->
+            <div class="slds-col">
+                <template
+                    for:each={records}
+                    for:item="record"
+                >
+                    <c-cpq_-admin-referenced-by-record
+                        key={record.Id}
+                        record={record}
+                        all-records={records}
+                        fields={fields}
+                        sobject-type={sobjectType}
+                    >
+                    </c-cpq_-admin-referenced-by-record>
+                </template>
+            </div>
+        </template>
+        <template if:false={hasRecords}>
+            <div class="slds-col">
+                <p class="slds-align_absolute-center slds-p-top_small">
+                    Nothing to see here.
+                </p>
+            </div>
+        </template>
+    </div>
+</template>

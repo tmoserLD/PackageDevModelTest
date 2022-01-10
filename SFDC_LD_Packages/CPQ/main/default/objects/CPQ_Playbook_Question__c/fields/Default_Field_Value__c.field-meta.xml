@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default_Field_Value__c</fullName>
+    <description>Field from CPQ data object to use for default value for answer</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Field from CPQ data objects to use for default value for answer. Valid objects include: &apos;Account&apos;, &apos;Opportunity&apos;, &apos;Quote&apos;, &apos;Profile&apos;, &apos;UserRole&apos;, and &apos;User&apos;</inlineHelpText>
+    <label>Default Field Value</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

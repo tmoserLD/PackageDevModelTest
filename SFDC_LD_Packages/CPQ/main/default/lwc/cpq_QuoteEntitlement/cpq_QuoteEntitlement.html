@@ -1,0 +1,25 @@
+<template>
+
+    <div
+        class="slds-grid"
+        style="height: 50px;"
+    >
+        <template
+            for:each={columnsToDisplay}
+            for:item="col"
+        >
+            <div
+                class={colCSS}
+                style="border-bottom: 0.25px solid gray"
+                key={col.field}
+            >
+                <c-cpq_-quote-entitlement-column
+                    column={col}
+                    entitlement={entitlement}
+                    opp-currency={oppCurrency}
+                >
+                </c-cpq_-quote-entitlement-column>
+            </div>
+        </template>
+    </div>
+</template>

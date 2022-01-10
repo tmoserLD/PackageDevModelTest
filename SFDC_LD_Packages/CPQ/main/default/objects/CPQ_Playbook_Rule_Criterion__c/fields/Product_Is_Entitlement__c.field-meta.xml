@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Is_Entitlement__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If true, the product will be evaluated based on how it is configured in its entitlement for the contract being replaced/renewed</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If true, the product will be evaluated based on how it is configured in its entitlement for the contract being replaced/renewed</inlineHelpText>
+    <label>Product Is Entitlement</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
