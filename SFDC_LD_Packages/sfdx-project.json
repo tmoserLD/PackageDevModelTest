@@ -13,6 +13,9 @@
         {
             "path": "CPQ",
             "default": true
+        },
+        {
+            "path": "TerritoryMapping"
         }
     ],
     "name": "SFDC_LD_Packages",

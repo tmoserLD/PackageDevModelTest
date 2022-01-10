@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eligible_Values__c</fullName>
+    <description>Semi-colon delineated list of Values that the Source Field may match in order to pass the condition</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Values that the Source Field may match in order to pass the condition</inlineHelpText>
+    <label>Eligible Values</label>
+    <length>1000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>2</visibleLines>
+</CustomField>

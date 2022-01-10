@@ -1,0 +1,77 @@
+<template>
+    <div class="slds-grid">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Record selection -->
+        <div
+            class="slds-col slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-5"
+            style="height: 70vh;overflow:auto;border-right: 0.5px solid gray;"
+        >
+            <c-item-selector
+                items={mappings}
+                selected-value={selected.mapping}
+                selected-attribute={selectedAttribute}
+                list-style="column"
+                obj-accessor="mapping"
+                header-attribute="Mapping_Name__c"
+                footer-attribute1="Is_Active__c"
+                footer-label1="Active: "
+                footer-attribute2="Evaluation_Order__c"
+                footer-label2="Evaluation Order: "
+                icon-name="custom:custom78"
+                show-search="true"
+                show-create="true"
+                onselect={recordSelected}
+                oncreate={createNewRecord}
+            >
+            </c-item-selector>
+        </div>
+
+        <div
+            class="slds-col"
+            style="max-width: 100%;overflow:hidden"
+        >
+            <!-- New Record -->
+            <template if:true={createNew}>
+                <div
+                    class="slds-col slds-p-horizontal_medium"
+                    style="height: 70vh;overflow:auto;"
+                >
+                    <c-territory-mapping-form
+                        button-label="Create"
+                        card-title="Create New Mapping"
+                        object={object}
+                        onchildsaved={childSaved}
+                        oncancel={cancelCreateNewRecord}
+                    >
+                    </c-territory-mapping-form>
+                </div>
+            </template>
+
+            <!-- Record Data -->
+            <template if:false={createNew}>
+                <template
+                    for:each={mappings}
+                    for:item="mapping"
+                >
+                    <c-territory-mapping
+                        key={mapping.mapping.Id}
+                        mapping={mapping}
+                        selected={selected}
+                        onchildsaved={childSaved}
+                        onselect={updateSelections}
+                    >
+                    </c-territory-mapping>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

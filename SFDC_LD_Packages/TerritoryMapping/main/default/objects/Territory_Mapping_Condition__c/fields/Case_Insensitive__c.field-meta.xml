@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Case_Insensitive__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If TRUE, the text case of Source Field's value and the text case of the Eligible/Ineligible Values will be irrelevant</description>
+    <externalId>false</externalId>
+    <inlineHelpText>If TRUE, the text case of Source Field's value and the text case of the Eligible/Ineligible Values will be irrelevant</inlineHelpText>
+    <label>Case Insensitive</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

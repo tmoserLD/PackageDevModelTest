@@ -1,0 +1,75 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectCondition}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:code_set"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={condition.Name}
+                >
+                    <b class="slds-truncate">
+                        {condition.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={condition.Is_Active__c}
+                >
+                    Active: {condition.Is_Active__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={condition.Source_Field__c}
+                >
+                    Source Field: {condition.Source_Field__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <div>
+                <!-- Error Modal -->
+                <c-error-modal>
+                </c-error-modal>
+
+                <!-- Loading Spinner -->
+                <template if:true={loading}>
+                    <lightning-spinner
+                        alternative-text="Loading"
+                        size="medium"
+                    >
+                    </lightning-spinner>
+                </template>
+
+                <div class="slds-col slds-p-horizontal_medium">
+                    <c-territory-mapping-condition-form
+                        button-label="Save"
+                        card-title="Edit Territory Condition"
+                        selected={selected}
+                        condition={condition}
+                        condition-id={condition.Id}
+                        onchildsaved={childSaved}
+                    >
+                    </c-territory-mapping-condition-form>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

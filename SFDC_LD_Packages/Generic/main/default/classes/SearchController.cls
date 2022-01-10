@@ -1,3 +1,10 @@
+/**
+ * @author tmoser@launchdarkly.com
+ * @date 1/6/2022
+ *
+ * @description Generic SOSL Query Class
+ *
+ */
 public with sharing class SearchController {
     @AuraEnabled
     public static List<sObject> search(String objectName, List<String> fields, String searchTerm){

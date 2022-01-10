@@ -1,0 +1,57 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <lightning-card
+        variant="narrow"    
+    >
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <!-- Object -->
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-5 slds-p-horizontal_small">
+                <lightning-combobox
+                    name="object"
+                    label="Object"
+                    value={object}
+                    placeholder="Select Object"
+                    options={objectOptions}
+                    onchange={objectChange}
+                    variant="label-hidden"
+                >
+                </lightning-combobox>
+            </div>
+            <div class="slds-col_bump-left slds-m-right_small">
+                <lightning-button
+                    icon-name="utility:refresh"
+                    alternative-text="Refresh Data"
+                    label="Refresh Data"
+                    size="x-small"
+                    style="cursor:pointer;"
+                    onclick={reloadMappings}
+                >
+                </lightning-button>
+            </div>
+        </div>
+
+        <!-- Mappings -->
+        <c-territory-mappings
+            mappings={mappings}
+            object={object}
+            selected={selected}
+            onchildsaved={reloadMappings}
+            onselect={updateSelections}
+        >
+        </c-territory-mappings>
+
+    </lightning-card>
+</template>

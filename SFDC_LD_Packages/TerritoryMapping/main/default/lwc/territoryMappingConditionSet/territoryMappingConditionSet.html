@@ -1,0 +1,83 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectSet}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:code_set_bundle"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={set.Name}
+                >
+                    <b class="slds-truncate">
+                        {set.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={set.Is_Active__c}
+                >
+                    Active: {set.Is_Active__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={set.Evaluation_Order__c}
+                >
+                    Evaluation Order: {set.Evaluation_Order__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <div>
+                <!-- Error Modal -->
+                <c-error-modal>
+                </c-error-modal>
+
+                <!-- Loading Spinner -->
+                <template if:true={loading}>
+                    <lightning-spinner
+                        alternative-text="Loading"
+                        size="medium"
+                    >
+                    </lightning-spinner>
+                </template>
+
+                <div class="slds-col slds-p-horizontal_medium">
+                    <c-territory-mapping-condition-set-form
+                        button-label="Save"
+                        card-title="Edit Territory Condition Set"
+                        selected={selected}
+                        set={set}
+                        set-id={set.Id}
+                        onchildsaved={childSaved}
+                    >
+                    </c-territory-mapping-condition-set-form>
+
+                    <c-territory-mapping-conditions
+                        conditions={set.Territory_Mapping_Conditions__r}
+                        selected={selected}
+                        onchildsaved={childSaved}
+                        onselect={updateSelections}
+                    >
+                    </c-territory-mapping-conditions>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
