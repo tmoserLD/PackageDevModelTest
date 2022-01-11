@@ -73,7 +73,10 @@
         class={mainCSS}
         style="border-bottom: 0.25px solid gray"
     >
-        <div class="slds-col slds-size_1-of-3">
+        <div
+            class="slds-col slds-size_1-of-3 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+        >
             <ul class="slds-list_horizontal">
                 <template if:true={hasIncompleteApprovals}>
                     <li class="slds-m-right_x-small">
@@ -103,18 +106,30 @@
                         </lightning-icon>
                     </li>
                 </template>
-                <li>
+                <li title={quoteName}>
                     {quoteName}
                 </li>
             </ul>
         </div>
-        <div class="slds-col slds-size_1-of-6">
+        <div
+            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+            title={playbook}
+        >
             {playbook}
         </div>
-        <div class="slds-col slds-size_1-of-6">
+        <div
+            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+            title={quote.Playbook_Status__c}
+        >
             {quote.Playbook_Status__c}
         </div>
-        <div class="slds-col slds-size_1-of-6">
+        <div
+            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+            title={quote.Total_Price__c}
+        >
             <lightning-formatted-number
                 value={quote.Total_Price__c}
                 format-style="currency"
@@ -122,13 +137,13 @@
             >
             </lightning-formatted-number>  
         </div>
-        <div class="slds-col slds-size_1-of-6">
-            <ul class="slds-list_horizontal">
+        <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
+            <ul class="slds-list_horizontal slds-wrap">
 
                 <!-- Edit Quote -->
                 <template if:true={canEdit}>
                     <li
-                        class="slds-m-right_small"
+                        class="slds-m-horizontal_x-small"
                         style="cursor:pointer"
                         onclick={editQuote}
                     >
@@ -144,7 +159,7 @@
                 </template>
                 <template if:false={canEdit}>
                     <li
-                        class="slds-m-right_small"
+                        class="slds-m-horizontal_x-small"
                         style="opacity: 0.5"
                     >
                         <lightning-icon
@@ -163,6 +178,7 @@
                     <!-- Sync Quote -->
                     <template if:true={canSync}>
                         <li
+                            class="slds-m-horizontal_x-small"
                             style="cursor:pointer"
                             onclick={syncQuote}
                             >
@@ -177,7 +193,10 @@
                         </li>
                     </template>
                     <template if:false={canSync}>
-                        <li style="opacity: 0.5">
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
+                        >
                             <lightning-icon
                                 icon-name="utility:link"
                                 alternative-text={syncTitle}
@@ -193,6 +212,7 @@
                     <!-- Unsync Quote -->
                     <template if:true={canUnsync}>
                         <li
+                            class="slds-m-horizontal_x-small"
                             style="cursor:pointer"
                             onclick={unsyncQuote}
                             >
@@ -207,7 +227,10 @@
                         </li>
                     </template>
                     <template if:false={canUnsync}>
-                        <li style="opacity: 0.5">
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
+                        >
                             <lightning-icon
                                 icon-name="utility:remove_link"
                                 alternative-text={unsyncTitle}
@@ -222,7 +245,7 @@
                 <!-- Quote PDFs -->
                 <template if:true={canGenProposal}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="cursor:pointer"
                         onclick={showProposal}
                         >
@@ -237,7 +260,7 @@
                 </template>
                 <template if:false={canGenProposal}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="opacity: 0.5"
                         >
                         <lightning-icon
@@ -253,7 +276,7 @@
                 <!-- Clone Quote -->
                 <template if:true={canClone}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="cursor:pointer"
                         onclick={cloneQuote}
                     >
@@ -269,7 +292,7 @@
                 </template>
                 <template if:false={canClone}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="opacity: 0.5"
                     >
                         <lightning-icon
@@ -285,7 +308,7 @@
                 <!-- Delete Quote -->
                 <template if:true={canDelete}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="cursor:pointer"
                         onclick={deleteQuote}
                     >
@@ -301,7 +324,7 @@
                 </template>
                 <template if:false={canDelete}>
                     <li
-                        class="slds-m-left_small"
+                        class="slds-m-horizontal_x-small"
                         style="opacity: 0.5"
                     >
                         <lightning-icon

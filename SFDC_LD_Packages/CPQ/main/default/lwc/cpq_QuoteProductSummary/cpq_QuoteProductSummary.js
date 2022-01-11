@@ -119,9 +119,18 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
 
     // CSS class names string for component
     get colCSS() {
-        let colCSS = 'slds-col slds-p-horizontal_x-small slds-p-bottom_xx-small slds-truncate';
-        if (this.productColumns.length > 5) {
-            colCSS += ' slds-size_1-of-6';
+        let colCSS = 'slds-col slds-p-horizontal_x-small slds-p-bottom_xx-small';
+        if (this.productColumns.length >= 6) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-5 slds-large-size_1-of-6';
+        }
+        else if (this.productColumns.length >= 5) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-5 slds-large-size_1-of-5';
+        }
+        else if (this.productColumns.length >= 4) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-4';
+        }
+        else if (this.productColumns.length >= 3) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-3 slds-large-size_1-of-3';
         }
         return colCSS;
     }
