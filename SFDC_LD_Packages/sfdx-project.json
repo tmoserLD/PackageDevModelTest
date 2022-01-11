@@ -8,14 +8,27 @@
             "versionNumber": "1.0.0.NEXT"
         },
         {
-            "path": "Generic"
+            "path": "Generic",
+            "package": "GenericComponents",
+            "versionName": "ver 1.1",
+            "versionNumber": "1.1.0.NEXT",
+            "default": false
         },
         {
             "path": "CPQ",
             "default": true
         },
         {
-            "path": "TerritoryMapping"
+            "path": "TerritoryMapping",
+            "package": "TerritoryMapping",
+            "versionName": "ver 1.1",
+            "versionNumber": "1.1.0.NEXT",
+            "default": false,
+            "dependencies": [
+                {
+                    "package": "GenericComponents@1.1.0-1"
+                }
+            ]
         }
     ],
     "name": "SFDC_LD_Packages",
@@ -25,6 +38,11 @@
     "packageAliases": {
         "LaunchDarklyCatFood": "0Ho1K000000fxVUSAY",
         "LaunchDarklyCatFood@0.1.0-1": "04t1K000002qpJ9QAI",
-        "LaunchDarklyCatFood@1.0.0-1": "04t1K000002qpJdQAI"
+        "LaunchDarklyCatFood@1.0.0-1": "04t1K000002qpJdQAI",
+        "GenericComponents": "0Ho1K000000fxVeSAI",
+        "GenericComponents@1.1.0-1": "04t1K000002qqAXQAY",
+        "TerritoryMapping": "0Ho1K000000fxVjSAI",
+        "TerritoryMapping@1.1.0-1": "04t1K000002qqAcQAI",
+        "TerritoryMapping@1.1.0-2": "04t1K000002qqB1QAI"
     }
 }
