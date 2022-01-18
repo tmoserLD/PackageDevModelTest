@@ -769,7 +769,7 @@ public class cpq_ProposalPDF_Controller {
                         }
                     }
 
-                    if (section.Name == 'Section 5') {
+                    if (section.Name == 'Section 2') {
                         System.debug('criterionEvaluation');
                         System.debug(criteriaGroup.Name);
                         System.debug(criterion.Name);
@@ -817,7 +817,7 @@ public class cpq_ProposalPDF_Controller {
                     groupEvaluation = false;
                 }
 
-                if (section.Name == 'Section 5') {
+                if (section.Name == 'Section 2') {
                     System.debug('groupEvaluation');
                     System.debug(criteriaGroup.Name);
                     System.debug(groupEvaluation);
@@ -863,7 +863,7 @@ public class cpq_ProposalPDF_Controller {
                 sectionEvaluation = false;
             }
 
-            if (section.Name == 'Section 5') {
+            if (section.Name == 'Section 2') {
                 System.debug('sectionEvaluation');
                 System.debug(groupEvalN);
                 System.debug(sectionEvaluation);

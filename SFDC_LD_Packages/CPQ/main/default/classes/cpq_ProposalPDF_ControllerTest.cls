@@ -1559,13 +1559,13 @@ public class cpq_ProposalPDF_ControllerTest {
         ];
         for (CPQ_Playbook_Answer__c answer : testAnswers) {
             if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
-                answer.Value_Decimal__c = 1;
+                answer.Value_Decimal__c = 11;
             }
             if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
-                answer.Value_Integer__c = 14;
+                answer.Value_Integer__c = null;
             }
             if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area') {
-                answer.Value_Text__c = 'Text is not a word in this string';
+                answer.Value_Text__c = 'Text is a word in this string';
             }
         }
         update testAnswers;
@@ -1579,10 +1579,81 @@ public class cpq_ProposalPDF_ControllerTest {
         ];
         for (QuoteLineItem qli : testQLIs) {
             if (qli.Product2.Name == 'Product 0') {
-                qli.Quantity__c = 44;
+                qli.Quantity__c = 45;
             }
             if (qli.Product2.Name == 'Product 1') {
-                qli.Discount__c = 9;
+                qli.Discount__c = 10;
+            }
+        }
+        update testQLIs;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(!contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with failing image section
+     **/
+    @isTest
+    public static void testQuoteImageFail2() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Image and Text - 2 columns (1:3)'
+        ];
+
+        List<CPQ_Playbook_Answer__c> testAnswers = [
+            SELECT Id,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                Value_Decimal__c,
+                Value_Integer__c,
+                Value_Text__c
+            FROM CPQ_Playbook_Answer__c
+            WHERE CPQ_Playbook_Question__r.Answer_Type__c IN ('Decimal','Integer','Text Area')
+        ];
+        for (CPQ_Playbook_Answer__c answer : testAnswers) {
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
+                answer.Value_Decimal__c = 1;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
+                answer.Value_Integer__c = 14;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area') {
+                answer.Value_Text__c = 'Text is a word in this string';
+            }
+        }
+        update testAnswers;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Quantity__c,
+                Discount__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Quantity__c = 4;
+            }
+            if (qli.Product2.Name == 'Product 1') {
+                qli.Discount__c = 1;
             }
         }
         update testQLIs;
@@ -1952,6 +2023,657 @@ public class cpq_ProposalPDF_ControllerTest {
                 ent.Unit_Price__c = 10; // 10
                 // ent.Total_Price__c = 100; // 100
                 ent.Quantity__c = 10; // 45
+                ent.Start_Date__c = Date.today(); // Today
+                ent.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(!contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with passing answer table section (Greater Than)
+     **/
+    @isTest
+    public static void testQuoteAnswerTablePassGreaterThan() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Greater than';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 11; // 10
+                qli.List_Price__c = 11; // 10
+                qli.Quoted_Price__c = 11; // 10
+                // qli.Total_Price__c = 506; // 100
+                qli.Quantity__c = 46; // 45
+                qli.Start_Date__c = Date.today() + 1; // Today
+                qli.End_Date__c = Date.today() + 2; // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 11; // 10
+                ent.List_Price__c = 11; // 10
+                ent.Unit_Price__c = 11; // 10
+                // ent.Total_Price__c = 506; // 100
+                ent.Quantity__c = 46; // 45
+                ent.Start_Date__c = Date.today() + 1; // Today
+                ent.End_Date__c = Date.today() + 2; // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with passing answer table section (Greater Than or Equal)
+     **/
+    @isTest
+    public static void testQuoteAnswerTablePassGreaterThanEqual() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Greater than or equal';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 11; // 10
+                qli.List_Price__c = 11; // 10
+                qli.Quoted_Price__c = 11; // 10
+                // qli.Total_Price__c = 495; // 100
+                qli.Quantity__c = 45; // 45
+                qli.Start_Date__c = Date.today(); // Today
+                qli.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 11; // 10
+                ent.List_Price__c = 11; // 10
+                ent.Unit_Price__c = 11; // 10
+                // ent.Total_Price__c = 495; // 100
+                ent.Quantity__c = 45; // 45
+                ent.Start_Date__c = Date.today(); // Today
+                ent.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with passing answer table section (Less Than)
+     **/
+    @isTest
+    public static void testQuoteAnswerTablePassLessThan() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Less than';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 9; // 10
+                qli.List_Price__c = 9; // 10
+                qli.Quoted_Price__c = 1; // 10
+                // qli.Total_Price__c = 44; // 100
+                qli.Quantity__c = 44; // 45
+                qli.Start_Date__c = Date.today() - 2; // Today
+                qli.End_Date__c = Date.today() - 1; // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 9; // 10
+                ent.List_Price__c = 9; // 10
+                ent.Unit_Price__c = 1; // 10
+                // ent.Total_Price__c = 44; // 100
+                ent.Quantity__c = 44; // 45
+                ent.Start_Date__c = Date.today() - 2; // Today
+                ent.End_Date__c = Date.today() - 1; // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with passing answer table section (Less Than or Equal)
+     **/
+    @isTest
+    public static void testQuoteAnswerTablePassLessThanEqual() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Less than or equal';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 9; // 10
+                qli.List_Price__c = 9; // 10
+                qli.Quoted_Price__c = 1; // 10
+                // qli.Total_Price__c = 45; // 100
+                qli.Quantity__c = 45; // 45
+                qli.Start_Date__c = Date.today(); // Today
+                qli.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 9; // 10
+                ent.List_Price__c = 9; // 10
+                ent.Unit_Price__c = 1; // 10
+                // ent.Total_Price__c = 45; // 100
+                ent.Quantity__c = 45; // 45
+                ent.Start_Date__c = Date.today(); // Today
+                ent.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with failing answer table section (Is Empty)
+     **/
+    @isTest
+    public static void testQuoteAnswerTableFailIsEmpty() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Is empty';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 9; // 10
+                qli.List_Price__c = 9; // 10
+                qli.Quoted_Price__c = 1; // 10
+                // qli.Total_Price__c = 44; // 100
+                qli.Quantity__c = 44; // 45
+                qli.Start_Date__c = Date.today() - 2; // Today
+                qli.End_Date__c = Date.today() - 1; // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 9; // 10
+                ent.List_Price__c = 9; // 10
+                ent.Unit_Price__c = 1; // 10
+                // ent.Total_Price__c = 44; // 100
+                ent.Quantity__c = 44; // 45
+                ent.Start_Date__c = Date.today() - 2; // Today
+                ent.End_Date__c = Date.today() - 1; // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(!contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with passing answer table section (Is Not Empty)
+     **/
+    @isTest
+    public static void testQuoteAnswerTablePassIsNotEmpty() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Is not empty';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 9; // 10
+                qli.List_Price__c = 9; // 10
+                qli.Quoted_Price__c = 1; // 10
+                // qli.Total_Price__c = 45; // 100
+                qli.Quantity__c = 45; // 45
+                qli.Start_Date__c = Date.today(); // Today
+                qli.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 9; // 10
+                ent.List_Price__c = 9; // 10
+                ent.Unit_Price__c = 1; // 10
+                // ent.Total_Price__c = 45; // 100
+                ent.Quantity__c = 45; // 45
+                ent.Start_Date__c = Date.today(); // Today
+                ent.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testEntitlements;
+
+        Test.startTest();
+
+        Pagereference pg = Page.cpq_ProposalVF;
+        Test.setCurrentPage(pg);
+        pg.getParameters().put('quoteId', testQuote.Id);
+        cpq_ProposalPDF_Controller cont = new cpq_ProposalPDF_Controller();
+
+        // Verify sections
+        String contSectionsPassed = cont.sectionsPassed;
+        System.assert(contSectionsPassed.split(';').contains(testSection.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify proposal with failing answer table section (Equals)
+     **/
+    @isTest
+    public static void testQuoteAnswerTableFailEquals() {
+
+        Quote testQuote = [
+            SELECT Id
+            FROM Quote
+            LIMIT 1
+        ];
+
+        CPQ_Playbook_Proposal_Section__c testSection = [
+            SELECT Id
+            FROM CPQ_Playbook_Proposal_Section__c
+            WHERE Section_Type__c = 'Answer Table - 2 columns'
+        ];
+
+        List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
+            SELECT Id,
+                Comparison_Operator__c
+            FROM CPQ_Playbook_Proposal_Criterion__c
+            WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
+        ];
+        for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
+            criterion.Comparison_Operator__c = 'Equals';
+        }
+        update testCriteria;
+
+        List<QuoteLineItem> testQLIs = [
+            SELECT Id,
+                Product2.Name,
+                Discount__c,
+                List_Price__c,
+                Quoted_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM QuoteLineItem
+        ];
+        for (QuoteLineItem qli : testQLIs) {
+            if (qli.Product2.Name == 'Product 0') {
+                qli.Discount__c = 9; // 10
+                qli.List_Price__c = 9; // 10
+                qli.Quoted_Price__c = 1; // 10
+                // qli.Total_Price__c = 45; // 100
+                qli.Quantity__c = 45; // 45
+                qli.Start_Date__c = Date.today(); // Today
+                qli.End_Date__c = Date.today(); // Today
+            }
+        }
+        update testQLIs;
+
+        List<Contract_Entitlement__c> testEntitlements = [
+            SELECT Id,
+                Product__r.Name,
+                Discount__c,
+                List_Price__c,
+                Unit_Price__c,
+                Quantity__c,
+                Start_Date__c,
+                Total_Price__c,
+                End_Date__c
+            FROM Contract_Entitlement__c
+        ];
+        for (Contract_Entitlement__c ent : testEntitlements) {
+            if (ent.Product__r.Name == 'Product 0') {
+                ent.Discount__c = 9; // 10
+                ent.List_Price__c = 9; // 10
+                ent.Unit_Price__c = 1; // 10
+                // ent.Total_Price__c = 45; // 100
+                ent.Quantity__c = 45; // 45
                 ent.Start_Date__c = Date.today(); // Today
                 ent.End_Date__c = Date.today(); // Today
             }
