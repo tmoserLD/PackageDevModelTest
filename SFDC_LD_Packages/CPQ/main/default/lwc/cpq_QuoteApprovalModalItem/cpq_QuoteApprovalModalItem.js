@@ -2,6 +2,9 @@ import { LightningElement, api } from 'lwc';
 
 export default class CPQ_QuoteApprovalModalItem extends LightningElement {
 
+    // Opportunity Info
+    @api oppInfo;
+
     // All Quote Approvals
     @api quoteApprovals;
 
@@ -33,8 +36,10 @@ export default class CPQ_QuoteApprovalModalItem extends LightningElement {
             step.CPQ_Quote_Approvers__r.forEach(function(approver) {
                 // Manager
                 if (approver.CPQ_Playbook_Approver__r.Manager_Approver__c === true) {
-                    if (this.userInfo.Manager) {
-                        approvers.push(this.userInfo.Manager.Name + ' (Manager)');
+                    if (this.oppInfo.Owner) {
+                        if (this.oppInfo.Owner.Manager) {
+                            approvers.push(this.oppInfo.Owner.Manager.Name + ' (Manager)');
+                        }
                     }
                 }
                 // Non-Manager

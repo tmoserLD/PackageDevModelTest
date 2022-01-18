@@ -1,6 +1,9 @@
 import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteApprovalSummary extends LightningElement {
+
+    // Opportunity Info
+    @api oppInfo;
     
     // Approvals needed for Quote
     @api quoteApprovals = [];

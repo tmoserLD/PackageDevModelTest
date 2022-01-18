@@ -1030,93 +1030,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
         return evaluation;
     }
 
-    // Determine adjustment credit to be applied
-    // evaluateContractAdjustment() {
-    //     this.adjustmentCredit = 0;
-    //     if (this.contractInfo) {
-    //         if (this.contractInfo.Contract_Entitlements__r) {
-    //             this.contractInfo.Contract_Entitlements__r.forEach(function(ent) {
-
-    //                 let matchingQuoteProduct = this.quoteProducts.find(prod => 
-    //                     prod.Product2Id === ent.Product__c &&
-    //                     prod.CPQ_Playbook_Rule_Action__c === ent.CPQ_Playbook_Rule_Action__c
-    //                 );
-
-    //                 // Entitlement dates
-    //                 let entStart = new Date(ent.Start_Date__c);
-    //                 let entEnd = new Date(ent.End_Date__c);
-
-    //                 // Comparison dates
-    //                 let compStart;
-    //                 let compEnd;
-
-    //                 // Entitlement product is in Quote configuration
-    //                 if (matchingQuoteProduct) {
-    //                     compStart = new Date(matchingQuoteProduct.startDate);
-    //                     compEnd = new Date(matchingQuoteProduct.endDate);
-    //                 }
-
-    //                 // Not in Quote configuration
-    //                 else {
-    //                     compStart = new Date(this.quoteStartDate);
-    //                     compEnd = new Date(this.quoteEndDate);
-    //                 }
-
-    //                 let remainingRatio;
-
-    //                 // Partial Start (Entitlement covers part of quote at the start)
-    //                 if (new Date(ent.Start_Date__c) <= new Date(this.quoteStartDate) &&
-    //                     new Date(ent.End_Date__c) > new Date(this.quoteStartDate) &&
-    //                     new Date(ent.End_Date__c) <= new Date(this.quoteEndDate)
-    //                 ) {
-    //                     let origTimeDiff = new Date(ent.End_Date__c).getTime() - new Date(ent.Start_Date__c).getTime();
-    //                     let origDayDiff = origTimeDiff / (1000 * 3600 * 24);
-    //                     let newTimeDiff = new Date(ent.End_Date__c).getTime() - new Date(this.quoteStartDate).getTime();
-    //                     let newDayDiff = newTimeDiff / (1000 * 3600 * 24);
-
-    //                     remainingRatio = 1 - (newDayDiff/origDayDiff);
-    //                 }
-
-    //                 // All Before Quote
-    //                 else if (new Date(ent.Start_Date__c) < new Date(this.quoteStartDate) &&
-    //                     new Date(ent.End_Date__c) < new Date(this.quoteStartDate)
-    //                 ) {
-    //                     remainingRatio = 1;
-    //                 }
-
-    //                 // Partial End (Entitlement covers part of quote at the end)
-    //                 else if (new Date(ent.Start_Date__c) >= new Date(this.quoteStartDate) &&
-    //                     new Date(ent.Start_Date__c) < new Date(this.quoteEndDate) &&
-    //                     new Date(ent.End_Date__c) >= new Date(this.quoteEndDate)
-    //                 ) {
-    //                     let origTimeDiff = new Date(ent.End_Date__c).getTime() - new Date(ent.Start_Date__c).getTime();
-    //                     let origDayDiff = origTimeDiff / (1000 * 3600 * 24);
-    //                     let newTimeDiff = new Date(ent.Start_Date__c).getTime() - new Date(this.quoteEndDate).getTime();
-    //                     let newDayDiff = newTimeDiff / (1000 * 3600 * 24);
-
-    //                     remainingRatio = 1 - (newDayDiff/origDayDiff);
-    //                 }
-
-    //                 // All After Quote
-    //                 else if (new Date(ent.Start_Date__c) > new Date(this.quoteEndDate) &&
-    //                     new Date(ent.End_Date__c) > new Date(this.quoteEndDate)
-    //                 ) {
-    //                     remainingRatio = 0;
-    //                 }
-
-    //                 // Ensure proper remainingRatio
-    //                 if (remainingRatio > 1) {
-    //                     remainingRatio = 1;
-    //                 } else if (remainingRatio < 0) {
-    //                     remainingRatio = 0;
-    //                 }
-
-    //                 this.adjustmentCredit += remainingRatio * ent.Total_Price__c;
-    //             }, this);
-    //         }
-    //     }
-    // }
-
     // Check and act on Rules
     evaluateRules(playbooks) {
         let changedRuleEvaluation = false;
@@ -2096,10 +2009,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     };
 
                     if (approver.approverInfo.Manager_Approver__c === true) {
-                        if (this.userInfo.ManagerId) {
-                            quoteApprover.Approver__c = this.userInfo.ManagerId;
-                            quoteApprover.Name = this.userInfo.Manager.Name;
-                            approvers.push(quoteApprover);
+                        if (this.oppInfo.Owner) {
+                            if (this.oppInfo.Owner.ManagerId) {
+                                quoteApprover.Approver__c = this.oppInfo.Owner.ManagerId;
+                                quoteApprover.Name = this.oppInfo.Owner.Manager.Name;
+                                approvers.push(quoteApprover);
+                            }
                         }
                     } else {
                         quoteApprover.Approver__c = approver.approverInfo.Approver__c;

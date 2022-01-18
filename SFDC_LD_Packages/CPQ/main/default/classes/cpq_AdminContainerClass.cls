@@ -1,9 +1,20 @@
-
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description CPQ Admin Console controller class
+*
+* Tested by cpq_AdminContainerClassTest
+*/
 public class cpq_AdminContainerClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals
 
+    /**
+    * @description Query all playbooks in system as well as all nested child records
+    * @return List of PlaybookInfo objects
+    */
     @AuraEnabled
     public static List<PlaybookInfo> getPlaybooks() {
 
@@ -256,7 +267,7 @@ public class cpq_AdminContainerClass {
             ruleInfoSets.put(rule.Id, ruleInfoSet);
         }
 
-        // All Criteria Groups
+        // All Rule Criteria Groups
         List<CPQ_Playbook_Rule_Criteria_Group__c> ruleCriteriaGroups = new List<CPQ_Playbook_Rule_Criteria_Group__c>();
         ruleCriteriaGroups = [
             SELECT Id,
@@ -287,7 +298,7 @@ public class cpq_AdminContainerClass {
             ruleInfoSet.criteriaGroups.add(criteriaGroupInfoSet);
         }
 
-        // All Criteria
+        // All Rule Criteria
         List<CPQ_Playbook_Rule_Criterion__c> criteria = new List<CPQ_Playbook_Rule_Criterion__c>();
         criteria = [
             SELECT Id,
@@ -505,7 +516,7 @@ public class cpq_AdminContainerClass {
             approvalInfoSets.put(approval.Id, approvalInfoSet);
         }
 
-        // All Criteria Groups
+        // All Approval Criteria Groups
         List<CPQ_Playbook_Approval_Criteria_Group__c> approvalCriteriaGroups = new List<CPQ_Playbook_Approval_Criteria_Group__c>();
         approvalCriteriaGroups = [
             SELECT Id,
@@ -536,7 +547,7 @@ public class cpq_AdminContainerClass {
             approvalInfoSet.criteriaGroups.add(approvalCriteriaGroupInfoSet);
         }
 
-        // All Criteria
+        // All Approval Criteria
         List<CPQ_Playbook_Approval_Criterion__c> approvalCriteria = new List<CPQ_Playbook_Approval_Criterion__c>();
         approvalCriteria = [
             SELECT Id,
@@ -886,6 +897,10 @@ public class cpq_AdminContainerClass {
         @AuraEnabled public CPQ_Playbook_Proposal_Criterion__c criterionInfo;
     }
 
+    /**
+    * @description Query all pricebooks in system as well as all nested child pricebook entry records
+    * @return List of Pricebook records with PricebookEntries
+    */
     @AuraEnabled
     public static List<Pricebook2> getPricebooks() {
 
@@ -928,6 +943,10 @@ public class cpq_AdminContainerClass {
         return pricebooks;
     }
 
+    /**
+    * @description Query all products in system
+    * @return List of Product records
+    */
     @AuraEnabled
     public static List<Product2> getProducts() {
 
@@ -1012,6 +1031,11 @@ public class cpq_AdminContainerClass {
         return products;
     }
 
+    /**
+    * @description Get Question Answer_Type__c field value for given question
+    * @param questionId Id of question record
+    * @return Answer_Type__c field value
+    */
     @AuraEnabled
     public static String getQuestionType(Id questionId) {
         return [
@@ -1025,33 +1049,50 @@ public class cpq_AdminContainerClass {
     // /////////////////////////////////////////////////////
     // Actions
 
+    /**
+    * @description Generic method to delete a list of sObject records
+    * @param records List of sObject records
+    */
     @AuraEnabled
     public static void deleteRecords(List<sObject> records) {
         delete records;
     }
 
+    /**
+    * @description Generic method to clone an sObject record
+    * @param recordId Id of sObejct record to be cloned
+    * @param objectAPI API Name of sObejct that the record belongs to
+    * @return new sObject record
+    */
     @AuraEnabled
     public static sObject cloneRecord(String recordId, String objectAPI) {
+
+        // Get fields for sObject
         SObjectType objType = ((SObject)(Type.forName('Schema.' + objectAPI).newInstance())).getSObjectType();
         DescribeSObjectResult obj = objType.getDescribe();
         List<String> fields = new List<String>();
         for (String field : obj.fields.getMap().keySet()) {
             fields.add(field);
         }
+
+        // Query for record
         String qry = 'SELECT ' + string.join(fields, ',') + ' FROM ' + objectAPI + ' WHERE Id =:recordId';
         sObject existingRecord = Database.query(qry);
+
+        // Clone record
         sObject clonedRecord = existingRecord.clone(false, false, false, false);
 
+        // Adjust fields on cloned record
         if (objectAPI == 'CPQ_Playbook_Question__c') {
             clonedRecord.put('Variable_Name__c', '*' + clonedRecord.get('Variable_Name__c'));
         }
-
         String currentName = (String) clonedRecord.get('Name');
-
         clonedRecord.put('Name', 'CLONE: ' + currentName.left(73));
 
+        // Insert cloned record
         insert clonedRecord;
 
+        // Return cloned record
         return clonedRecord;
     }
 

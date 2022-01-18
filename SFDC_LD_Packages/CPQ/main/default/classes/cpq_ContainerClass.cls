@@ -1,8 +1,21 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description CPQ Main Container controller class
+*
+* Tested by cpq_ContainerClassTest
+*/
 public class cpq_ContainerClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals
 
+    /**
+    * @description Query all necessary info for CPQ visibility for an opportunity
+    * @param oppId Id of Opportunity record CPQ is accessing
+    * @return CPQInfo object
+    */
     @AuraEnabled
     public static CPQInfo getCPQInfo(Id oppId) {
 
@@ -13,7 +26,8 @@ public class cpq_ContainerClass {
         // Return wrapper obj
         CPQInfo cpqObj = new CPQInfo();
         if (multiCurrency == true) {
-            List<sObject> currencies = Database.query('SELECT Id, ConversionRate, IsoCode FROM CurrencyType WHERE IsActive = TRUE AND IsCorporate = TRUE');
+            List<sObject> currencies = new List<sObject>();
+            currencies = Database.query('SELECT Id, ConversionRate, IsoCode FROM CurrencyType WHERE IsActive = TRUE AND IsCorporate = TRUE');
             if (currencies.size() > 0) {
                 cpqObj.defaultCurrency = (String) currencies[0].get('IsoCode');
             }   
@@ -176,6 +190,11 @@ public class cpq_ContainerClass {
         @AuraEnabled public String defaultCurrency;
     }
 
+    /**
+    * @description Retrieve all necessary fields for object queries
+    * @param multiCurrency Whether or not org is a multicurrency org or not
+    * @return Object/Field Map: Object Name => Comma delineated list of field API names
+    */
     public static Map<String, String> getObjectFields(Boolean multiCurrency) {
 
         Map<String, String> objFieldQueryStrings = new Map<String, String>();
@@ -204,6 +223,8 @@ public class cpq_ContainerClass {
             'Lock_CPQ__c',
             'Name',
             'OwnerId',
+            'Owner.ManagerId',
+            'Owner.Manager.Name',
             'Account.Id',
             'Account.Name'
         };
@@ -219,8 +240,6 @@ public class cpq_ContainerClass {
         Set<String> userFields = new Set<String>{
             'Id',
             'Name',
-            'ManagerId',
-            'Manager.Name',
             'Profile.Id',
             'Profile.Name'
         };
@@ -314,16 +333,28 @@ public class cpq_ContainerClass {
     // /////////////////////////////////////////////////////
     // Actions
 
+    /**
+    * @description Generic method to delete a list of sObject records
+    * @param records List of sObject records
+    */
     @AuraEnabled
     public static void deleteRecords(List<sObject> records) {
         delete records;
     }
 
+    /**
+    * @description Generic method to update a list of sObject records
+    * @param records List of sObject records
+    */
     @AuraEnabled
     public static void updateRecords(List<sObject> records) {
         update records;
     }
 
+    /**
+    * @description Submit all incomplete approvals that exist for a given quote
+    * @param quoteId Id of Quote record where approvals are being submitted
+    */
     @AuraEnabled
     public static void submitForApproval(Id quoteId) {
 
@@ -364,10 +395,6 @@ public class cpq_ContainerClass {
         for (CPQ_Quote_Approval_Step__c step : steps) {
             if (!firstStepMap.containsKey(step.CPQ_Quote_Approval__c)) {
                 firstStepMap.put(step.CPQ_Quote_Approval__c, step);
-            } else {
-                if (step.Approval_Order__c < firstStepMap.get(step.CPQ_Quote_Approval__c).Approval_Order__c) {
-                    firstStepMap.put(step.CPQ_Quote_Approval__c, step);
-                }
             }
         }
 
@@ -399,6 +426,10 @@ public class cpq_ContainerClass {
 
     }
 
+    /**
+    * @description Recall all pending approvers that exist for a given approval
+    * @param approvalId Id of Quote Approval record where approvers are being recalled
+    */
     @AuraEnabled
     public static void recallApproval(Id approvalId) {
 
@@ -421,9 +452,15 @@ public class cpq_ContainerClass {
         update approvers;
     }
 
+    /**
+    * @description Generate and save quote proposal to opportunity
+    * @param quoteInfo Quote record associated with proposal
+    * @param oppInfo Quote record associated with proposal
+    */
     @AuraEnabled
-    public static void generatePDF(String txtValue, Quote quoteInfo, Opportunity oppInfo){
+    public static void generatePDF(Quote quoteInfo, Opportunity oppInfo){
         
+        // Proposal VF Page
         Pagereference pg = Page.cpq_ProposalVF;
         pg.getParameters().put('quoteId', quoteInfo.Id);
 
@@ -431,7 +468,7 @@ public class cpq_ContainerClass {
         ContentVersion pdfAttachment = new ContentVersion();
         pdfAttachment.Title = 'Quote Proposal ' + Date.today().format();
         pdfAttachment.PathOnClient = 'Quote Proposal ' + Date.today().format() + '.pdf';
-        pdfAttachment.VersionData = pg.getContentaspdf();
+        pdfAttachment.VersionData = (Test.isRunningTest() ? blob.valueOf('Unit.Test') : pg.getContentAsPDF());
         pdfAttachment.Description = 'Quote Proposal submitted on ' + Date.today().format() + '. Quote: ' + quoteInfo.Name + ' (' + quoteInfo.Id + '), Opportunity: ' + oppInfo.Name + ' (' + oppInfo.Id + ').';
 
         insert pdfAttachment;
@@ -454,6 +491,10 @@ public class cpq_ContainerClass {
         insert postAttachment;
     }
 
+    /**
+    * @description Clone Quote record and child CPQ records
+    * @param quoteId Id of Quote record to clone
+    */
     @AuraEnabled
     public static void cloneQuoteData(Id quoteId) {
 

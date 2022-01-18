@@ -1,8 +1,21 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description CPQ Quote Configuration controller class
+*
+* Tested by cpq_ConfigQuoteClassTest
+*/
 public class cpq_ConfigQuoteClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals
 
+    /**
+    * @description Query all necessary info for quote configuration
+    * @param adjustingContract Id of Contract record being upgraded for this quote configuration
+    * @return ConfigInfo object
+    */
     @AuraEnabled
     public static ConfigInfo getConfigInfo(Id adjustingContract) {
 
@@ -12,7 +25,7 @@ public class cpq_ConfigQuoteClass {
         configObj.rules = new List<RuleInfo>();
         configObj.approvals = new List<ApprovalInfo>();
         configObj.pricebooks = new List<Pricebook2>();
-        configObj.currencyMap = getCurrencyMap();
+        configObj.currencyMap = getCurrencyMap(System.UserInfo.isMultiCurrencyOrganization());
 
         // Custom QLI Fields being stamped and shown as columns
         Boolean hasCustomField = false;
@@ -574,7 +587,7 @@ public class cpq_ConfigQuoteClass {
                 item.Product_Is_Entitlement__c != true
             ) {
                 // Ensure valid obj.field structure
-                if (item.Product_Calculation_Field__c.split('\\.').size() > 0) {
+                if (item.Product_Calculation_Field__c.split('\\.').size() > 1) {
                     // Ensure valid obj
                     if (item.Product_Calculation_Field__c.split('\\.')[0] == 'Product2') {
                         pricebookEntryFields.add(item.Product_Calculation_Field__c);
@@ -591,7 +604,7 @@ public class cpq_ConfigQuoteClass {
                 item.Product_Is_Entitlement__c == true
             ) {
                 // Ensure valid obj.field structure
-                if (item.Entitlement_Calculation_Field__c.split('\\.').size() > 0) {
+                if (item.Entitlement_Calculation_Field__c.split('\\.').size() > 1) {
                     // Ensure valid obj
                     if (item.Entitlement_Calculation_Field__c.split('\\.')[0] == 'Product__r') {
                         entitlementFields.add(item.Entitlement_Calculation_Field__c);
@@ -906,11 +919,14 @@ public class cpq_ConfigQuoteClass {
         @AuraEnabled public String type;
     }
 
-    private static Map<String, Double> getCurrencyMap() {
+    /**
+    * @description Populate and retrieve currency conversion map
+    * @param multiCurrency Whether or not org is a multicurrency org or not
+    * @return Currency Conversion Map: Currency => Conversion Rate (from org default currency)
+    */
+    private static Map<String, Double> getCurrencyMap(Boolean multiCurrency) {
 
         Map<String, Double> currencyMap = new Map<String, Double>();
-
-        Boolean multiCurrency = System.UserInfo.isMultiCurrencyOrganization();
 
         if (multiCurrency == true) {
             List<sObject> currencies = Database.query('SELECT Id, ConversionRate, IsoCode FROM CurrencyType WHERE IsActive = TRUE');
@@ -924,6 +940,12 @@ public class cpq_ConfigQuoteClass {
         return currencyMap;
     }
 
+    /**
+    * @description Query contract info
+    * @param contractId Id of Contract record info is needed for
+    * @param entitlementFields Comma delineated list of Contract_Entitlement__c field API names that should be included in the sub-query
+    * @return Contract record with child answers and entitlements
+    */
     @AuraEnabled
     public static Contract getContractInfo(Id contractId, String entitlementFields) {
 
@@ -971,6 +993,15 @@ public class cpq_ConfigQuoteClass {
     // Actions
 
 
+    /**
+    * @description Save and associate quote configuration data into database records
+    * @param quoteToSave Unsaved Quote record data
+    * @param quoteLineItems List of Unsaved QuoteLineItem record data
+    * @param playbookAnswers List of Unsaved CPQ_Playbook_Answer__c record data
+    * @param quoteApprovals List of Unsaved CPQ_Quote_Approval__c record data
+    * @param quoteApprovalSteps List of List of Unsaved CPQ_Quote_Approval_Step__c record data
+    * @param quoteApprovers List of List of List of Unsaved CPQ_Quote_Approver__c record data
+    */
     @AuraEnabled
     public static void saveQuoteConfiguration(
         Quote quoteToSave,

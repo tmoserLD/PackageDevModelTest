@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_Playbook extends LightningElement {
 
+    // Opportunity Info
+    @api oppInfo;
+
     // Opportunity Currency Iso Code
     @api oppCurrency;
 

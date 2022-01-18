@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Calculation_Type__c</fullName>
-    <description>How to determine calculated value if Parent Rule&apos;s Type is &apos;Calculation&apos;</description>
+    <description>How to determine calculated value if Value Source Type is &apos;Dynamic&apos;</description>
     <externalId>false</externalId>
-    <inlineHelpText>How to determine calculated value if Parent Rule&apos;s Type is &apos;Calculation&apos;</inlineHelpText>
+    <inlineHelpText>How to determine calculated value if Value Source Type is &apos;Dynamic&apos;</inlineHelpText>
     <label>Calculation Type</label>
     <required>false</required>
     <trackTrending>false</trackTrending>

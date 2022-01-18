@@ -117,7 +117,7 @@
             <apex:pageBlock rendered="{!playbook.Proposal_Header_Type__c == 'Image'}">
                 <div class="headerImage">
                     <apex:image
-                        url="{!'/sfc/servlet.shepherd/version/download/' + playbook.AttachedContentDocuments[0].ContentDocument.LatestPublishedVersionId + '?style=header'}"
+                        url="{!'/sfc/servlet.shepherd/version/download/' + playbookHeaderImageId + '?style=header'}"
                         width="100%"
                     />
                 </div>

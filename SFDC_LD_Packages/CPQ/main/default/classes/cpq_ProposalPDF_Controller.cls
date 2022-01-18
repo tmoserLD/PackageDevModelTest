@@ -1,8 +1,27 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description Quote Proposal PDF VFP controller class
+*
+* Tested by cpq_ProposalPDF_ControllerTest
+*/
 public class cpq_ProposalPDF_Controller {
     public Id quoteId {get; set;}
     public CPQ_Playbook__c playbook {get; set;}
+    public String playbookHeaderImageId {get; set;}
     public List<sectionObj> sections {get; set;}
+    public String sectionsPassed {get; set;}
+
+    /**
+    * @description Constuctor method to build out PDF layout based on criteria and quote configuration
+    * Populates playbook and sections public variables
+    * quoteId set as VFP parameter
+    */
     public cpq_ProposalPDF_Controller() {
+
+        Id quoteRecordId = ApexPages.currentPage().getParameters().get('quoteId');
+        sectionsPassed = '';
 
         // Quote Info
         Quote quoteInfo = [
@@ -15,7 +34,7 @@ public class cpq_ProposalPDF_Controller {
                 SubTotal_Price__c,
                 Total_Price__c
             FROM Quote
-            WHERE Id=:ApexPages.currentPage().getParameters().get('quoteId')
+            WHERE Id=:quoteRecordId
         ];
 
         // Playbook
@@ -32,6 +51,9 @@ public class cpq_ProposalPDF_Controller {
             FROM CPQ_Playbook__c
             WHERE Id=:quoteInfo.CPQ_Playbook__c
         ];
+        if (playbook.AttachedContentDocuments.size() > 0) {
+            playbookHeaderImageId = playbook.AttachedContentDocuments[0].ContentDocument.LatestPublishedVersionId;
+        }
 
         // EOL text wrap fix
         if (playbook.Proposal_Header__c != null) {
@@ -61,7 +83,7 @@ public class cpq_ProposalPDF_Controller {
                 Value_Integer__c,
                 Value_Text__c
             FROM CPQ_Playbook_Answer__c
-            WHERE Quote__c=:quoteInfo.Id
+            WHERE Quote__c=:quoteRecordId
         ]) {
             answerMap.put(answer.CPQ_Playbook_Question__r.Variable_Name__c, answer);
         }
@@ -71,6 +93,7 @@ public class cpq_ProposalPDF_Controller {
         Set<Id> sectionIDs = new Set<Id>();
         Map<Id, List<CPQ_Playbook_Proposal_Criteria_Group__c>> criteriaGroupsMap = new Map<Id,List< CPQ_Playbook_Proposal_Criteria_Group__c>>();
         Set<String> productFields = new Set<String>{
+            'CPQ_Playbook_Rule_Action__c',
             'Discount__c',
             'End_Date__c',
             'List_Price__c',
@@ -82,6 +105,7 @@ public class cpq_ProposalPDF_Controller {
             'Quoted_Price__c'
         };
         Set<String> entitlementFields = new Set<String>{
+            'CPQ_Playbook_Rule_Action__c',
             'Discount__c',
             'End_Date__c',
             'List_Price__c',
@@ -109,6 +133,7 @@ public class cpq_ProposalPDF_Controller {
                 Inputs_Font_Color__c,
                 Inputs_Font_Size__c,
                 IsActive__c,
+                Name,
                 Product_Table_QLI_Fields__c,
                 Record_Table_Order_By_Clause__c,
                 Record_Table_Where_Clause__c,
@@ -152,7 +177,7 @@ public class cpq_ProposalPDF_Controller {
             qliQueryFields += field + ',';
         }
         qliQueryFields = qliQueryFields.substring(0, qliQueryFields.length()-1);
-        String qliQueryString = 'SELECT ' + qliQueryFields + ' FROM QuoteLineItem WHERE QuoteId=\''+quoteInfo.Id+'\'';
+        String qliQueryString = 'SELECT ' + qliQueryFields + ' FROM QuoteLineItem WHERE QuoteId=\''+quoteRecordId+'\'';
         qlis = Database.query(qliQueryString);
 
         // Query Entitlements
@@ -233,6 +258,17 @@ public class cpq_ProposalPDF_Controller {
                 // Assume true
                 Boolean groupEvaluation = true;
 
+                // Update needed Ns
+                if (criteriaGroup.Evaluation_Logic__c == 'One of N required') {
+                    groupEvalN.put('exactN_needed', criteriaGroup.N__c);
+                }
+                else if (criteriaGroup.Evaluation_Logic__c == 'One of at least N required') {
+                    groupEvalN.put('atLeastN_needed', criteriaGroup.N__c);
+                }
+                else if (criteriaGroup.Evaluation_Logic__c == 'One of at most N required') {
+                    groupEvalN.put('atMostN_needed', criteriaGroup.N__c);
+                }
+
                 // Set criteria Ns
                 Map<String, Decimal> criterionEvalN = new Map<String, Decimal>();
                 criterionEvalN.put('requireds', 1);
@@ -269,27 +305,29 @@ public class cpq_ProposalPDF_Controller {
                         CPQ_Playbook_Answer__c answer = answerMap.get(criterion.CPQ_Playbook_Question__r.Variable_Name__c);
 
                         // Evaluation by Comparison Type
-                        if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Boolean') {
-                            criterionEvaluation = compareBoolean(answer.Value_Boolean__c, criterion.Comparison_Value_Boolean__c, criterion.Comparison_Operator__c);
-                        }
-                        else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
-                            criterionEvaluation = compareDecimal(answer.Value_Currency__c, criterion.Comparison_Value_Currency__c, criterion.Comparison_Operator__c);
-                        }
-                        else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
-                            criterionEvaluation = compareDate(answer.Value_Date__c, criterion.Comparison_Value_Date__c, criterion.Comparison_Operator__c);
-                        }
-                        else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
-                            criterionEvaluation = compareDecimal(answer.Value_Decimal__c, criterion.Comparison_Value_Decimal__c, criterion.Comparison_Operator__c);
-                        }
-                        else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
-                            criterionEvaluation = compareDecimal(answer.Value_Integer__c, criterion.Comparison_Value_Integer__c, criterion.Comparison_Operator__c);
-                        }
-                        else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Picklist' ||
-                            answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Multi-Select Picklist' ||
-                            answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text' ||
-                            answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area'
-                        ) {
-                            criterionEvaluation = compareText(answer.Value_Text__c, criterion.Comparison_Value_Text__c, criterion.Comparison_Operator__c);
+                        if (answer != null) {
+                            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Boolean') {
+                                criterionEvaluation = compareBoolean(answer.Value_Boolean__c, criterion.Comparison_Value_Boolean__c, criterion.Comparison_Operator__c);
+                            }
+                            else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
+                                criterionEvaluation = compareDecimal(answer.Value_Currency__c, criterion.Comparison_Value_Currency__c, criterion.Comparison_Operator__c);
+                            }
+                            else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
+                                criterionEvaluation = compareDate(answer.Value_Date__c, criterion.Comparison_Value_Date__c, criterion.Comparison_Operator__c);
+                            }
+                            else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
+                                criterionEvaluation = compareDecimal(answer.Value_Decimal__c, criterion.Comparison_Value_Decimal__c, criterion.Comparison_Operator__c);
+                            }
+                            else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
+                                criterionEvaluation = compareDecimal(answer.Value_Integer__c, criterion.Comparison_Value_Integer__c, criterion.Comparison_Operator__c);
+                            }
+                            else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Picklist' ||
+                                answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Multi-Select Picklist' ||
+                                answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text' ||
+                                answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area'
+                            ) {
+                                criterionEvaluation = compareText(answer.Value_Text__c, criterion.Comparison_Value_Text__c, criterion.Comparison_Operator__c);
+                            }
                         }
                     }
                     // Product
@@ -731,6 +769,14 @@ public class cpq_ProposalPDF_Controller {
                         }
                     }
 
+                    if (section.Name == 'Section 5') {
+                        System.debug('criterionEvaluation');
+                        System.debug(criteriaGroup.Name);
+                        System.debug(criterion.Name);
+                        System.debug(criterionEvaluation);
+                    }
+
+
                     // Update needed Ns
                     if (criterionEvaluation == true) {
                         if (criterion.Evaluation_Logic__c == 'One of N required') {
@@ -769,6 +815,12 @@ public class cpq_ProposalPDF_Controller {
                 // Mismatch of at most N required 
                 else if (criterionEvalN.get('atMostN_needed') < criterionEvalN.get('atMostN_passed')) {
                     groupEvaluation = false;
+                }
+
+                if (section.Name == 'Section 5') {
+                    System.debug('groupEvaluation');
+                    System.debug(criteriaGroup.Name);
+                    System.debug(groupEvaluation);
                 }
 
                 // Update needed Ns
@@ -811,8 +863,15 @@ public class cpq_ProposalPDF_Controller {
                 sectionEvaluation = false;
             }
 
+            if (section.Name == 'Section 5') {
+                System.debug('sectionEvaluation');
+                System.debug(groupEvalN);
+                System.debug(sectionEvaluation);
+            }
+
             // If section passed criteria, add it
             if (sectionEvaluation == true) {
+                sectionsPassed += section.Id + ';';
 
                 // Pipe text if applicable
                 for (String questionVar : answerMap.keySet()) {
@@ -1067,25 +1126,44 @@ public class cpq_ProposalPDF_Controller {
                                 ansPair.label = answer.CPQ_Playbook_Question__r.Proposal_Label__c;
 
                                 // Value
-                                if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Boolean') {
+                                if (
+                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Boolean' &&
+                                    answer.Value_Boolean__c != null
+                                ) {
                                     ansPair.value = String.valueOf(answer.Value_Boolean__c);
                                 }
-                                else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
+                                else if (
+                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency' &&
+                                    answer.Value_Currency__c != null
+                                ) {
                                     ansPair.value = String.valueOf(answer.Value_Currency__c.format());
                                 }
-                                else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
+                                else if (
+                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date' &&
+                                    answer.Value_Date__c != null    
+                                ) {
                                     ansPair.value = String.valueOf(answer.Value_Date__c.format());
                                 }
-                                else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
+                                else if (
+                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal' &&
+                                    answer.Value_Decimal__c != null    
+                                ) {
                                     ansPair.value = String.valueOf(answer.Value_Decimal__c.format());
                                 }
-                                else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
+                                else if (
+                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer' &&
+                                    answer.Value_Integer__c != null
+                                ) {
                                     ansPair.value = String.valueOf(answer.Value_Integer__c.format());
                                 }
-                                else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Picklist' ||
-                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Multi-Select Picklist' ||
-                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text' ||
-                                    answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area'
+                                else if (
+                                    (
+                                        answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Picklist' ||
+                                        answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Multi-Select Picklist' ||
+                                        answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text' ||
+                                        answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area'
+                                    ) &&
+                                    answer.Value_Text__c != null
                                 ) {
                                     ansPair.value = answer.Value_Text__c;
                                 }
@@ -1150,6 +1228,13 @@ public class cpq_ProposalPDF_Controller {
         public String value {get; set;}
     }
 
+    /**
+    * @description Compare Boolean answer to Boolean comparison value given the operator
+    * @param answer Value of answer
+    * @param comparisonValue Value of comparison
+    * @param operator How values should be compared
+    * @return Comparison result status
+    */
     public static Boolean compareBoolean(Boolean answer, Boolean comparisonValue, String operator) {
         Boolean criterionEvaluation = false;
         
@@ -1163,6 +1248,13 @@ public class cpq_ProposalPDF_Controller {
         return criterionEvaluation;
     }
 
+    /**
+    * @description Compare Decimal answer to Decimal comparison value given the operator
+    * @param answer Value of answer
+    * @param comparisonValue Value of comparison
+    * @param operator How values should be compared
+    * @return Comparison result status
+    */
     public static Boolean compareDecimal(Decimal answer, Decimal comparisonValue, String operator) {
         Boolean criterionEvaluation = false;
         
@@ -1202,6 +1294,13 @@ public class cpq_ProposalPDF_Controller {
         return criterionEvaluation;
     }
 
+    /**
+    * @description Compare Date answer to Date comparison value given the operator
+    * @param answer Value of answer
+    * @param comparisonValue Value of comparison
+    * @param operator How values should be compared
+    * @return Comparison result status
+    */
     public static Boolean compareDate(Date answer, Date comparisonValue, String operator) {
         Boolean criterionEvaluation = false;
         
@@ -1241,6 +1340,13 @@ public class cpq_ProposalPDF_Controller {
         return criterionEvaluation;
     }
 
+    /**
+    * @description Compare Text answer to Text comparison value given the operator
+    * @param answer Value of answer
+    * @param comparisonValue Value of comparison
+    * @param operator How values should be compared
+    * @return Comparison result status
+    */
     public static Boolean compareText(String answer, String comparisonValue, String operator) {
         Boolean criterionEvaluation = false;
         
