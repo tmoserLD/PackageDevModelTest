@@ -26,7 +26,7 @@
             "default": false,
             "dependencies": [
                 {
-                    "package": "GenericComponents@1.1.0-1"
+                    "package": "GenericComponents@1.1.0-2"
                 }
             ]
         }
@@ -41,8 +41,10 @@
         "LaunchDarklyCatFood@1.0.0-1": "04t1K000002qpJdQAI",
         "GenericComponents": "0Ho1K000000fxVeSAI",
         "GenericComponents@1.1.0-1": "04t1K000002qqAXQAY",
+        "GenericComponents@1.1.0-2": "04t1K000002qqEeQAI",
         "TerritoryMapping": "0Ho1K000000fxVjSAI",
         "TerritoryMapping@1.1.0-1": "04t1K000002qqAcQAI",
-        "TerritoryMapping@1.1.0-2": "04t1K000002qqB1QAI"
+        "TerritoryMapping@1.1.0-2": "04t1K000002qqB1QAI",
+        "TerritoryMapping@1.1.0-3": "04t1K000002qqEjQAI"
     }
 }

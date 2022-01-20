@@ -1,3 +1,11 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description CPQ_Quote_Approval_Step__c object Updates class
+*
+* Tested by CPQ_Approval_Automation_Test
+*/
 public class CPQ_Quote_Approval_Step_UpdatesUtil {
 
     /****************

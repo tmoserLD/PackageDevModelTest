@@ -1,6 +1,15 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description CPQ_Quote_Approver__c object Updates class
+*
+* Tested by CPQ_Approval_Automation_Test
+*/
 public class CPQ_Quote_Approver_UpdatesUtil {
 
-    private static Boolean runStepUpdates = true;
+    // Parent steps should only be updated once per execution
+    public static Boolean runStepUpdates = true;
 
     /****************
      * ENTRY METHODS

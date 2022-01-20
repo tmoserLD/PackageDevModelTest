@@ -277,6 +277,57 @@ public class cpq_ProposalPDF_ControllerTest {
         insert testQuestions;
 
 
+        // Rules
+        List<CPQ_Playbook_Rule__c> testRules = new List<CPQ_Playbook_Rule__c>();
+        testRules.add(
+            new CPQ_Playbook_Rule__c(
+                CPQ_Playbook__c = testPlaybooks[0].Id,
+                Execution_Order__c = 1,
+                Evaluate_When__c = 'Always',
+                IsActive__c = true,
+                Name = 'Rule 1'
+            )
+        );
+        insert testRules;
+
+        // Rule Actions
+        List<CPQ_Playbook_Rule_Action__c> testRuleActions = new List<CPQ_Playbook_Rule_Action__c>();
+        testRuleActions.add(
+            new CPQ_Playbook_Rule_Action__c(
+                Action_Type__c = 'Adjust Question Field',
+                Calculation_Type__c = 'Add',
+                CPQ_Playbook_Question__c = testQuestions[0].Id,
+                CPQ_Playbook_Question_Group__c = null,
+                CPQ_Playbook_Rule__c = testRules[0].Id,
+                Execution_Order__c = 1,
+                IsActive__c = true,
+                Name = 'Action 1',
+                Numeric_Math_Operator__c = null,
+                Product__c = null,
+                Product_Adjustment_Field__c = null,
+                Product_Adjustment_Field_Type__c = null,
+                Product_Adjustment_Target_Rule_Action__c = null,
+                Product_Field_Value_Boolean__c = false,
+                Product_Field_Value_Currency__c = null,
+                Product_Field_Value_Date__c = null,
+                Product_Field_Value_Decimal__c = null,
+                Product_Field_Value_Integer__c = null,
+                Product_Field_Value_Text__c = null,
+                Question_Adjustment_Field__c = 'IsHidden__c',
+                Question_Group_Adjustment_Field__c = null,
+                Question_Field_Value_Boolean__c = false,
+                Question_Field_Value_Currency__c = null,
+                Question_Field_Value_Date__c = null,
+                Question_Field_Value_Decimal__c = null,
+                Question_Field_Value_Integer__c = null,
+                Question_Field_Value_Text__c = null,
+                Target_Manual_Addition_Only__c = false,
+                Value_Source_Type__c = 'Static'
+            )
+        );
+        insert testRuleActions;
+
+
         // Proposal Sections
         List<CPQ_Playbook_Proposal_Section__c> testProposalSections = new List<CPQ_Playbook_Proposal_Section__c>();
         // Text - 3 columns
@@ -403,7 +454,7 @@ public class cpq_ProposalPDF_ControllerTest {
         testProposalSections.add(
             new CPQ_Playbook_Proposal_Section__c(
                 Allow_Mid_Section_Page_Break__c = false,
-                Answer_Table_Questions__c = 'Question 1;Question 2;Question 3;Question 4;Question 5;Question 6',
+                Answer_Table_Questions__c = 'Question 1;Question 2;Question 3;Question 4;Question 5;Question 6;Question 1',
                 Body_Text_Block_1__c = 'Block 1 Text',
                 Body_Text_Block_2__c = 'Block 2 Text',
                 Body_Text_Block_3__c = 'Block 3 Text',
@@ -1897,6 +1948,39 @@ public class cpq_ProposalPDF_ControllerTest {
             WHERE Section_Type__c = 'Answer Table - 2 columns'
         ];
 
+        List<CPQ_Playbook_Answer__c> testAnswers = [
+            SELECT Id,
+                CPQ_Playbook_Question__r.Answer_Type__c,
+                Value_Boolean__c,
+                Value_Currency__c,
+                Value_Date__c,
+                Value_Decimal__c,
+                Value_Integer__c,
+                Value_Text__c
+            FROM CPQ_Playbook_Answer__c
+        ];
+        for (CPQ_Playbook_Answer__c answer : testAnswers) {
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Boolean') {
+                answer.Value_Boolean__c = true;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
+                answer.Value_Currency__c = 1;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
+                answer.Value_Date__c = Date.today();
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Decimal') {
+                answer.Value_Decimal__c = 1;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Integer') {
+                answer.Value_Integer__c = 14;
+            }
+            if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Text Area') {
+                answer.Value_Text__c = 'Text is a word in this string';
+            }
+        }
+        update testAnswers;
+
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
                 Product2.Name,
@@ -2613,6 +2697,11 @@ public class cpq_ProposalPDF_ControllerTest {
             LIMIT 1
         ];
 
+        CPQ_Playbook_Rule_Action__c testAction = [
+            SELECT Id
+            FROM CPQ_Playbook_Rule_Action__c
+        ];
+
         CPQ_Playbook_Proposal_Section__c testSection = [
             SELECT Id
             FROM CPQ_Playbook_Proposal_Section__c
@@ -2621,17 +2710,22 @@ public class cpq_ProposalPDF_ControllerTest {
 
         List<CPQ_Playbook_Proposal_Criterion__c> testCriteria = [
             SELECT Id,
-                Comparison_Operator__c
+                Comparison_Operator__c,
+                Product_Criterion_Target_Rule_Action__c,
+                Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Proposal_Criterion__c
             WHERE CPQ_Playbook_Proposal_Criteria_Group__r.CPQ_Playbook_Proposal_Section__c =:testSection.Id
         ];
         for (CPQ_Playbook_Proposal_Criterion__c criterion : testCriteria) {
             criterion.Comparison_Operator__c = 'Equals';
+            criterion.Product_Criterion_Target_Rule_Action__c = testAction.Id;
+            criterion.Target_Manual_Addition_Only__c = false;
         }
         update testCriteria;
 
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
+                CPQ_Playbook_Rule_Action__c,
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
@@ -2651,12 +2745,14 @@ public class cpq_ProposalPDF_ControllerTest {
                 qli.Quantity__c = 45; // 45
                 qli.Start_Date__c = Date.today(); // Today
                 qli.End_Date__c = Date.today(); // Today
+                qli.CPQ_Playbook_Rule_Action__c = testAction.Id;
             }
         }
         update testQLIs;
 
         List<Contract_Entitlement__c> testEntitlements = [
             SELECT Id,
+                CPQ_Playbook_Rule_Action__c,
                 Product__r.Name,
                 Discount__c,
                 List_Price__c,
@@ -2676,6 +2772,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 ent.Quantity__c = 45; // 45
                 ent.Start_Date__c = Date.today(); // Today
                 ent.End_Date__c = Date.today(); // Today
+                ent.CPQ_Playbook_Rule_Action__c = testAction.Id;
             }
         }
         update testEntitlements;
@@ -2692,5 +2789,260 @@ public class cpq_ProposalPDF_ControllerTest {
         System.assert(!contSectionsPassed.split(';').contains(testSection.Id));
 
         Test.stopTest();
+    }
+
+
+    // Comparison test methods
+
+    /**
+     * @description Test to verify Boolean comparison (Does not equal)
+     **/
+    @isTest
+    public static void testBooleanDoesNotEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareBoolean(true, false, 'Does not equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Equals)
+     **/
+    @isTest
+    public static void testDecimalEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(1.7, 1.7, 'Equals');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Greater than)
+     **/
+    @isTest
+    public static void testDecimalGreaterThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(2.7, 1.7, 'Greater than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Greater than or equal)
+     **/
+    @isTest
+    public static void testDecimalGreaterThanEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(2.7, 1.7, 'Greater than or equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Less than)
+     **/
+    @isTest
+    public static void testDecimalLessThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(0.7, 1.7, 'Less than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Is Empty)
+     **/
+    @isTest
+    public static void testDecimalIsEmpty() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(0.7, null, 'Is Empty');
+        System.assertEquals(false, result);
+    }
+
+    /**
+     * @description Test to verify Decimal comparison (Is Empty)
+     **/
+    @isTest
+    public static void testDecimalIsEmpty2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDecimal(null, null, 'Is Empty');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Equals)
+     **/
+    @isTest
+    public static void testDateEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today(), Date.today(), 'Equals');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Does not equal)
+     **/
+    @isTest
+    public static void testDateDoesNotEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today(), Date.today() - 1, 'Does not equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Greater than)
+     **/
+    @isTest
+    public static void testDateGreaterThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today(), Date.today() - 1, 'Greater than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Less than)
+     **/
+    @isTest
+    public static void testDateLessThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today() - 1, Date.today(), 'Less than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Less than or equal)
+     **/
+    @isTest
+    public static void testDateLessThanEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today() - 1, Date.today(), 'Less than or equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Is empty)
+     **/
+    @isTest
+    public static void testDateIsEmpty() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today() - 1, null, 'Is empty');
+        System.assertEquals(false, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Is empty)
+     **/
+    @isTest
+    public static void testDateIsEmpty2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(null, null, 'Is empty');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Is not empty)
+     **/
+    @isTest
+    public static void testDateIsNotEmpty() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(Date.today() - 1, null, 'Is not empty');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Date comparison (Is empty)
+     **/
+    @isTest
+    public static void testDateIsNotEmpty2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareDate(null, null, 'Is not empty');
+        System.assertEquals(false, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Equals)
+     **/
+    @isTest
+    public static void testTextEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('Text', 'Text', 'Equals');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Does not equal)
+     **/
+    @isTest
+    public static void testTextDoesNotEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('Text', 'Text 1', 'Does not equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Greater than)
+     **/
+    @isTest
+    public static void testTextGreaterThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('b', 'a', 'Greater than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Greater than or equal)
+     **/
+    @isTest
+    public static void testTextGreaterThanEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('alphabet', 'alfredo', 'Greater than or equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Less than)
+     **/
+    @isTest
+    public static void testTextLessThan() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('a', 'b', 'Less than');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Less than or equal)
+     **/
+    @isTest
+    public static void testTextLessThanEqual() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('bets', 'blank', 'Less than or equal');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Does not contain)
+     **/
+    @isTest
+    public static void testTextDoesNotContain() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('Text', 'blank', 'Does not contain');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Does not contain)
+     **/
+    @isTest
+    public static void testTextDoesNotContain2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText(null, 'blank', 'Does not contain');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Is empty)
+     **/
+    @isTest
+    public static void testTextIsEmpty() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('Text', null, 'Is empty');
+        System.assertEquals(false, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Does not contain)
+     **/
+    @isTest
+    public static void testTextIsEmpty2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText(null, null, 'Is empty');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Is not empty)
+     **/
+    @isTest
+    public static void testTextIsNotEmpty() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText('Text', null, 'Is not empty');
+        System.assertEquals(true, result);
+    }
+
+    /**
+     * @description Test to verify Text comparison (Does not contain)
+     **/
+    @isTest
+    public static void testTextIsNotEmpty2() {
+        Boolean result = cpq_ProposalPDF_Controller.compareText(null, null, 'Is not empty');
+        System.assertEquals(false, result);
     }
 }

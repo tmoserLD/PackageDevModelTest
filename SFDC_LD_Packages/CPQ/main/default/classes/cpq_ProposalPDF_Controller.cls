@@ -769,13 +769,6 @@ public class cpq_ProposalPDF_Controller {
                         }
                     }
 
-                    if (section.Name == 'Section 2') {
-                        System.debug('criterionEvaluation');
-                        System.debug(criteriaGroup.Name);
-                        System.debug(criterion.Name);
-                        System.debug(criterionEvaluation);
-                    }
-
 
                     // Update needed Ns
                     if (criterionEvaluation == true) {
@@ -817,12 +810,6 @@ public class cpq_ProposalPDF_Controller {
                     groupEvaluation = false;
                 }
 
-                if (section.Name == 'Section 2') {
-                    System.debug('groupEvaluation');
-                    System.debug(criteriaGroup.Name);
-                    System.debug(groupEvaluation);
-                }
-
                 // Update needed Ns
                 if (groupEvaluation == true) {
                     if (criteriaGroup.Evaluation_Logic__c == 'One of N required') {
@@ -861,12 +848,6 @@ public class cpq_ProposalPDF_Controller {
             // Mismatch of at most N required 
             else if (groupEvalN.get('atMostN_needed') < groupEvalN.get('atMostN_passed')) {
                 sectionEvaluation = false;
-            }
-
-            if (section.Name == 'Section 2') {
-                System.debug('sectionEvaluation');
-                System.debug(groupEvalN);
-                System.debug(sectionEvaluation);
             }
 
             // If section passed criteria, add it
@@ -1379,7 +1360,7 @@ public class cpq_ProposalPDF_Controller {
             if (answer != null) {
                 criterionEvaluation = (!answer.contains(comparisonValue));
             } else {
-                criterionEvaluation = false;
+                criterionEvaluation = true;
             }
         }
         else if (operator == 'Is empty') {

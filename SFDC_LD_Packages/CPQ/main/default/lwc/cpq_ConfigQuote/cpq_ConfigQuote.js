@@ -702,7 +702,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                 if (answer !== undefined) {
                                                     criterionEvaluation = (!answer.includes(comparisonValue));
                                                 } else {
-                                                    criterionEvaluation = false;
+                                                    criterionEvaluation = true;
                                                 }
                                             }
                                             else if (criterion.criterionInfo.Comparison_Operator__c === 'Is empty') {

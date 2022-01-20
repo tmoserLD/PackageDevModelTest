@@ -1,3 +1,11 @@
+/**
+* @author Tristan Moser
+* @date 1/12/2022
+*
+* @description Opportunity object - Contract automation Updates class
+*
+* Tested by OppContractTest
+*/
 public class OppContractUtil {
 
     /****************
