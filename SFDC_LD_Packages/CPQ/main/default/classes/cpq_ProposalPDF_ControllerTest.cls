@@ -73,7 +73,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 IsActive__c = true,
                 Label__c = 'Playbook 1',
                 Name = 'Playbook 1',
-                Price_Book__c = testPricebooks[0].Id,
+                Pricebook__c = testPricebooks[0].Id,
                 Product_Summary_Columns__c = 'Quantity__c;End_Date__c;Discount__c;List_Price__c;Product_Name__c',
                 Proposal_Header__c = 'Header Text',
                 Proposal_Header_Type__c = 'Text',
@@ -1334,7 +1334,7 @@ public class cpq_ProposalPDF_ControllerTest {
                     Quantity__c = 1,
                     Quantity = 1,
                     Start_Date__c = Date.today(),
-                    Quoted_Price__c = 0,
+                    Unit_Price__c = 0,
                     UnitPrice = 0,
                     QuoteId = testQuote.Id
                 )
@@ -1746,14 +1746,14 @@ public class cpq_ProposalPDF_ControllerTest {
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
                 Product2.Name,
-                Quoted_Price__c,
+                Unit_Price__c,
                 List_Price__c,
                 QuoteId
             FROM QuoteLineItem
         ];
         for (QuoteLineItem qli : testQLIs) {
             if (qli.Product2.Name == 'Product 2') {
-                qli.Quoted_Price__c = 10;
+                qli.Unit_Price__c = 10;
             }
             if (qli.Product2.Name == 'Product 3') {
                 qli.List_Price__c = 10;
@@ -1796,13 +1796,13 @@ public class cpq_ProposalPDF_ControllerTest {
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
                 Product2.Name,
-                Quoted_Price__c,
+                Unit_Price__c,
                 List_Price__c
             FROM QuoteLineItem
         ];
         for (QuoteLineItem qli : testQLIs) {
             if (qli.Product2.Name == 'Product 2') {
-                qli.Quoted_Price__c = 0;
+                qli.Unit_Price__c = 0;
             }
             if (qli.Product2.Name == 'Product 3') {
                 qli.List_Price__c = 0;
@@ -1848,14 +1848,14 @@ public class cpq_ProposalPDF_ControllerTest {
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
                 Product2.Name,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Start_Date__c,
                 End_Date__c
             FROM QuoteLineItem
         ];
         for (QuoteLineItem qli : testQLIs) {
             if (qli.Product2.Name == 'Product 0') {
-                qli.Quoted_Price__c = 1;
+                qli.Unit_Price__c = 1;
                 qli.Quantity__c = 1;
                 qli.Start_Date__c = Date.today() - 1;
                 qli.End_Date__c = Date.today() + 1;
@@ -1898,14 +1898,14 @@ public class cpq_ProposalPDF_ControllerTest {
         List<QuoteLineItem> testQLIs = [
             SELECT Id,
                 Product2.Name,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Start_Date__c,
                 End_Date__c
             FROM QuoteLineItem
         ];
         for (QuoteLineItem qli : testQLIs) {
             if (qli.Product2.Name == 'Product 0') {
-                qli.Quoted_Price__c = 100;
+                qli.Unit_Price__c = 100;
                 qli.Quantity__c = 1;
                 qli.Start_Date__c = Date.today();
                 qli.End_Date__c = Date.today();
@@ -1986,7 +1986,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -1997,7 +1997,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 1; // 10
                 qli.List_Price__c = 20; // 10
-                qli.Quoted_Price__c = 18; // 10
+                qli.Unit_Price__c = 18; // 10
                 // qli.Total_Price__c = 18; // 100
                 qli.Quantity__c = 1; // 45
                 qli.Start_Date__c = Date.today() - 1; // Today
@@ -2068,7 +2068,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2079,7 +2079,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 10; // 10
                 qli.List_Price__c = 10; // 10
-                qli.Quoted_Price__c = 10; // 10
+                qli.Unit_Price__c = 10; // 10
                 // qli.Total_Price__c = 100; // 100
                 qli.Quantity__c = 10; // 45
                 qli.Start_Date__c = Date.today(); // Today
@@ -2161,7 +2161,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2172,7 +2172,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 11; // 10
                 qli.List_Price__c = 11; // 10
-                qli.Quoted_Price__c = 11; // 10
+                qli.Unit_Price__c = 11; // 10
                 // qli.Total_Price__c = 506; // 100
                 qli.Quantity__c = 46; // 45
                 qli.Start_Date__c = Date.today() + 1; // Today
@@ -2254,7 +2254,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2265,7 +2265,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 11; // 10
                 qli.List_Price__c = 11; // 10
-                qli.Quoted_Price__c = 11; // 10
+                qli.Unit_Price__c = 11; // 10
                 // qli.Total_Price__c = 495; // 100
                 qli.Quantity__c = 45; // 45
                 qli.Start_Date__c = Date.today(); // Today
@@ -2347,7 +2347,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2358,7 +2358,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 9; // 10
                 qli.List_Price__c = 9; // 10
-                qli.Quoted_Price__c = 1; // 10
+                qli.Unit_Price__c = 1; // 10
                 // qli.Total_Price__c = 44; // 100
                 qli.Quantity__c = 44; // 45
                 qli.Start_Date__c = Date.today() - 2; // Today
@@ -2440,7 +2440,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2451,7 +2451,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 9; // 10
                 qli.List_Price__c = 9; // 10
-                qli.Quoted_Price__c = 1; // 10
+                qli.Unit_Price__c = 1; // 10
                 // qli.Total_Price__c = 45; // 100
                 qli.Quantity__c = 45; // 45
                 qli.Start_Date__c = Date.today(); // Today
@@ -2533,7 +2533,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2544,7 +2544,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 9; // 10
                 qli.List_Price__c = 9; // 10
-                qli.Quoted_Price__c = 1; // 10
+                qli.Unit_Price__c = 1; // 10
                 // qli.Total_Price__c = 44; // 100
                 qli.Quantity__c = 44; // 45
                 qli.Start_Date__c = Date.today() - 2; // Today
@@ -2626,7 +2626,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2637,7 +2637,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 9; // 10
                 qli.List_Price__c = 9; // 10
-                qli.Quoted_Price__c = 1; // 10
+                qli.Unit_Price__c = 1; // 10
                 // qli.Total_Price__c = 45; // 100
                 qli.Quantity__c = 45; // 45
                 qli.Start_Date__c = Date.today(); // Today
@@ -2729,7 +2729,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product2.Name,
                 Discount__c,
                 List_Price__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 Quantity__c,
                 Start_Date__c,
                 Total_Price__c,
@@ -2740,7 +2740,7 @@ public class cpq_ProposalPDF_ControllerTest {
             if (qli.Product2.Name == 'Product 0') {
                 qli.Discount__c = 9; // 10
                 qli.List_Price__c = 9; // 10
-                qli.Quoted_Price__c = 1; // 10
+                qli.Unit_Price__c = 1; // 10
                 // qli.Total_Price__c = 45; // 100
                 qli.Quantity__c = 45; // 45
                 qli.Start_Date__c = Date.today(); // Today

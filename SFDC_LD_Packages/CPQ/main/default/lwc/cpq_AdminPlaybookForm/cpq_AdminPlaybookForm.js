@@ -89,6 +89,17 @@ export default class CPQ_AdminPlaybookForm extends LightningElement {
         return this.headerType === 'Text';
     }
 
+    get inactivePricebook() {
+        let inactivePricebook = false;
+        if (this.playbook !== undefined &&
+            this.playbook.playbookInfo.Pricebook__c !== undefined &&
+            this.playbook.playbookInfo.Pricebook__r.IsActive === false    
+        ) {
+            inactivePricebook = true;
+        }
+        return inactivePricebook;
+    }
+
     get showImageAttach() {
         return (this.headerType === 'Image' && this.playbook !== undefined);
     }

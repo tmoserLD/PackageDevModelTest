@@ -132,7 +132,7 @@ public with sharing class cpq_ContainerClass {
                         + 'Product2Id,'
                         + 'Product2.Name,'
                         + 'Quantity__c,'
-                        + 'Quoted_Price__c,'
+                        + 'Unit_Price__c,'
                         + 'Start_Date__c'
                     + ' FROM QuoteLineItems'
                 + '), '
@@ -208,7 +208,7 @@ public with sharing class cpq_ContainerClass {
             'CPQ_Playbook__c',
             'CPQ_Playbook__r.Default_Term_in_Months__c',
             'CPQ_Playbook__r.Label__c',
-            'CPQ_Playbook__r.Price_Book__c',
+            'CPQ_Playbook__r.Pricebook__c',
             'IsSyncing',
             'Name',
             'Playbook_Status__c',
@@ -262,7 +262,7 @@ public with sharing class cpq_ContainerClass {
             'CPQ_Playbook__c',
             'CPQ_Playbook__r.Default_Term_in_Months__c',
             'CPQ_Playbook__r.Label__c',
-            'CPQ_Playbook__r.Price_Book__c',
+            'CPQ_Playbook__r.Pricebook__c',
             'Opportunity__c',
             'Opportunity__r.Name',
             'Quote__c'

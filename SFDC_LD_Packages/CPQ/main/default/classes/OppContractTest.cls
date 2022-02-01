@@ -78,7 +78,7 @@ public class OppContractTest {
                 IsActive__c = true,
                 Label__c = 'Playbook 1',
                 Name = 'Playbook 1',
-                Price_Book__c = testPricebooks[0].Id,
+                Pricebook__c = testPricebooks[0].Id,
                 Product_Summary_Columns__c = 'Quantity;End_Date',
                 Proposal_Header__c = 'Header Text',
                 Proposal_Header_Type__c = 'Text',
@@ -203,7 +203,7 @@ public class OppContractTest {
                     Quantity__c = 1,
                     Quantity = 1,
                     Start_Date__c = (Date.today() - index),
-                    Quoted_Price__c = 0,
+                    Unit_Price__c = 0,
                     UnitPrice = 0,
                     QuoteId = testQuote.Id
                 )
@@ -243,7 +243,7 @@ public class OppContractTest {
                         Product2Id,
                         Product2.Do_Not_Create_Entitlement__c,
                         Quantity__c,
-                        Quoted_Price__c,
+                        Unit_Price__c,
                         Start_Date__c,
                         TotalPrice
                     FROM QuoteLineItems
@@ -326,7 +326,7 @@ public class OppContractTest {
             System.assertEquals(testQuote.QuoteLineItems[index].Product2Id, newContract.Contract_Entitlements__r[index].Product__c);
             System.assertEquals(testQuote.QuoteLineItems[index].Quantity__c, newContract.Contract_Entitlements__r[index].Quantity__c);
             System.assertEquals(testQuote.QuoteLineItems[index].Start_Date__c, newContract.Contract_Entitlements__r[index].Start_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Quoted_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
+            System.assertEquals(testQuote.QuoteLineItems[index].Unit_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
             System.assertEquals(testQuote.QuoteLineItems[index].CPQ_Playbook_Rule_Action__c, newContract.Contract_Entitlements__r[index].CPQ_Playbook_Rule_Action__c);
         }
 
@@ -384,7 +384,7 @@ public class OppContractTest {
                         Product2Id,
                         Product2.Do_Not_Create_Entitlement__c,
                         Quantity__c,
-                        Quoted_Price__c,
+                        Unit_Price__c,
                         Start_Date__c,
                         TotalPrice
                     FROM QuoteLineItems
@@ -469,7 +469,7 @@ public class OppContractTest {
             System.assertEquals(testQuote.QuoteLineItems[index].Product2Id, newContract.Contract_Entitlements__r[index].Product__c);
             System.assertEquals(testQuote.QuoteLineItems[index].Quantity__c, newContract.Contract_Entitlements__r[index].Quantity__c);
             System.assertEquals(testQuote.QuoteLineItems[index].Start_Date__c, newContract.Contract_Entitlements__r[index].Start_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Quoted_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
+            System.assertEquals(testQuote.QuoteLineItems[index].Unit_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
             System.assertEquals(testQuote.QuoteLineItems[index].CPQ_Playbook_Rule_Action__c, newContract.Contract_Entitlements__r[index].CPQ_Playbook_Rule_Action__c);
         }
 

@@ -85,7 +85,7 @@ public class cpq_ContainerClassTest {
                     IsActive__c = true,
                     Label__c = 'Playbook ' + i,
                     Name = 'Playbook ' + i,
-                    Price_Book__c = testPricebooks[i].Id,
+                    Pricebook__c = testPricebooks[i].Id,
                     Product_Summary_Columns__c = 'Quantity;End_Date',
                     Proposal_Header__c = 'Header Text',
                     Proposal_Header_Type__c = 'Text',
@@ -512,7 +512,7 @@ public class cpq_ContainerClassTest {
         CPQ_Playbook__c testPlaybook = [
             SELECT Id
             FROM CPQ_Playbook__c
-            WHERE Price_Book__c =:testPricebook.Id
+            WHERE Pricebook__c =:testPricebook.Id
             LIMIT 1
         ];
 
@@ -703,7 +703,7 @@ public class cpq_ContainerClassTest {
         CPQ_Playbook__c testPlaybook = [
             SELECT Id
             FROM CPQ_Playbook__c
-            WHERE Price_Book__c =:testPricebook.Id
+            WHERE Pricebook__c =:testPricebook.Id
             LIMIT 1
         ];
 
@@ -869,7 +869,7 @@ public class cpq_ContainerClassTest {
         CPQ_Playbook__c testPlaybook = [
             SELECT Id
             FROM CPQ_Playbook__c
-            WHERE Price_Book__c =:testPricebook.Id
+            WHERE Pricebook__c =:testPricebook.Id
             LIMIT 1
         ];
 
@@ -991,7 +991,7 @@ public class cpq_ContainerClassTest {
                 End_Date__c = Date.today(),
                 List_Price__c = 1,
                 Quantity__c = 1,
-                Quoted_Price__c = 1,
+                Unit_Price__c = 1,
                 UnitPrice = 1
             )
         );
@@ -1090,7 +1090,7 @@ public class cpq_ContainerClassTest {
                 End_Date__c,
                 List_Price__c,
                 Quantity__c,
-                Quoted_Price__c,
+                Unit_Price__c,
                 UnitPrice
             FROM QuoteLineItem
             WHERE QuoteId =:clonedQuote.Id
@@ -1104,7 +1104,7 @@ public class cpq_ContainerClassTest {
         System.assertEquals(testQLIs[0].End_Date__c, clonedQLI.End_Date__c);
         System.assertEquals(testQLIs[0].List_Price__c, clonedQLI.List_Price__c);
         System.assertEquals(testQLIs[0].Quantity__c, clonedQLI.Quantity__c);
-        System.assertEquals(testQLIs[0].Quoted_Price__c, clonedQLI.Quoted_Price__c);
+        System.assertEquals(testQLIs[0].Unit_Price__c, clonedQLI.Unit_Price__c);
         System.assertEquals(testQLIs[0].UnitPrice, clonedQLI.UnitPrice);
 
         CPQ_Playbook_Answer__c clonedAnswer = [

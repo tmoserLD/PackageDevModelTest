@@ -818,7 +818,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CPQ_Playbook__c.Price_Book__c</field>
+        <field>CPQ_Playbook__c.Pricebook__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1173,7 +1173,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>QuoteLineItem.Quoted_Price__c</field>
+        <field>QuoteLineItem.Unit_Price__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

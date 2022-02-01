@@ -85,7 +85,7 @@ public class cpq_AdminContainerClassTest {
                     IsActive__c = true,
                     Label__c = 'Playbook ' + i,
                     Name = 'Playbook ' + i,
-                    Price_Book__c = testPricebooks[i].Id,
+                    Pricebook__c = testPricebooks[i].Id,
                     Product_Summary_Columns__c = 'Quantity;End_Date',
                     Proposal_Header__c = 'Header Text',
                     Proposal_Header_Type__c = 'Text',

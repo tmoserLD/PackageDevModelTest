@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Total_Price__c</fullName>
     <externalId>false</externalId>
-    <formula>Quoted_Price__c * Quantity__c</formula>
+    <formula>Unit_Price__c * Quantity__c</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Total Price</label>
     <precision>18</precision>

@@ -129,7 +129,7 @@ public with sharing class OppContractUtil {
                         ent.Product__c = qli.Product2Id;
                         ent.Quantity__c = qli.Quantity__c;
                         ent.Start_Date__c = qli.Start_Date__c;
-                        ent.Unit_Price__c = qli.Quoted_Price__c;
+                        ent.Unit_Price__c = qli.Unit_Price__c;
                         ent.CPQ_Playbook_Rule_Action__c = qli.CPQ_Playbook_Rule_Action__c;
 
                         if (!entitlementsToInsert.containsKey(opp.Id)) {
@@ -279,7 +279,7 @@ public with sharing class OppContractUtil {
                             Product2Id,
                             Product2.Do_Not_Create_Entitlement__c,
                             Quantity__c,
-                            Quoted_Price__c,
+                            Unit_Price__c,
                             Start_Date__c,
                             TotalPrice
                         FROM QuoteLineItems

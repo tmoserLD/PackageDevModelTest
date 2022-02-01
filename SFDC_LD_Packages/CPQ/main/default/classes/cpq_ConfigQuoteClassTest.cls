@@ -85,7 +85,7 @@ public class cpq_ConfigQuoteClassTest {
                     IsActive__c = true,
                     Label__c = 'Playbook ' + i,
                     Name = 'Playbook ' + i,
-                    Price_Book__c = testPricebooks[i].Id,
+                    Pricebook__c = testPricebooks[i].Id,
                     Product_Summary_Columns__c = i == 0 ? 'Quantity;Unit_Price' : 'Description;Quantity__c;Start_Date;End_Date__c;Discount__c;List_Price__c;Product_Name__c',
                     Proposal_Header__c = 'Header Text',
                     Proposal_Header_Type__c = 'Text',
@@ -631,7 +631,7 @@ public class cpq_ConfigQuoteClassTest {
                 End_Date__c = Date.today(),
                 List_Price__c = 1,
                 Quantity__c = 1,
-                Quoted_Price__c = 1,
+                Unit_Price__c = 1,
                 UnitPrice = 1
             )
         );

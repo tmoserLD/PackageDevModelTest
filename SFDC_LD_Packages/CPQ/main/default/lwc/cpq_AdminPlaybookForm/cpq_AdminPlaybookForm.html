@@ -123,10 +123,33 @@
 
                         <!-- Pricebook -->
                         <lightning-input-field
-                            field-name="Price_Book__c"
+                            field-name="Pricebook__c"
                             required="true"
                         >
                         </lightning-input-field>
+
+                        <!-- Inactive Pricebook Warning -->
+                        <template if:true={inactivePricebook}>
+                            <div
+                                class="slds-theme_info slds-m-top_small slds-p-vertical_xx-small slds-p-horizontal_small"
+                                style="border: 1px solid gray;border-radius: 25px;"
+                            >
+                                <ul class="slds-list_horizontal">
+                                    <li class="slds-m-right_x-small">
+                                        <lightning-icon
+                                            alternative-text="info"
+                                            icon-name="utility:info_alt"
+                                            size="x-small"
+                                            variant="inverse"
+                                        >
+                                        </lightning-icon>
+                                    </li>
+                                    <li>
+                                        The associated pricebook is Inactive. This playbook will NOT appear in CPQ unless associated to an active pricebook.
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
                 </div>
 

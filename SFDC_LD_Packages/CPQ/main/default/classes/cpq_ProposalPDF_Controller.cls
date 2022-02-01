@@ -102,7 +102,7 @@ public with sharing class cpq_ProposalPDF_Controller {
             'Start_Date__c',
             'SubTotal_Price__c',
             'Total_Price__c',
-            'Quoted_Price__c'
+            'Unit_Price__c'
         };
         Set<String> entitlementFields = new Set<String>{
             'CPQ_Playbook_Rule_Action__c',
@@ -365,7 +365,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c == criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c == criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c == criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c == criterion.Comparison_Value_Currency__c);
@@ -389,7 +389,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c != criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c != criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c != criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c != criterion.Comparison_Value_Currency__c);
@@ -413,7 +413,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c > criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c > criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c > criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c > criterion.Comparison_Value_Currency__c);
@@ -437,7 +437,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c >= criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c >= criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c >= criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c >= criterion.Comparison_Value_Currency__c);
@@ -461,7 +461,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c < criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c < criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c < criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c < criterion.Comparison_Value_Currency__c);
@@ -485,7 +485,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c <= criterion.Comparison_Value_Decimal__c); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c <= criterion.Comparison_Value_Currency__c);
+                                            criterionEvaluation = (qli.Unit_Price__c <= criterion.Comparison_Value_Currency__c);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c <= criterion.Comparison_Value_Currency__c);
@@ -509,7 +509,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = (qli.Discount__c == null); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Quoted_Price__c == null);
+                                            criterionEvaluation = (qli.Unit_Price__c == null);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = (qli.List_Price__c == null);
@@ -533,7 +533,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                             criterionEvaluation = !(qli.Discount__c == null); 
                                         }
                                         else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = !(qli.Quoted_Price__c == null);
+                                            criterionEvaluation = !(qli.Unit_Price__c == null);
                                         }
                                         else if (criterion.Product_Field__c == 'List Price') {
                                             criterionEvaluation = !(qli.List_Price__c == null);

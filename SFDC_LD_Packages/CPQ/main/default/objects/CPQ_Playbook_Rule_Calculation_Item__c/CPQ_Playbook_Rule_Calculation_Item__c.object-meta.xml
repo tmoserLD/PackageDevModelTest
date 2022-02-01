@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Rule Calculation Item</label>
     <nameField>
-        <label>CPQ Playbook  Name</label>
+        <label>CPQ Playbook Rule Calculation Item Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Rule Calculation Items</pluralLabel>

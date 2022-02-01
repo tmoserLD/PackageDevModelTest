@@ -89,10 +89,11 @@ public with sharing class cpq_ConfigQuoteClass {
                 IsActive__c,
                 Label__c,
                 Name,
-                Price_Book__c,
+                Pricebook__c,
                 Product_Summary_Columns__c
             FROM CPQ_Playbook__c
-            WHERE IsActive__c = TRUE
+            WHERE IsActive__c = TRUE AND
+                Pricebook__r.IsActive = TRUE
         ];
 
         Set<Id> playbookIDs = new Set<Id>();
@@ -106,7 +107,7 @@ public with sharing class cpq_ConfigQuoteClass {
             playbookIDs.add(playbook.Id);
 
             // Track all pricebooks associated to playbooks
-            pricebookIDs.add(playbook.Price_Book__c);
+            pricebookIDs.add(playbook.Pricebook__c);
 
             // Configure PlaybookInfo class object 
             PlaybookInfo playbookInfoSet = new PlaybookInfo();
@@ -957,7 +958,7 @@ public with sharing class cpq_ConfigQuoteClass {
                 + 'Contract_Status__c,'
                 + 'Contract_Total__c,'
                 + 'CPQ_Playbook__c,'
-                + 'CPQ_Playbook__r.Price_Book__c,'
+                + 'CPQ_Playbook__r.Pricebook__c,'
                 + 'Opportunity__c,'
                 + 'Opportunity__r.Name,'
                 + 'Quote__c,'

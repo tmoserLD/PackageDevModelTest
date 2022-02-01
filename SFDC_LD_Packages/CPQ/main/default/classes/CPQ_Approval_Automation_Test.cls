@@ -41,7 +41,7 @@ public class CPQ_Approval_Automation_Test {
                 IsActive__c = true,
                 Label__c = 'Playbook 1',
                 Name = 'Playbook 1',
-                Price_Book__c = testPricebooks[0].Id,
+                Pricebook__c = testPricebooks[0].Id,
                 Product_Summary_Columns__c = 'Quantity;End_Date',
                 Proposal_Header__c = 'Header Text',
                 Proposal_Header_Type__c = 'Text',

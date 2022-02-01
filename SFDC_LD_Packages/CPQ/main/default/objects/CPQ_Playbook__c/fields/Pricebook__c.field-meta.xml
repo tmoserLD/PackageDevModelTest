@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Price_Book__c</fullName>
+    <fullName>Pricebook__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
     <description>Pricebook used for products added in playbook</description>
     <externalId>false</externalId>
     <inlineHelpText>Pricebook from which products are pulled from for rules</inlineHelpText>
-    <label>Price Book</label>
+    <label>Pricebook</label>
     <referenceTo>Pricebook2</referenceTo>
     <relationshipLabel>CPQ Playbooks</relationshipLabel>
     <relationshipName>CPQ_Playbooks</relationshipName>

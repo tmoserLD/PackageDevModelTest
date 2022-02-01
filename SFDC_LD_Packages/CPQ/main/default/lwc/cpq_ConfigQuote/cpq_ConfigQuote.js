@@ -116,7 +116,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 if (this.existingQuoteData.CPQ_Playbook__c !== undefined) {
                     this.selectedPlaybookId = this.existingQuoteData.CPQ_Playbook__c;
                     this.selectedPricebook = JSON.parse(JSON.stringify(
-                        this.pricebooks.find(pricebook => pricebook.Id === this.existingQuoteData.CPQ_Playbook__r.Price_Book__c)
+                        this.pricebooks.find(pricebook => pricebook.Id === this.existingQuoteData.CPQ_Playbook__r.Pricebook__c)
                     ));
                     this.productColumns = playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).productColumns;
                     this.entitlementColumns = playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).entitlementColumns;
@@ -125,7 +125,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 else {
                     this.selectedPlaybookId = playbooks[0].playbookInfo.Id;
                     this.selectedPricebook = JSON.parse(JSON.stringify(
-                        this.pricebooks.find(pricebook => pricebook.Id === playbooks[0].playbookInfo.Price_Book__c)
+                        this.pricebooks.find(pricebook => pricebook.Id === playbooks[0].playbookInfo.Pricebook__c)
                     ));
                     this.productColumns = playbooks[0].productColumns;
                     this.entitlementColumns = playbooks[0].entitlementColumns;
@@ -340,7 +340,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 productToAdd.List_Price = qli.List_Price__c;
 
                                 // Unit Price
-                                productToAdd.Unit_Price = qli.Quoted_Price__c !== undefined ? qli.Quoted_Price__c : qli.Unit_Price__c;
+                                productToAdd.Unit_Price = qli.Unit_Price__c;
 
                                 // Discount
                                 if (productToAdd.List_Price !== 0) {
@@ -1465,7 +1465,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     playbookChange(event) {
         this.selectedPlaybookId = event.detail.value;
         this.selectedPricebook = JSON.parse(JSON.stringify(
-            this.pricebooks.find(pricebook => pricebook.Id === this.playbooks.find(playbook => playbook.playbookInfo.Id === event.detail.value).playbookInfo.Price_Book__c)
+            this.pricebooks.find(pricebook => pricebook.Id === this.playbooks.find(playbook => playbook.playbookInfo.Id === event.detail.value).playbookInfo.Pricebook__c)
         ));
         this.productColumns = this.playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).productColumns;
         this.entitlementColumns = this.playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).entitlementColumns;
@@ -1901,7 +1901,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
             qli.Product2Id = product.Product2Id;
             qli.Quantity = Math.min(product.Quantity, 9999999999.99);
             qli.Quantity__c = (product.Quantity);
-            qli.Quoted_Price__c = Number(product.Unit_Price);
+            qli.Unit_Price__c = Number(product.Unit_Price);
             qli.Start_Date__c = new Date(product.Start_Date);
             qli.UnitPrice = product.Unit_Price;
 

@@ -17,9 +17,9 @@
             "master": false
         },
         {
-            "query": "SELECT Id,Default_Term_in_Months__c,Entitlement_Summary_Columns__c,IsActive__c,Label__c,Name,Price_Book__c,Product_Summary_Columns__c,Proposal_Header__c,Proposal_Header_Type__c,Proposal_Footer__c FROM CPQ_Playbook__c",
+            "query": "SELECT Id,Default_Term_in_Months__c,Entitlement_Summary_Columns__c,IsActive__c,Label__c,Name,Pricebook__c,Product_Summary_Columns__c,Proposal_Header__c,Proposal_Header_Type__c,Proposal_Footer__c FROM CPQ_Playbook__c",
             "operation": "Upsert",
-            "externalId": "Name;Label__c;Price_Book__r.Name",
+            "externalId": "Name;Label__c;Pricebook__r.Name",
             "afterAddons" : [
                 {
                     "module": "core:ExportFiles",

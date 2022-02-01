@@ -29,7 +29,8 @@ public with sharing class cpq_AdminContainerClass {
                 IsActive__c,
                 Label__c,
                 Name,
-                Price_Book__c,
+                Pricebook__c,
+                Pricebook__r.IsActive,
                 Product_Summary_Columns__c,
                 Proposal_Header__c,
                 Proposal_Header_Type__c,
@@ -55,7 +56,7 @@ public with sharing class cpq_AdminContainerClass {
             playbookIDs.add(playbook.Id);
 
             // Track all pricebooks associated to playbooks
-            pricebookIDs.add(playbook.Price_Book__c);
+            pricebookIDs.add(playbook.Pricebook__c);
 
             // Configure PlaybookInfo class object 
             PlaybookInfo playbookInfoSet = new PlaybookInfo();
