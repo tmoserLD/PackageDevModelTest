@@ -33,64 +33,68 @@ public class TerritoryMapping {
                 // Do not evaluate if already assigned value
                 if (territoryAssigned != true) {
 
-                    List<Boolean> conditionsMet = new List<Boolean>();
+                    Boolean conditionsMet = true;
                     
                     for (Territory_Mapping_Condition__c condition : conditionSet.Territory_Mapping_Conditions__r) {
 
-                        Boolean eligibleMet = false;
-                        Boolean ineligibleMet = false;
+                        // Do not evaluate if previous condition not met
+                        if (conditionsMet == true) {
 
-                        // If no values to check, then it is a default condition
-                        if (condition.Eligible_Values__c ==  null) {
-                            eligibleMet = true;
-                        } else {
+                            Boolean eligibleMet = false;
+                            Boolean ineligibleMet = false;
 
-                            // Determine if record's source field value is one of the eligible values
-                            String values = condition.Eligible_Values__c;
-                            String sourceValue = (String) record.get(condition.Source_Field__c);
-                            if (condition.Case_Insensitive__c == true) {
-                                values = values.toLowerCase();
-                                if (sourceValue != null) {
-                                    sourceValue = sourceValue.toLowerCase();
-                                }
-                            }
-                            List<String> eligibleValues = values.split(';');
-
-                            if (eligibleValues.contains(sourceValue)) {
+                            // If no values to check, then it is a default condition
+                            if (condition.Eligible_Values__c ==  null) {
                                 eligibleMet = true;
-                            }
-                        }
+                            } else {
 
-                        // If no values to check, then it is a default condition
-                        if (condition.Ineligible_Values__c ==  null) {
-                            ineligibleMet = true;
-                        } else {
+                                // Determine if record's source field value is one of the eligible values
+                                String values = condition.Eligible_Values__c;
+                                String sourceValue = (String) record.get(condition.Source_Field__c);
+                                if (condition.Case_Insensitive__c == true) {
+                                    values = values.toLowerCase();
+                                    if (sourceValue != null) {
+                                        sourceValue = sourceValue.toLowerCase();
+                                    }
+                                }
+                                List<String> eligibleValues = values.split(';');
 
-                            // Determine if record's source field value is NOT one of the ineligible values
-                            String values = condition.Ineligible_Values__c;
-                            String sourceValue = (String) record.get(condition.Source_Field__c);
-                            if (condition.Case_Insensitive__c == true) {
-                                values = values.toLowerCase();
-                                if (sourceValue != null) {
-                                    sourceValue = sourceValue.toLowerCase();
+                                if (eligibleValues.contains(sourceValue)) {
+                                    eligibleMet = true;
                                 }
                             }
-                            List<String> ineligibleValues = values.split(';');
 
-                            if (!ineligibleValues.contains(sourceValue)) {
+                            // If no values to check, then it is a default condition
+                            if (condition.Ineligible_Values__c ==  null) {
                                 ineligibleMet = true;
-                            }
-                        }
+                            } else {
 
-                        if (eligibleMet == true &&
-                            ineligibleMet == true
-                        ) {
-                            conditionsMet.add(true);
+                                // Determine if record's source field value is NOT one of the ineligible values
+                                String values = condition.Ineligible_Values__c;
+                                String sourceValue = (String) record.get(condition.Source_Field__c);
+                                if (condition.Case_Insensitive__c == true) {
+                                    values = values.toLowerCase();
+                                    if (sourceValue != null) {
+                                        sourceValue = sourceValue.toLowerCase();
+                                    }
+                                }
+                                List<String> ineligibleValues = values.split(';');
+
+                                if (!ineligibleValues.contains(sourceValue)) {
+                                    ineligibleMet = true;
+                                }
+                            }
+
+                            if (eligibleMet == false ||
+                                ineligibleMet == false
+                            ) {
+                                conditionsMet = false;
+                            }
                         }
                     }
 
                     // Update record's target field value if condition met
-                    if (conditionsMet.size() == conditionSet.Territory_Mapping_Conditions__r.size()) {
+                    if (conditionsMet == true) {
                         record.put(mappingObj.mapping.Target_Field__c, conditionSet.Target_Value__c);
                         territoryAssigned = true;
                     }
