@@ -1,10 +1,11 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
 
 // Initial Query Method
 import getCPQInfo from '@salesforce/apex/cpq_ContainerClass.getCPQInfo';
 
-export default class Cpq_Container extends LightningElement {
+export default class Cpq_Container extends NavigationMixin(LightningElement) {
 
     // Opportunity Id
     @api recordId;
@@ -25,6 +26,9 @@ export default class Cpq_Container extends LightningElement {
     @track showQuoteConfig = false;
     // User Info
     @track userInfo = {};
+    // Record URLs
+    @track oppURL = '/';
+    @track acctURL = '/';
 
     // On Mount
     connectedCallback() {
@@ -215,4 +219,27 @@ export default class Cpq_Container extends LightningElement {
         this.loading = false;
     }
 
+    navToOpp() {
+        // Navigate to the Account home page
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.oppInfo.Id,
+                objectApiName: 'Opportunity',
+                actionName: 'view',
+            },
+        });
+    }
+
+    navToAcct() {
+        // Navigate to the Account home page
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.oppInfo.Account.Id,
+                objectApiName: 'Account',
+                actionName: 'view',
+            },
+        });
+    }
 }

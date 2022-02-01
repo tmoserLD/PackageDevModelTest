@@ -6,7 +6,7 @@
 *
 * Tested by cpq_ProposalPDF_ControllerTest
 */
-public class cpq_ProposalPDF_Controller {
+public with sharing class cpq_ProposalPDF_Controller {
     public Id quoteId {get; set;}
     public CPQ_Playbook__c playbook {get; set;}
     public String playbookHeaderImageId {get; set;}

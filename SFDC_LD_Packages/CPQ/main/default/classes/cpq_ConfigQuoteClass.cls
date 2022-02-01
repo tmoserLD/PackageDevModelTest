@@ -6,7 +6,7 @@
 *
 * Tested by cpq_ConfigQuoteClassTest
 */
-public class cpq_ConfigQuoteClass {
+public with sharing class cpq_ConfigQuoteClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals

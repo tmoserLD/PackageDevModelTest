@@ -6,7 +6,7 @@
 *
 * Tested by OppContractTest
 */
-public class OppContractTriggerHandler {
+public with sharing class OppContractTriggerHandler {
 
     // track current loop for Apex transaction
     public static Boolean firstRunAfterInsert = true;

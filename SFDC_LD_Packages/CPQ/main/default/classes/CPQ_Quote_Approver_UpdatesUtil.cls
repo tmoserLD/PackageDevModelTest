@@ -6,7 +6,7 @@
 *
 * Tested by CPQ_Approval_Automation_Test
 */
-public class CPQ_Quote_Approver_UpdatesUtil {
+public with sharing class CPQ_Quote_Approver_UpdatesUtil {
 
     // Parent steps should only be updated once per execution
     public static Boolean runStepUpdates = true;

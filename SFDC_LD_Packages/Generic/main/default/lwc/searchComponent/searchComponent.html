@@ -1,14 +1,14 @@
 <template>
 
-    <lightning-spinner if:true={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
     <div class="slds-form-element">
+        <lightning-spinner if:true={isLoading} alternative-text="Loading" size="small"></lightning-spinner>
         <label class="slds-form-element__label" for="combobox-id-1">{labelName}</label>
         <div class="slds-form-element__control">
             <div class="slds-combobox_container">
                 <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" aria-expanded="false" aria-haspopup="listbox" role="combobox">
                     <template if:false={selectedRecord}>
                         <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
-                            <input type="text" onchange={handleInputChange} onkeyup={handleInputChange} onkeydown={handleInputChange}
+                            <input type="text" onkeyup={handleInputChange} onkeydown={handleInputChange}
                             class="slds-input slds-combobox__input" 
                             id="combobox-id-1" aria-autocomplete="list" aria-controls="listbox-id-1" autocomplete="off" 
                             role="textbox" placeholder={placeholder} />
@@ -18,10 +18,10 @@
                             </svg>
                             </span>
                         </div>
-                        <div style="background: white;" id="listbox-id-1" class="slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                        <div style="background: white;position:absolute" id="listbox-id-1" class="slds-dropdown_length-with-icon-7 slds-dropdown_fluid slds-m-top_x-large" role="listbox">
                             <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                                 <template if:true={searchRecords} for:each={searchRecords} for:item="record" for:index="index">
-                                    <li onclick={handleSelect} role="presentation" class="slds-listbox__item" data-record-id={record.Id} key={record.Id}>
+                                    <li onclick={handleSelect} role="presentation" class="slds-listbox__item slds-m-bottom-xx_small" data-record-id={record.Id} key={record.Id} style="border-radius: 5px;border: 1px solid gray">
                                         <div data-id={record.Id} class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">
                                             <span class="slds-media__figure slds-listbox__option-icon">
                                                 <span class="slds-icon_container slds-icon-standard-account">
@@ -35,7 +35,7 @@
                                                 {record.FIELD1}
                                             </span>
                                             <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
-                                                {objectLabel} • {record.FIELD2} &nbsp; {record.FIELD3}
+                                                {record.FIELD2} • {record.FIELD3}
                                             </span>
                                             </span>
                                         </div>

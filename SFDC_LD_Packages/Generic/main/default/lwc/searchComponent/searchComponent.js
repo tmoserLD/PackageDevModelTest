@@ -73,7 +73,7 @@ export default class SearchComponent extends LightningElement {
     handleInputChange(event){
         window.clearTimeout(this.delayTimeout);
         const searchKey = event.target.value;
-        //this.isLoading = true;
+        this.isLoading = true;
         this.delayTimeout = setTimeout(() => {
             if(searchKey.length >= 2){
                 search({ 
@@ -85,14 +85,28 @@ export default class SearchComponent extends LightningElement {
                     let stringResult = JSON.stringify(result);
                     let allResult    = JSON.parse(stringResult);
                     allResult.forEach( record => {
-                        record.FIELD1 = record[this.field];
-                        record.FIELD2 = record[this.field1];
-                        if( this.field2 ){
-                            record.FIELD3 = record[this.field2];
-                        }else{
-                            record.FIELD3 = '';
+                        if (this.field !== undefined &&
+                            this.field.split('.').length > 1    
+                        ) {
+                            record.FIELD1 = record[this.field.split('.')[0]][this.field.split('.')[1]];
+                        } else {
+                            record.FIELD1 = record[this.field];
                         }
-                    });
+                        if (this.field1 !== undefined &&
+                            this.field1.split('.').length > 1    
+                        ) {
+                            record.FIELD2 = record[this.field1.split('.')[0]][this.field1.split('.')[1]];
+                        } else {
+                            record.FIELD2 = record[this.field1];
+                        }
+                        if (this.field2 !== undefined &&
+                            this.field2.split('.').length > 1    
+                        ) {
+                            record.FIELD3 = record[this.field2.split('.')[0]][this.field2.split('.')[1]];
+                        } else {
+                            record.FIELD3 = record[this.field2];
+                        }
+                    }, this);
                     this.searchRecords = allResult;
                     
                 })
@@ -100,8 +114,11 @@ export default class SearchComponent extends LightningElement {
                     console.error('Error:', error);
                 })
                 .finally( ()=>{
-                    //this.isLoading = false;
+                    this.isLoading = false;
                 });
+            } else {
+                this.searchRecords = [];
+                this.isLoading = false;
             }
         }, DELAY);
     }
@@ -136,5 +153,31 @@ export default class SearchComponent extends LightningElement {
             sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
         }
         return sentence;
+    }
+
+    @api selectFromParent(record) {
+        let selectedRecord = JSON.parse(JSON.stringify(record));
+        if (this.field !== undefined &&
+            this.field.split('.').length > 1    
+        ) {
+            selectedRecord.FIELD1 = selectedRecord[this.field.split('.')[0]][this.field.split('.')[1]];
+        } else {
+            selectedRecord.FIELD1 = selectedRecord[this.field];
+        }
+        if (this.field1 !== undefined &&
+            this.field1.split('.').length > 1    
+        ) {
+            selectedRecord.FIELD2 = selectedRecord[this.field1.split('.')[0]][this.field1.split('.')[1]];
+        } else {
+            selectedRecord.FIELD2 = selectedRecord[this.field1];
+        }
+        if (this.field2 !== undefined &&
+            this.field2.split('.').length > 1    
+        ) {
+            selectedRecord.FIELD3 = selectedRecord[this.field2.split('.')[0]][this.field2.split('.')[1]];
+        } else {
+            selectedRecord.FIELD3 = selectedRecord[this.field2];
+        }
+        this.selectedRecord = selectedRecord;
     }
 }

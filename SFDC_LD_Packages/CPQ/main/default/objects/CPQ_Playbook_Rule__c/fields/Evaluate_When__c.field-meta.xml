@@ -23,11 +23,6 @@
                 <label>When TRUE with evaluation change</label>
             </value>
             <value>
-                <fullName>When FALSE with evaluation change</fullName>
-                <default>false</default>
-                <label>When FALSE with evaluation change</label>
-            </value>
-            <value>
                 <fullName>Always</fullName>
                 <default>false</default>
                 <label>Always</label>
@@ -38,9 +33,9 @@
                 <label>Always when TRUE</label>
             </value>
             <value>
-                <fullName>Always when FALSE</fullName>
+                <fullName>On first TRUE evalutation</fullName>
                 <default>false</default>
-                <label>Always when FALSE</label>
+                <label>On first TRUE evalutation</label>
             </value>
         </valueSetDefinition>
     </valueSet>

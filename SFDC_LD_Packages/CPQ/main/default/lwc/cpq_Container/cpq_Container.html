@@ -35,6 +35,64 @@
         <!-- User has access -->
         <template if:true={hasOppAccess}>
 
+            <template if:true={oppInfo.Lock_CPQ__c}>
+                <h1
+                    class="slds-p-vertical_medium"
+                    style="color:red;text-align:center"
+                >
+                    Opportunity is locked
+                </h1>
+            </template>
+
+            <!-- Opportunity Info -->
+            <div class="slds-p-horizontal_x-small slds-p-vertical_small">
+        
+                <ul class="slds-list_horizontal">
+                    <li class="slds-p-top_xx-small">
+                        <lightning-icon
+                            icon-name="standard:opportunity"
+                        >
+                        </lightning-icon>
+                    </li>
+                    <li class="slds-p-left_small slds-m-left_x-small slds-truncate">
+                        <p 
+                            class="slds-text-heading_small slds-truncate slds-m-bottom_xx-small"
+                            title={oppInfo.Name}
+                        >
+                            <b
+                                class="slds-truncate"
+                                style="text-decoration: underline;cursor: pointer;"
+                                onclick={navToOpp}
+                            >
+                                {oppInfo.Name}
+                            </b>
+                        </p>
+                        <p
+                            class="slds-truncate"
+                            style="color:gray"
+                            title={oppInfo.Owner.Name}
+                        >
+                            Owner: {oppInfo.Owner.Name}
+                        </p>
+                        <ul
+                            class="slds-list_horizontal"
+                            style="color:gray"
+                            title={oppInfo.Account.Name}
+                        >
+                            <li class="slds-truncate">
+                                Account:
+                            </li>
+                            <li class="slds-m-left_xx-small"
+                                style="text-decoration: underline;cursor: pointer;"
+                                onclick={navToAcct}
+                            >
+                                {oppInfo.Account.Name}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
             <!-- Playbook Quote Configuration -->
             <template if:true={showQuoteConfig}>
                 <c-cpq_-config-quote
@@ -51,15 +109,6 @@
 
             <template if:false={showQuoteConfig}>
 
-                <template if:true={oppInfo.Lock_CPQ__c}>
-                    <h1
-                        class="slds-p-vertical_medium"
-                        style="color:red;text-align:center"
-                    >
-                        Opportunity is locked
-                    </h1>
-                </template>
-
                 <!-- Quote List -->
                 <c-cpq_-quote-list
                     opp-info={oppInfo}
@@ -69,6 +118,13 @@
                     onreload={reload}
                 >
                 </c-cpq_-quote-list>
+
+                <!-- Proposals List -->
+                <c-cpq_-proposal-list
+                    opp-info={oppInfo}
+                    onreload={reload}
+                >
+                </c-cpq_-proposal-list>
 
                 <!-- Contract List -->
                 <c-cpq_-contract-list

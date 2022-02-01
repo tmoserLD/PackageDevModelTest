@@ -1,0 +1,81 @@
+<template>
+
+    <!-- Confirm Delete -->
+    <template if:true={showConfirmDelete}>
+        <c-confirmation-modal
+            variant="error"
+            add-texture="false"
+            title="Confirm Deletion"
+            body={confirmDeletePrompt}
+            confirm-button-title="Confirm"
+            cancel-button-title="Cancel"
+            onconfirm={confirmDeleteProposal}
+            oncancel={cancelDeleteProposal}
+        >
+        </c-confirmation-modal>
+    </template>
+
+    <div
+        class={mainCSS}
+        style="border-bottom: 0.25px solid gray"
+    >
+        <div
+            class="slds-col slds-size_5-of-6 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+            title={proposal.ContentDocument.LatestPublishedVersion.Title}
+        >
+            {proposal.ContentDocument.LatestPublishedVersion.Title}
+        </div>
+        <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
+            <ul class="slds-list_horizontal slds-wrap">
+
+                <!-- View Proposal -->
+                <li
+                    class="slds-m-horizontal_x-small"
+                    style="cursor:pointer"
+                    onclick={viewProposal}
+                >
+                    <lightning-icon
+                        icon-name="utility:preview"
+                        alternative-text="View Proposal"
+                        title="View Proposal"
+                        size="x-small"
+                    >
+                    </lightning-icon>
+                </li>
+
+                <!-- Delete Proposal -->
+                <template if:true={canDelete}>
+                    <li
+                        class="slds-m-horizontal_x-small"
+                        style="cursor:pointer"
+                        onclick={deleteProposal}
+                    >
+                        <lightning-icon
+                            icon-name="utility:delete"
+                            alternative-text={deleteTitle}
+                            title={deleteTitle}
+                            size="x-small"
+                            variant="error"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+                <template if:false={canDelete}>
+                    <li
+                        class="slds-m-horizontal_x-small"
+                        style="opacity: 0.5"
+                    >
+                        <lightning-icon
+                            icon-name="utility:delete"
+                            alternative-text={deleteTitle}
+                            title={deleteTitle}
+                            size="x-small"
+                        >
+                        </lightning-icon>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </div>
+</template>

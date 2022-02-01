@@ -16,6 +16,9 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
         if (this.questionInfo !== undefined) {
             this.template.querySelectorAll('lightning-input').forEach(function(input) {
                 input.value = this.questionInfo.answer;
+                if (input.type === 'checkbox') {
+                    input.checked = this.questionInfo.answer;
+                }
             }, this);
             this.template.querySelectorAll('lightning-textarea').forEach(function(input) {
                 input.value = this.questionInfo.answer;

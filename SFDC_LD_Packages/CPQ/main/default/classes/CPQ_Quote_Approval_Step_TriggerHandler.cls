@@ -6,7 +6,7 @@
 *
 * Tested by CPQ_Approval_Automation_Test
 */
-public class CPQ_Quote_Approval_Step_TriggerHandler {
+public with sharing class CPQ_Quote_Approval_Step_TriggerHandler {
 
     // track current loop for Apex transaction
     public static Boolean firstRunAfterUpdate = true;

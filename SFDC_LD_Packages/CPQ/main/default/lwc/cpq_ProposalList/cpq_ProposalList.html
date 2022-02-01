@@ -1,0 +1,75 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <div class="slds-grid_vertical slds-m-bottom_medium">
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+                
+        <!-- Header -->
+        <div
+            class="slds-grid slds-theme_shade slds-p-around_x-small"
+            style="border-radius: 10px;"
+        >
+            <div class="slds-text-heading_medium">
+                Proposals ({numberOfProposals})
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="slds-theme_default slds-p-around_x-small">
+
+            <!-- No Proposals -->
+            <template if:true={noProposalsToDisplay}>
+                <div class="slds-align_absolute-center">
+                    No Proposals have been configured on this Opportunity.
+                </div>
+            </template>
+
+            <!-- Proposals List -->
+            <template if:false={noProposalsToDisplay}>
+
+                <!-- List Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 1px double gray;font-weight: bold;"
+                >
+                    <div
+                        class="slds-col slds-size_5-of-6 slds-p-horizontal_xx-small"
+                        style="overflow:auto"
+                        title="Name"
+                    >
+                        Name
+                    </div>
+                    <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
+                    </div>
+                </div>
+
+                <!-- Proposals -->
+                <template
+                    for:each={oppInfo.AttachedContentDocuments}
+                    for:item="proposal"
+                >
+                <div key={proposal.Id}>
+                    <c-cpq_-proposal-list-item
+                        all-proposals={oppInfo.AttachedContentDocuments}
+                        opp-info={oppInfo}
+                        proposal={proposal}
+                        ondeleteproposal={deleteProposal}
+                    >
+                    </c-cpq_-proposal-list-item>
+                </div>
+                </template>
+            </template>
+        </div>
+    </div>
+</template>

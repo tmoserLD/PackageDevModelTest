@@ -6,7 +6,7 @@
 *
 * Tested by cpq_AdminContainerClassTest
 */
-public class cpq_AdminContainerClass {
+public with sharing class cpq_AdminContainerClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals

@@ -6,7 +6,7 @@
 *
 * Tested by cpq_ContainerClassTest
 */
-public class cpq_ContainerClass {
+public with sharing class cpq_ContainerClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals
@@ -39,7 +39,7 @@ public class cpq_ContainerClass {
 
         // Opportunity and parent info
         Opportunity opp = new Opportunity();
-        String oppQuery = 'SELECT ' + objFieldsStrings.get('Opportunity') + ', (SELECT Id, UserId FROM OpportunityTeamMembers) FROM Opportunity WHERE Id=\'' + oppId + '\''; 
+        String oppQuery = 'SELECT ' + objFieldsStrings.get('Opportunity') + ', (SELECT Id, UserId FROM OpportunityTeamMembers),(SELECT Id,ContentDocumentId, ContentDocument.LatestPublishedVersion.Title FROM AttachedContentDocuments WHERE ContentDocument.LatestPublishedVersion.CPQ_Proposal__c = TRUE ORDER BY CreatedDate DESC) FROM Opportunity WHERE Id=\'' + oppId + '\''; 
         opp = Database.query(oppQuery);
         cpqObj.oppInfo = opp;
 
@@ -223,6 +223,7 @@ public class cpq_ContainerClass {
             'Lock_CPQ__c',
             'Name',
             'OwnerId',
+            'Owner.Name',
             'Owner.ManagerId',
             'Owner.Manager.Name',
             'Account.Id',
@@ -466,10 +467,11 @@ public class cpq_ContainerClass {
 
         // PDF File
         ContentVersion pdfAttachment = new ContentVersion();
-        pdfAttachment.Title = 'Quote Proposal ' + Date.today().format();
-        pdfAttachment.PathOnClient = 'Quote Proposal ' + Date.today().format() + '.pdf';
+        pdfAttachment.Title = (quoteInfo.Name + ' (' + Date.today().format() + ')').left(250);
+        pdfAttachment.PathOnClient = (quoteInfo.Name + ' (' + Date.today().format() + ')').left(250) + '.pdf';
         pdfAttachment.VersionData = (Test.isRunningTest() ? blob.valueOf('Unit.Test') : pg.getContentAsPDF());
         pdfAttachment.Description = 'Quote Proposal submitted on ' + Date.today().format() + '. Quote: ' + quoteInfo.Name + ' (' + quoteInfo.Id + '), Opportunity: ' + oppInfo.Name + ' (' + oppInfo.Id + ').';
+        pdfAttachment.CPQ_Proposal__c = true;
 
         insert pdfAttachment;
 

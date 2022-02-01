@@ -6,7 +6,7 @@
 *
 * Tested by OppContractTest
 */
-public class OppContractUtil {
+public with sharing class OppContractUtil {
 
     /****************
      * ENTRY METHODS

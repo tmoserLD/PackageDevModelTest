@@ -1034,308 +1034,285 @@ export default class CPQ_ConfigQuote extends LightningElement {
     evaluateRules(playbooks) {
         let changedRuleEvaluation = false;
         this.rules.forEach(function(rule) {
-            // Rule of selected playbook
-            if (rule.ruleInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
-                let ruleEvaluation = this.evaluateCriteria(rule, playbooks);
+            // Ignore flagged rules
+            if (rule.ruleInfo.doNotEvaluate !== true) {
+                // Rule of selected playbook
+                if (rule.ruleInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
+                    let ruleEvaluation = this.evaluateCriteria(rule, playbooks);
 
-                // Determine if rule should fire
-                if ((
-                        rule.ruleInfo.Evaluate_When__c == 'Evaluation change' &&
-                        ruleEvaluation != rule.ruleInfo.prevEvaluation
-                    ) ||
-                    (
-                        rule.ruleInfo.Evaluate_When__c == 'When TRUE with evaluation change' &&
-                        ruleEvaluation === true &&
-                        rule.ruleInfo.prevEvaluation !== true
-                    ) ||
-                    (
-                        rule.ruleInfo.Evaluate_When__c == 'When FALSE with evaluation change' &&
-                        ruleEvaluation === false &&
-                        rule.ruleInfo.prevEvaluation !== false
-                    ) ||
-                    (
-                        rule.ruleInfo.Evaluate_When__c == 'Always when TRUE' &&
-                        ruleEvaluation === true
-                    ) ||
-                    (
-                        rule.ruleInfo.Evaluate_When__c == 'Always when FALSE' &&
-                        ruleEvaluation === false
-                    ) ||
-                    rule.ruleInfo.Evaluate_When__c == 'Always'
-                ) {
+                    // Determine if rule should fire
+                    if ((
+                            rule.ruleInfo.Evaluate_When__c === 'Evaluation change' &&
+                            ruleEvaluation != rule.ruleInfo.prevEvaluation
+                        ) ||
+                        (
+                            rule.ruleInfo.Evaluate_When__c === 'When TRUE with evaluation change' &&
+                            ruleEvaluation === true &&
+                            rule.ruleInfo.prevEvaluation !== true
+                        ) ||
+                        (
+                            rule.ruleInfo.Evaluate_When__c === 'Always when TRUE' &&
+                            ruleEvaluation === true
+                        ) ||
+                        (
+                            rule.ruleInfo.Evaluate_When__c === 'On first TRUE evalutation' &&
+                            rule.ruleInfo.hasHadTrueEvaluation === undefined &&
+                            ruleEvaluation === true
+                        ) ||
+                        rule.ruleInfo.Evaluate_When__c === 'Always'
+                    ) {
 
-                    if (ruleEvaluation != rule.ruleInfo.prevEvaluation) {
-                        changedRuleEvaluation = true;
-                    }
+                        if (ruleEvaluation != rule.ruleInfo.prevEvaluation) {
+                            changedRuleEvaluation = true;
+                        }
 
-                    // Run each action
-                    rule.actions.forEach(function(action) {
+                        // Flag rule to never evaluate again
+                        if (rule.ruleInfo.Evaluate_When__c === 'On first TRUE evalutation') {
+                            rule.ruleInfo.doNotEvaluate = true;
+                        }
 
-                        // Playbook actions
-                        if (
-                            (
-                                action.actionInfo.Action_Type__c === 'Adjust question field' ||
-                                action.actionInfo.Action_Type__c === 'Adjust question group field'
-                            ) &&
-                            (
-                                action.actionInfo.CPQ_Playbook_Question__c !== undefined ||
-                                action.actionInfo.CPQ_Playbook_Question_Group__c !== undefined
-                            )
-                        ) {
-                            playbooks.forEach(function(playbook) {
-                                // Matching Playbook
-                                if (playbook.playbookInfo.Id === this.selectedPlaybookId) {
-                                    playbook.questionGroups.forEach(function(group) {
-                                        // Matching Playbook
-                                        if (group.groupInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
+                        // Run each action
+                        rule.actions.forEach(function(action) {
 
-                                            // Question Group action
-                                            if (action.actionInfo.Action_Type__c === 'Adjust question group field') {
+                            // Playbook actions
+                            if (
+                                (
+                                    action.actionInfo.Action_Type__c === 'Adjust question field' ||
+                                    action.actionInfo.Action_Type__c === 'Adjust question group field'
+                                ) &&
+                                (
+                                    action.actionInfo.CPQ_Playbook_Question__c !== undefined ||
+                                    action.actionInfo.CPQ_Playbook_Question_Group__c !== undefined
+                                )
+                            ) {
+                                playbooks.forEach(function(playbook) {
+                                    // Matching Playbook
+                                    if (playbook.playbookInfo.Id === this.selectedPlaybookId) {
+                                        playbook.questionGroups.forEach(function(group) {
+                                            // Matching Playbook
+                                            if (group.groupInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
 
-                                                // Matching Question Group
-                                                if (group.groupInfo.Id === action.actionInfo.CPQ_Playbook_Question_Group__c) {
+                                                // Question Group action
+                                                if (action.actionInfo.Action_Type__c === 'Adjust question group field') {
 
-                                                    if (ruleEvaluation === true) {
+                                                    // Matching Question Group
+                                                    if (group.groupInfo.Id === action.actionInfo.CPQ_Playbook_Question_Group__c) {
 
-                                                        group.groupInfo.prevValues[action.actionInfo.Question_Group_Adjustment_Field__c] = group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c];
+                                                        if (ruleEvaluation === true) {
 
-                                                        // Static Source
-                                                        if (action.actionInfo.Value_Source_Type__c === 'Static') {
-                                                            
-                                                            // Set new static value
-                                                            if (action.actionInfo.Question_Group_Adjustment_Field__c === 'IsHidden__c') {
-                                                                group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Boolean__c;
+                                                            group.groupInfo.prevValues[action.actionInfo.Question_Group_Adjustment_Field__c] = group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c];
+
+                                                            // Static Source
+                                                            if (action.actionInfo.Value_Source_Type__c === 'Static') {
+                                                                
+                                                                // Set new static value
+                                                                if (action.actionInfo.Question_Group_Adjustment_Field__c === 'IsHidden__c') {
+                                                                    group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Boolean__c;
+                                                                }
                                                             }
-                                                        }
-                                                        // Dynamic Source
-                                                        else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
+                                                            // Dynamic Source
+                                                            else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
 
-                                                            let fieldType;
-                                                            if (action.actionInfo.Question_Group_Adjustment_Field__c === 'IsHidden__c') {
-                                                                fieldType = 'Boolean';
+                                                                let fieldType;
+                                                                if (action.actionInfo.Question_Group_Adjustment_Field__c === 'IsHidden__c') {
+                                                                    fieldType = 'Boolean';
+                                                                }
+                                                                group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
                                                             }
-                                                            group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
-                                                        }
-                                                    } else {
-                                                        if (group.groupInfo.prevValues.hasOwnProperty(action.actionInfo.Question_Group_Adjustment_Field__c)) {
-                                                            group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = group.groupInfo.prevValues[action.actionInfo.Question_Group_Adjustment_Field__c];
+                                                        } else {
+                                                            if (group.groupInfo.prevValues.hasOwnProperty(action.actionInfo.Question_Group_Adjustment_Field__c)) {
+                                                                group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = group.groupInfo.prevValues[action.actionInfo.Question_Group_Adjustment_Field__c];
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
-                                            // Question action
-                                            else if (action.actionInfo.Action_Type__c === 'Adjust question field') {
-                                                // Matching Group
-                                                if (group.groupInfo.Id === action.actionInfo.CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c) {
-                                                    group.questions.forEach(function(question) {
-                                                        // Matching Question
-                                                        if (question.questionInfo.Id === action.actionInfo.CPQ_Playbook_Question__c) { 
+                                                // Question action
+                                                else if (action.actionInfo.Action_Type__c === 'Adjust question field') {
+                                                    // Matching Group
+                                                    if (group.groupInfo.Id === action.actionInfo.CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c) {
+                                                        group.questions.forEach(function(question) {
+                                                            // Matching Question
+                                                            if (question.questionInfo.Id === action.actionInfo.CPQ_Playbook_Question__c) { 
 
-                                                            // Execute action
-                                                            if (action.actionInfo.Action_Type__c === 'Adjust question field') {
+                                                                // Execute action
+                                                                if (action.actionInfo.Action_Type__c === 'Adjust question field') {
 
-                                                                if (ruleEvaluation === true) {
+                                                                    if (ruleEvaluation === true) {
 
-                                                                    question.questionInfo.prevValues[action.actionInfo.Question_Adjustment_Field__c] = question.questionInfo[action.actionInfo.Question_Adjustment_Field__c];
-    
-                                                                    // Static Source
-                                                                    if (action.actionInfo.Value_Source_Type__c === 'Static') {
-                                                                        
-                                                                        // Set new static value
-                                                                        if (
-                                                                            (
-                                                                                question.questionInfo.Answer_Type__c === 'Boolean' &&
-                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsHidden__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsRequired__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsReadOnly__c'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Boolean__c;
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Currency' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Question_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Date' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Date__c;
-                                                                        }
-                                                                        else if (
-                                                                            (
-                                                                                question.questionInfo.Answer_Type__c === 'Decimal' &&
-                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Minimum_Value__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Value__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Step_Value__c'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Decimal__c;
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Integer' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Integer__c;
-                                                                        }
-                                                                        else if (
-                                                                            (
-                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer' &&
+                                                                        question.questionInfo.prevValues[action.actionInfo.Question_Adjustment_Field__c] = question.questionInfo[action.actionInfo.Question_Adjustment_Field__c];
+        
+                                                                        // Static Source
+                                                                        if (action.actionInfo.Value_Source_Type__c === 'Static') {
+                                                                            
+                                                                            // Set new static value
+                                                                            if (
                                                                                 (
-                                                                                    question.questionInfo.Answer_Type__c === 'Picklist' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Text' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Text Area'
-                                                                                )
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
-                                                                        ) {
-                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Text__c;
-                                                                        }
-                                                                    }
-                                                                    // Dynamic Source
-                                                                    else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
-
-                                                                        let fieldType;
-                                                                        if (
-                                                                            (
-                                                                                question.questionInfo.Answer_Type__c === 'Boolean' &&
+                                                                                    question.questionInfo.Answer_Type__c === 'Boolean' &&
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsHidden__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsRequired__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsReadOnly__c'
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Boolean__c;
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Currency' &&
                                                                                 action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsHidden__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsRequired__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'IsReadOnly__c'
-                                                                        ) {
-                                                                            fieldType = 'Boolean';
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Currency' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            fieldType = 'Currency';
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Date' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            fieldType = 'Date';
-                                                                        }
-                                                                        else if (
-                                                                            (
-                                                                                question.questionInfo.Answer_Type__c === 'Decimal' &&
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Question_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Date' &&
                                                                                 action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Minimum_Value__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Value__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Step_Value__c'
-                                                                        ) {
-                                                                            fieldType = 'Decimal';
-                                                                        }
-                                                                        else if (question.questionInfo.Answer_Type__c === 'Integer' &&
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'answer'
-                                                                        ) {
-                                                                            fieldType = 'Integer';
-                                                                        }
-                                                                        else if (
-                                                                            (
-                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer' &&
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Date__c;
+                                                                            }
+                                                                            else if (
                                                                                 (
-                                                                                    question.questionInfo.Answer_Type__c === 'Picklist' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Text' ||
-                                                                                    question.questionInfo.Answer_Type__c === 'Text Area'
-                                                                                )
-                                                                            ) ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
-                                                                            action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
-                                                                        ) {
-                                                                            fieldType = 'Text';
+                                                                                    question.questionInfo.Answer_Type__c === 'Decimal' &&
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Minimum_Value__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Value__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Step_Value__c'
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Decimal__c;
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Integer' &&
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Integer__c;
+                                                                            }
+                                                                            else if (
+                                                                                (
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer' &&
+                                                                                    (
+                                                                                        question.questionInfo.Answer_Type__c === 'Picklist' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Text' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Text Area'
+                                                                                    )
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
+                                                                            ) {
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Text__c;
+                                                                            }
                                                                         }
-                                                                        question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
-                                                                    }
-                                                                } else {
-                                                                    if (question.questionInfo.prevValues.hasOwnProperty(action.actionInfo.Question_Adjustment_Field__c)) {
-                                                                        question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = question.questionInfo.prevValues[action.actionInfo.Question_Adjustment_Field__c];
-                                                                    }
-                                                                }
+                                                                        // Dynamic Source
+                                                                        else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
 
-                                                                if (question.questionInfo.actionSet !== undefined) {
-                                                                    question.questionInfo.actionSet += 1;
-                                                                } else {
-                                                                    question.questionInfo.actionSet = 1;
+                                                                            let fieldType;
+                                                                            if (
+                                                                                (
+                                                                                    question.questionInfo.Answer_Type__c === 'Boolean' &&
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsHidden__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsRequired__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'IsReadOnly__c'
+                                                                            ) {
+                                                                                fieldType = 'Boolean';
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Currency' &&
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                            ) {
+                                                                                fieldType = 'Currency';
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Date' &&
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                            ) {
+                                                                                fieldType = 'Date';
+                                                                            }
+                                                                            else if (
+                                                                                (
+                                                                                    question.questionInfo.Answer_Type__c === 'Decimal' &&
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Minimum_Value__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Value__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Step_Value__c'
+                                                                            ) {
+                                                                                fieldType = 'Decimal';
+                                                                            }
+                                                                            else if (question.questionInfo.Answer_Type__c === 'Integer' &&
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'answer'
+                                                                            ) {
+                                                                                fieldType = 'Integer';
+                                                                            }
+                                                                            else if (
+                                                                                (
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'answer' &&
+                                                                                    (
+                                                                                        question.questionInfo.Answer_Type__c === 'Picklist' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Text' ||
+                                                                                        question.questionInfo.Answer_Type__c === 'Text Area'
+                                                                                    )
+                                                                                ) ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
+                                                                                action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
+                                                                            ) {
+                                                                                fieldType = 'Text';
+                                                                            }
+                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
+                                                                        }
+                                                                    } else {
+                                                                        if (question.questionInfo.prevValues.hasOwnProperty(action.actionInfo.Question_Adjustment_Field__c)) {
+                                                                            question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = question.questionInfo.prevValues[action.actionInfo.Question_Adjustment_Field__c];
+                                                                        }
+                                                                    }
+
+                                                                    if (question.questionInfo.actionSet !== undefined) {
+                                                                        question.questionInfo.actionSet += 1;
+                                                                    } else {
+                                                                        question.questionInfo.actionSet = 1;
+                                                                    }
                                                                 }
                                                             }
-                                                        }
-                                                    }, this);
+                                                        }, this);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    }, this);
-                                }
-                            }, this);
-                        }
-                        // Product actions
-                        else if (
-                            (
-                                action.actionInfo.Action_Type__c === 'Add product' ||
-                                action.actionInfo.Action_Type__c === 'Adjust product field'
-                            ) &&
-                            action.actionInfo.Product__c !== undefined
-                        ) {
-                            
-                            // Find associated product
-                            // Selected pricebook
-                            if (this.selectedPricebook !== undefined &&
-                                this.selectedPricebook.PricebookEntries !== undefined    
+                                        }, this);
+                                    }
+                                }, this);
+                            }
+                            // Product actions
+                            else if (
+                                (
+                                    action.actionInfo.Action_Type__c === 'Add product' ||
+                                    action.actionInfo.Action_Type__c === 'Adjust product field'
+                                ) &&
+                                action.actionInfo.Product__c !== undefined
                             ) {
-                                this.selectedPricebook.PricebookEntries.forEach(function(entry) {
-                                    // Matching product
-                                    if (entry.Product2Id === action.actionInfo.Product__c) {
+                                
+                                // Find associated product
+                                // Selected pricebook
+                                if (this.selectedPricebook !== undefined &&
+                                    this.selectedPricebook.PricebookEntries !== undefined    
+                                ) {
+                                    this.selectedPricebook.PricebookEntries.forEach(function(entry) {
+                                        // Matching product
+                                        if (entry.Product2Id === action.actionInfo.Product__c) {
 
-                                        if (action.actionInfo.Action_Type__c === 'Add product') {
-
-                                            if (ruleEvaluation === true) {
-
-                                                // Only add if not already added by this rule (only relevant for initial action on edit)
-                                                if (this.quoteProducts.filter(
-                                                        product => product.addedByAction === action.actionInfo.Id
-                                                    ).length === 0
-                                                ) {
-                                                    this.addProduct(JSON.parse(JSON.stringify(entry)), action.actionInfo.Id);
-                                                }
-
-                                            } else {
-
-                                                // Remove product
-                                                let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
-                                                updatedProducts = updatedProducts.filter(
-                                                    product => product.addedByAction !== action.actionInfo.Id
-                                                );
-
-                                                // Re-Key products
-                                                this.quoteProductKeyHelper += 1;
-                                                updatedProducts.forEach(function(productToKey) {
-                                                    productToKey.key = updatedProducts.indexOf(productToKey).toString() + '.' + this.quoteProductKeyHelper.toString()
-                                                }, this);
-                                                this.quoteProducts = updatedProducts;
-                                            }
-                                        }
-                                        else if (action.actionInfo.Action_Type__c === 'Adjust product field') {
-
-                                            // Manually Addible (pricebook entry level)
-                                            if (action.actionInfo.Product_Adjustment_Field__c === 'Manually_Addible') {
+                                            if (action.actionInfo.Action_Type__c === 'Add product') {
 
                                                 if (ruleEvaluation === true) {
-                                                    entry.Manually_Addible = action.actionInfo.Product_Field_Value_Boolean__c;
-                                                } else {
-                                                    entry.Manually_Addible = !action.actionInfo.Product_Field_Value_Boolean__c;
-                                                }
 
-                                                if (entry.Manually_Addible === false) {
-                                                    // Remove manually added product
+                                                    // Only add if not already added by this rule (only relevant for initial action on edit)
+                                                    if (this.quoteProducts.filter(
+                                                            product => product.addedByAction === action.actionInfo.Id
+                                                        ).length === 0
+                                                    ) {
+                                                        this.addProduct(JSON.parse(JSON.stringify(entry)), action.actionInfo.Id);
+                                                    }
+
+                                                } else {
+
+                                                    // Remove product
                                                     let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
                                                     updatedProducts = updatedProducts.filter(
-                                                        product => product.addedByAction === undefined && product.Product2Id === entry.Product2Id
+                                                        product => product.addedByAction !== action.actionInfo.Id
                                                     );
 
                                                     // Re-Key products
@@ -1346,98 +1323,130 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                     this.quoteProducts = updatedProducts;
                                                 }
                                             }
-                                            // All others (quote product level)
-                                            else {
-                                                this.quoteProducts.forEach(function(product) {
-                                                    if (product.Product2Id === action.actionInfo.Product__c &&
-                                                        (
-                                                            (// Targeting specific rule action or not targeting anything
-                                                                action.actionInfo.Target_Manual_Addition_Only__c !== true &&
-                                                                (
-                                                                    action.actionInfo.Product_Adjustment_Target_Rule_Action__c === undefined ||
-                                                                    product.addedByAction === action.actionInfo.Product_Adjustment_Target_Rule_Action__c
-                                                                )
-                                                            ) ||
-                                                            (// Manually added target
-                                                                action.actionInfo.Target_Manual_Addition_Only__c === true &&
-                                                                product.addedByAction === undefined
-                                                            )
-                                                        )
-                                                    ) {
-                                                        if (ruleEvaluation === true) {
+                                            else if (action.actionInfo.Action_Type__c === 'Adjust product field') {
 
-                                                            product.prevValues[action.actionInfo.Product_Adjustment_Field__c] = product[action.actionInfo.Product_Adjustment_Field__c];
-                                                            product.qliFields.push(action.actionInfo.Product_Adjustment_Field__c);
+                                                // Manually Addible (pricebook entry level)
+                                                if (action.actionInfo.Product_Adjustment_Field__c === 'Manually_Addible') {
 
-                                                            // Static Source
-                                                            if (action.actionInfo.Value_Source_Type__c === 'Static') {
-                                                                
-                                                                // Set new static value
-                                                                if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Boolean') {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Boolean__c;
-                                                                }
-                                                                else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Currency') {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Product_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
-                                                                }
-                                                                else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Date') {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Date__c;
-                                                                }
-                                                                else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Decimal') {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Decimal__c;
-                                                                }
-                                                                else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Integer') {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Integer__c;
-                                                                }
-                                                                else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Picklist' ||
-                                                                    action.actionInfo.Product_Adjustment_Field_Type__c === 'Multi-Select Picklist' ||
-                                                                    action.actionInfo.Product_Adjustment_Field_Type__c === 'Text' ||
-                                                                    action.actionInfo.Product_Adjustment_Field_Type__c === 'Text Area'
-                                                                ) {
-                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Text__c;
-                                                                }
-                                                            }
-                                                            // Dynamic Source
-                                                            else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
-                                                                product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c);
-                                                            }
-                                                        } else {
-                                                            if (product.prevValues.hasOwnProperty(action.actionInfo.Product_Adjustment_Field__c)) {
-                                                                product[action.actionInfo.Product_Adjustment_Field__c] = product.prevValues[action.actionInfo.Product_Adjustment_Field__c];
-                                                            }
-                                                        }
-
-                                                        // Reset Discount
-                                                        if (action.actionInfo.Product_Adjustment_Field__c === 'Unit_Price' ||
-                                                            action.actionInfo.Product_Adjustment_Field__c === 'List_Price'
-                                                        ) {
-                                                            if (product.List_Price !== 0) {
-                                                                product.Discount = 1 - (product.Unit_Price / product.List_Price);
-                                                            } else {
-                                                                product.Discount = 0;
-                                                            }
-                                                        }
-
-                                                        // Reset Unit Price
-                                                        else if (action.actionInfo.Product_Adjustment_Field__c === 'Discount') {
-                                                            product.Unit_Price = (1 - product.Discount) * product.List_Price;
-                                                        }
-
-                                                        // Reset prices
-                                                        product.Total_Price = product.Quantity * product.Unit_Price;
-                                                        product.Sub_Total_Price = product.Quantity * product.List_Price;
+                                                    if (ruleEvaluation === true) {
+                                                        entry.Manually_Addible = action.actionInfo.Product_Field_Value_Boolean__c;
+                                                    } else {
+                                                        entry.Manually_Addible = !action.actionInfo.Product_Field_Value_Boolean__c;
                                                     }
-                                                }, this);
+
+                                                    if (entry.Manually_Addible === false) {
+                                                        // Remove manually added product
+                                                        let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
+                                                        updatedProducts = updatedProducts.filter(
+                                                            product => product.addedByAction === undefined && product.Product2Id === entry.Product2Id
+                                                        );
+
+                                                        // Re-Key products
+                                                        this.quoteProductKeyHelper += 1;
+                                                        updatedProducts.forEach(function(productToKey) {
+                                                            productToKey.key = updatedProducts.indexOf(productToKey).toString() + '.' + this.quoteProductKeyHelper.toString()
+                                                        }, this);
+                                                        this.quoteProducts = updatedProducts;
+                                                    }
+                                                }
+                                                // All others (quote product level)
+                                                else {
+                                                    this.quoteProducts.forEach(function(product) {
+                                                        if (product.Product2Id === action.actionInfo.Product__c &&
+                                                            (
+                                                                (// Targeting specific rule action or not targeting anything
+                                                                    action.actionInfo.Target_Manual_Addition_Only__c !== true &&
+                                                                    (
+                                                                        action.actionInfo.Product_Adjustment_Target_Rule_Action__c === undefined ||
+                                                                        product.addedByAction === action.actionInfo.Product_Adjustment_Target_Rule_Action__c
+                                                                    )
+                                                                ) ||
+                                                                (// Manually added target
+                                                                    action.actionInfo.Target_Manual_Addition_Only__c === true &&
+                                                                    product.addedByAction === undefined
+                                                                )
+                                                            )
+                                                        ) {
+                                                            if (ruleEvaluation === true) {
+
+                                                                product.prevValues[action.actionInfo.Product_Adjustment_Field__c] = product[action.actionInfo.Product_Adjustment_Field__c];
+                                                                product.qliFields.push(action.actionInfo.Product_Adjustment_Field__c);
+
+                                                                // Static Source
+                                                                if (action.actionInfo.Value_Source_Type__c === 'Static') {
+                                                                    
+                                                                    // Set new static value
+                                                                    if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Boolean') {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Boolean__c;
+                                                                    }
+                                                                    else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Currency') {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Product_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                                                    }
+                                                                    else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Date') {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Date__c;
+                                                                    }
+                                                                    else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Decimal') {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Decimal__c;
+                                                                    }
+                                                                    else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Integer') {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Integer__c;
+                                                                    }
+                                                                    else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Picklist' ||
+                                                                        action.actionInfo.Product_Adjustment_Field_Type__c === 'Multi-Select Picklist' ||
+                                                                        action.actionInfo.Product_Adjustment_Field_Type__c === 'Text' ||
+                                                                        action.actionInfo.Product_Adjustment_Field_Type__c === 'Text Area'
+                                                                    ) {
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Text__c;
+                                                                    }
+                                                                }
+                                                                // Dynamic Source
+                                                                else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
+                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c);
+                                                                }
+                                                            } else {
+                                                                if (product.prevValues.hasOwnProperty(action.actionInfo.Product_Adjustment_Field__c)) {
+                                                                    product[action.actionInfo.Product_Adjustment_Field__c] = product.prevValues[action.actionInfo.Product_Adjustment_Field__c];
+                                                                }
+                                                            }
+
+                                                            // Reset Discount
+                                                            if (action.actionInfo.Product_Adjustment_Field__c === 'Unit_Price' ||
+                                                                action.actionInfo.Product_Adjustment_Field__c === 'List_Price'
+                                                            ) {
+                                                                if (product.List_Price !== 0) {
+                                                                    product.Discount = 1 - (product.Unit_Price / product.List_Price);
+                                                                } else {
+                                                                    product.Discount = 0;
+                                                                }
+                                                            }
+
+                                                            // Reset Unit Price
+                                                            else if (action.actionInfo.Product_Adjustment_Field__c === 'Discount') {
+                                                                product.Unit_Price = (1 - product.Discount) * product.List_Price;
+                                                            }
+
+                                                            // Reset prices
+                                                            product.Total_Price = product.Quantity * product.Unit_Price;
+                                                            product.Sub_Total_Price = product.Quantity * product.List_Price;
+                                                        }
+                                                    }, this);
+                                                }
                                             }
                                         }
-                                    }
-                                }, this);
+                                    }, this);
+                                }
                             }
-                        }
-                    }, this);
-                }
+                        }, this);
+                    }
 
-                // Set lookback evaluation for next update
-                rule.ruleInfo.prevEvaluation = ruleEvaluation;
+                    // Set lookback evaluation for next update
+                    rule.ruleInfo.prevEvaluation = ruleEvaluation;
+
+                    // Set hasHadTrueEvaluation
+                    if (ruleEvaluation === true) {
+                        rule.ruleInfo.hasHadTrueEvaluation = true;
+                    }
+                }
             }
         }, this);
 
