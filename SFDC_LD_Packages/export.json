@@ -1,17 +1,12 @@
 {
     "objects": [
         {
-            "query": "SELECT Id,Description,Name,IsActive,IsStandard FROM Pricebook2",
+            "query": "SELECT Id,Description,Name,IsActive,IsStandard FROM Pricebook2 WHERE IsActive = TRUE",
             "operation": "Upsert",
             "externalId": "Name;Description"
         },
         {
-            "query": "SELECT Id,Description,Family,IsActive,Name,ProductCode FROM Product2",
-            "operation": "Upsert",
-            "externalId": "Name;ProductCode"
-        },
-        {
-            "query": "SELECT Id,IsActive,Dates_Editable__c,Discountable__c,UnitPrice,List_Price_Editable__c,Manually_Addible__c,Pricebook2Id,Product2Id,Quantity__c,Quantity_Editable__c,Removable__c FROM PricebookEntry",
+            "query": "SELECT Id,IsActive,Dates_Editable__c,Discountable__c,UnitPrice,List_Price_Editable__c,Manually_Addible__c,Pricebook2Id,Product2Id,Quantity__c,Quantity_Editable__c,Removable__c FROM PricebookEntry WHERE IsActive = TRUE AND Product2.IsActive = TRUE",
             "operation": "Upsert",
             "externalId": "Product2.Name;UnitPrice;Pricebook2.Name",
             "master": false
@@ -40,7 +35,7 @@
             "externalId": "Variable_Name__c"
         },
         {
-            "query": "SELECT Id,CPQ_Playbook__c,Execution_Order__c,Evaluate_When__c,IsActive__c,Name FROM CPQ_Playbook_Rule__c",
+            "query": "SELECT Id,CPQ_Playbook__c,Description__c,Execution_Order__c,Evaluate_When__c,IsActive__c,Name FROM CPQ_Playbook_Rule__c",
             "operation": "Upsert",
             "externalId": "Name;CPQ_Playbook__r.Name"
         },
@@ -108,7 +103,7 @@
             "externalId": "Name;CPQ_Playbook_Proposal_Section__r.Name"
         },
         {
-            "query": "SELECT Id,Comparison_Operator__c,Comparison_Value_Boolean__c,Comparison_Value_Currency__c,Comparison_Value_Date__c,Comparison_Value_Decimal__c,Comparison_Value_Integer__c,Comparison_Value_Text__c,CPQ_Playbook_Question__c,CPQ_Playbook_Proposal_Criteria_Group__c,Criterion_Source__c,Evaluation_Logic__c,IsActive__c,N__c,Name,Product__c,Product_Criterion_Target_Rule_Action__c,Product_Field__c,Target_Manual_Addition_Only__c FROM CPQ_Playbook_Proposal_Criterion__c",
+            "query": "SELECT Id,Comparison_Operator__c,Comparison_Value_Boolean__c,Comparison_Value_Currency__c,Comparison_Value_Date__c,Comparison_Value_Decimal__c,Comparison_Value_Integer__c,Comparison_Value_Text__c,CPQ_Playbook_Question__c,CPQ_Playbook_Proposal_Criteria_Group__c,Criterion_Source__c,Evaluation_Logic__c,IsActive__c,N__c,Name,Product__c,Product_Criterion_Target_Rule_Action__c,Product_Field__c,Product_Is_Entitlement__c,Target_Manual_Addition_Only__c FROM CPQ_Playbook_Proposal_Criterion__c",
             "operation": "Upsert",
             "externalId": "Name;CPQ_Playbook_Proposal_Criteria_Group__r.Name"
         }

@@ -29,7 +29,7 @@
         <label>Approval Step</label>
         <name>Approval_Step</name>
     </approvalStep>
-    <emailTemplate>unfiled$public/CPQ_Approver_Assignment_vf</emailTemplate>
+    <emailTemplate>CPQ/CPQ_Approver_Assignment_vf</emailTemplate>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <criteriaItems>
