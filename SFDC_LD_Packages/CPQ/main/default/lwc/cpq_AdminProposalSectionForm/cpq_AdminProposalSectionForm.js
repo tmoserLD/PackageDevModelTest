@@ -111,11 +111,11 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     }
 
     get showTextBlock1() {
-        return ['Text - 1 column', 'Text - 2 columns', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Product Table', 'Entitlement Table', 'Answer Table - 1 column','Answer Table - 2 columns', 'User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 1 column', 'Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Product Table', 'Entitlement Table', 'Answer Table - 1 column','Answer Table - 2 columns', 'User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
     }
 
     get showTextBlock2() {
-        return ['Text - 2 columns', 'Text - 3 columns', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
     }
 
     get showTextBlock3() {

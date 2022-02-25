@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Approver Group</label>
     <nameField>
-        <label>CPQ Playbook Approver Group Name</label>
+        <label>Approver Group Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Approver Groups</pluralLabel>

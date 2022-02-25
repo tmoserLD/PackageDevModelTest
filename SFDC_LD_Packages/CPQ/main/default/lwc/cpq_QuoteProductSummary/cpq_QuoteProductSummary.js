@@ -136,8 +136,27 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     }
 
     // Determine if any Products are currently on quote
-    get hasProducts() {
-        return this.quoteProducts.length > 0;
+    get showProductSummary() {
+        let hasProductsToAdd = false;
+        if (this.pricebook !== undefined &&
+            this.pricebook.PricebookEntries !== undefined    
+        ) {
+            let addibleProducts = this.pricebook.PricebookEntries.filter(
+                pbe => pbe.Manually_Addible === true
+            );
+            if (addibleProducts.length > 0) {
+                addibleProducts.forEach(function(prod) {
+                    if (this.quoteProducts.filter(
+                        product => product.addedByAction === undefined && product.Product2Id === prod.Product2Id
+                        ).length === 0
+                    ) {
+                        hasProductsToAdd = true;
+                    }
+                }, this);
+            }
+        }
+        
+        return this.quoteProducts.length > 0 || hasProductsToAdd;
     }
 
     // Determine if Products are available to add manually

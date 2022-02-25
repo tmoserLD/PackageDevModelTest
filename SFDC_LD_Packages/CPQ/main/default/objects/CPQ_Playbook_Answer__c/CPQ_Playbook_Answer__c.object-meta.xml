@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Answer</label>
     <nameField>
-        <label>CPQ Playbook Answer Name</label>
+        <label>Playbook Answer Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Answers</pluralLabel>

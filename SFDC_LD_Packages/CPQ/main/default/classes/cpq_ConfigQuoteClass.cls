@@ -284,6 +284,7 @@ public with sharing class cpq_ConfigQuoteClass {
         playbookQuestionGroups = [
             SELECT Id,
                 CPQ_Playbook__c,
+                Default_Collapsed__c,
                 Display_Order__c,
                 IsActive__c,
                 IsHidden__c,

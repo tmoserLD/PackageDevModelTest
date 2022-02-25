@@ -11,6 +11,11 @@ export default class CPQ_PlaybookQuestionGroup extends LightningElement {
     // Value of group questions being shown
     @track collapsed = false;
 
+    // On Mount
+    connectedCallback() {
+        this.collapsed = this.group.groupInfo.Default_Collapsed__c;
+    }
+
     // If Group has at all questions completed
     get completed() {
         let completed = true;

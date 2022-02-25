@@ -52,7 +52,7 @@ export default class CPQ_QuoteProduct extends LightningElement {
 
     // CSS class names string for component
     get colCSS() {
-        let colCSS = 'slds-col';
+        let colCSS = 'slds-col slds-p-left_xx-small';
         if (this.sortedQuoteProducts.indexOf(
             this.sortedQuoteProducts.find(
                 product => product.key === this.product.key

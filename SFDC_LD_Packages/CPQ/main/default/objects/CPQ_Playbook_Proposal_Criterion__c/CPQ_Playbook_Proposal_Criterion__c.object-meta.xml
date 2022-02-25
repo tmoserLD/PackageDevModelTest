@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Proposal Criterion</label>
     <nameField>
-        <label>CPQ Playbook Proposal Criterion Name</label>
+        <label>Criterion Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Proposal Criteria</pluralLabel>

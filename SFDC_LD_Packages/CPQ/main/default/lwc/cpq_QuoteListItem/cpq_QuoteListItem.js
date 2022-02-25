@@ -104,7 +104,8 @@ export default class CPQ_QuoteListItem extends LightningElement {
 
     // Determine if Quote can have proposal generated
     get canGenProposal() {
-        if (this.quote.IsSyncing &&
+        if (
+            // this.quote.IsSyncing &&
             !this.oppInfo.Lock_CPQ__c &&
             this.quote.Playbook_Status__c === 'Complete'
         ) {
@@ -132,9 +133,9 @@ export default class CPQ_QuoteListItem extends LightningElement {
         if (this.oppInfo.Lock_CPQ__c) {
             title = 'Cannot Generate Proposal. Opportunity is locked';
         }
-        else if (!this.quote.IsSyncing) {
-            title = 'Cannot Generate Proposal. Quote is not synced';
-        }
+        // else if (!this.quote.IsSyncing) {
+        //     title = 'Cannot Generate Proposal. Quote is not synced';
+        // }
         else if (this.quote.Playbook_Status__c !== 'Complete') {
             title = 'Cannot Generate Proposal. Playbook is incomplete';
         }

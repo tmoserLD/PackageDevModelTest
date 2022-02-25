@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Approver</label>
     <nameField>
-        <label>CPQ Playbook Approver Name</label>
+        <label>Approver Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Approvers</pluralLabel>

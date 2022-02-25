@@ -25,7 +25,7 @@
             ]
         },
         {
-            "query": "SELECT Id,CPQ_Playbook__c,Display_Order__c,IsActive__c,IsHidden__c,Label__c,Name FROM CPQ_Playbook_Question_Group__c",
+            "query": "SELECT Id,CPQ_Playbook__c,Default_Collapsed__c,Display_Order__c,IsActive__c,IsHidden__c,Label__c,Name FROM CPQ_Playbook_Question_Group__c",
             "operation": "Upsert",
             "externalId": "Name;Label__c;CPQ_Playbook__r.Name"
         },

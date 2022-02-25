@@ -33,6 +33,11 @@
                 <label>Always when TRUE</label>
             </value>
             <value>
+                <fullName>On first evalutation</fullName>
+                <default>false</default>
+                <label>On first evalutation</label>
+            </value>
+            <value>
                 <fullName>On first TRUE evalutation</fullName>
                 <default>false</default>
                 <label>On first TRUE evalutation</label>

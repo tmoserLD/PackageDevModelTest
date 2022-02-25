@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Proposal Section</label>
     <nameField>
-        <label>CPQ Playbook Proposal Section Name</label>
+        <label>Proposal Section Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Proposal Sections</pluralLabel>

@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Quote Approval</label>
     <nameField>
-        <label>CPQ Quote Approval Name</label>
+        <label>Quote Approval Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Quote Approvals</pluralLabel>

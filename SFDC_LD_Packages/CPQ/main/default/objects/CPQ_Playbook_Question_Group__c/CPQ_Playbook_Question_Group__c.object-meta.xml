@@ -156,7 +156,7 @@
     <externalSharingModel>ControlledByParent</externalSharingModel>
     <label>CPQ Playbook Question Group</label>
     <nameField>
-        <label>CPQ Playbook Question Group Name</label>
+        <label>Question Group Name</label>
         <type>Text</type>
     </nameField>
     <pluralLabel>CPQ Playbook Question Groups</pluralLabel>

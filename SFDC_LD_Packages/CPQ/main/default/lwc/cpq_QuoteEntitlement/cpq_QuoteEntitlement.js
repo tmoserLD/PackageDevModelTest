@@ -16,7 +16,7 @@ export default class CPQ_QuoteEntitlement extends LightningElement {
 
     // CSS class names string for component
     get colCSS() {
-        let colCSS = 'slds-col';
+        let colCSS = 'slds-col slds-p-left_xx-small';
         if (this.sortedEntitlements.indexOf(
             this.sortedEntitlements.find(
                 entitlement => entitlement.Id === this.entitlement.Id
