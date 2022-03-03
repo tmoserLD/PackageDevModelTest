@@ -51,6 +51,30 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         this.showQuoteConfig = true;
     }
 
+    // Amend Contract event received
+    amendContract(event) {
+        this.configType = 'New';
+        
+        // Contract
+        let tempQuoteObj = this.oppInfo.Contracts.find(
+            contract => contract.Id === event.detail
+        );
+
+        // Set 'Quote' data
+        tempQuoteObj.Name = 'Contract Amendment';
+        tempQuoteObj.QuoteLineItems = [];
+        tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
+        tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
+        tempQuoteObj.Adjustment_Type__c = 'Amendment';
+
+        // Remove Id -- since not quote
+        tempQuoteObj.contractId = tempQuoteObj.Id;
+        tempQuoteObj.Id = undefined;
+
+        this.quoteForConfig = tempQuoteObj;
+        this.showQuoteConfig = true;
+    }
+
     // Replace Contract event received
     replaceContract(event) {
         this.configType = 'New';
@@ -220,7 +244,7 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
     }
 
     navToOpp() {
-        // Navigate to the Account home page
+        // Navigate to the Opportunity home page
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {

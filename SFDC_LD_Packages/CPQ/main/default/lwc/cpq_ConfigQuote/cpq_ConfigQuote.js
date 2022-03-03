@@ -612,6 +612,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     if (criterion.criterionInfo.System_Value_Source__c === 'Is Edit') {
                         criterionEvaluation = ((this.configType === 'Edit') === criterion.criterionInfo.Comparison_Value_Boolean__c);
                     }
+                    // No Contract
+                    else if (criterion.criterionInfo.System_Value_Source__c === 'No Contract') {
+                        criterionEvaluation = ((this.existingQuoteData.Adjustment_of_Contract__c === undefined) === criterion.criterionInfo.Comparison_Value_Boolean__c);
+                    }
+                    // Is Contract Amendment
+                    else if (criterion.criterionInfo.System_Value_Source__c === 'Is Contract Amendment') {
+                        criterionEvaluation = ((this.existingQuoteData.Adjustment_Type__c === 'Amendment') === criterion.criterionInfo.Comparison_Value_Boolean__c);
+                    }
                     // Is Contract Replacement
                     else if (criterion.criterionInfo.System_Value_Source__c === 'Is Contract Replacement') {
                         criterionEvaluation = ((this.existingQuoteData.Adjustment_Type__c === 'Replacement') === criterion.criterionInfo.Comparison_Value_Boolean__c);
@@ -1546,16 +1554,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
             }, this);
         }
 
-        // Reset rules
-        // this.rules.forEach(function(rule) {
-        //     rule.ruleInfo.prevEvaluation = undefined;
-        //     rule.ruleInfo.hasHadTrueEvaluation = undefined;
-        //     rule.ruleInfo.doNotEvaluate = undefined;
-        // });
-
-        // Reset products
-        // this.quoteProducts = [];
-
         // Reset approvals
         this.quoteApprovals = [];
 
@@ -1926,11 +1924,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
         // If a rule changed evaluation, run rules again to see if actions cause others to change evaluation
         if (result.changedRuleEvaluation === true) {
             result = this.evaluateRules(result.playbooks);
-
-            // If a rule changed evaluation, run rules again to see if actions cause others to change evaluation
-            // if (result.changedRuleEvaluation === true) {
-            //     result = this.evaluateRules(result.playbooks);
-            // }
         }
 
         // this.evaluateContractAdjustment();
@@ -1983,7 +1976,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
             quoteLineItems.push(qli);
         }, this);
-        // debugger;
 
         // Configure Playbook Answers
         let playbookAnswers = [];

@@ -18,6 +18,16 @@
                 <label>Is Edit</label>
             </value>
             <value>
+                <fullName>No Contract</fullName>
+                <default>false</default>
+                <label>No Contract</label>
+            </value>
+            <value>
+                <fullName>Is Contract Amendment</fullName>
+                <default>false</default>
+                <label>Is Contract Amendment</label>
+            </value>
+            <value>
                 <fullName>Is Contract Replacement</fullName>
                 <default>false</default>
                 <label>Is Contract Replacement</label>

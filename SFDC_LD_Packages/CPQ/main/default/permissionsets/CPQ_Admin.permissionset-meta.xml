@@ -938,7 +938,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Contract.IsReplaced__c</field>
+        <field>Contract.Adjustment_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -984,11 +984,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contract_Entitlement__c.Product__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Contract_Entitlement__c.Quote_Line_Item__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1447,6 +1442,10 @@
     </tabSettings>
     <tabSettings>
         <tab>CPQ_by_Opportunity</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Contracts_by_Account</tab>
         <visibility>Visible</visibility>
     </tabSettings>
 </PermissionSet>

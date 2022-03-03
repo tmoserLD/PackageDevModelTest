@@ -1295,7 +1295,7 @@ public class cpq_ProposalPDF_ControllerTest {
             Pricebook2Id = testPricebooks[0].Id,
             Name = 'Test Quote',
             Adjustment_of_Contract__c = testContract.Id,
-            Adjustment_Type__c = 'On Renewal',
+            Adjustment_Type__c = 'Renewal',
             CPQ_Playbook__c = testPlaybooks[0].Id,
             IsClone__c = false,
             Playbook_Status__c = 'Complete'

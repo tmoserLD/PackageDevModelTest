@@ -1,0 +1,54 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <lightning-card
+        title="View Contracts for a given Account"
+        variant="narrow"
+    >
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-p-horizontal_small">
+                    <c-search-component
+                        obj-name="Account"
+                        icon-name="standard:account"
+                        label-name="Account"
+                        placeholder="Search" 
+                        fields={fields}
+                        display-fields={displayFields}
+                        onlookup={handleLookup} >
+                    </c-search-component>
+                </div>
+                <template if:false={hasAcctId}>
+                    <div style="max-height: 50vh;overflow:auto">
+                        <c-item-selector
+                            items={recentlyViewed}
+                            selected-value="nothing"
+                            selected-attribute="nothing"
+                            list-style="column"
+                            header="Recently Viewed"
+                            header-attribute="name"
+                            footer-attribute1="ownerName"
+                            footer-label1="Owner: "
+                            icon-name="standard:account"
+                            show-search="false"
+                            show-create="false"
+                            onselect={recordSelected}
+                        >
+                        </c-item-selector>
+                    </div>
+                </template>
+            </div>
+            <div class="slds-col slds-size_5-of-6 slds-p-around_small">
+                <template if:true={hasAcctId}>
+                    <c-cpq_-account-contracts
+                        acct-id={acctId}
+                    >
+                    </c-cpq_-account-contracts>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>

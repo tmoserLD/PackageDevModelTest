@@ -197,20 +197,53 @@ public class OppContractTest {
                 new QuoteLineItem(
                     Discount__c = 0,
                     End_Date__c = (Date.today() + index),
-                    List_Price__c = 0,
+                    List_Price__c = index,
                     Product2Id = testProducts[index].Id,
                     PricebookEntryId = testEntries[index].Id,
-                    Quantity__c = 1,
-                    Quantity = 1,
+                    Quantity__c = index + 1,
+                    Quantity = index + 1,
                     Start_Date__c = (Date.today() - index),
-                    Unit_Price__c = 0,
-                    UnitPrice = 0,
+                    Unit_Price__c = index,
+                    UnitPrice = index,
                     QuoteId = testQuote.Id
                 )
             );
         }
         insert testQLIs;
 
+        // Contract Entitlements
+        List<Contract_Entitlement__c> testEntitlements = new List<Contract_Entitlement__c>();
+        for (Integer index = 0; index < testProducts.size(); index++) {
+            testEntitlements.add(
+                new Contract_Entitlement__c(
+                    End_Date__c = (Date.today() - (1 + index)),
+                    List_Price__c = index,
+                    Product__c = testProducts[index].Id,
+                    Quantity__c = index + 1,
+                    Start_Date__c = (Date.today() - (1 + index)),
+                    Unit_Price__c = index,
+                    Contract__c = testContract.Id
+                )
+            );
+        }
+        insert testEntitlements;
+
+        // Sync quote
+        testOpportunity.SyncedQuoteId = testQuote.Id;
+        update testOpportunity;
+
+        // Update OLIs
+        List<OpportunityLineItem> olis = [
+            SELECT Id
+            FROM OpportunityLineItem
+            WHERE OpportunityId=:testOpportunity.Id
+        ];
+        for (Integer index = 0; index < olis.size(); index++) {
+            olis[index].Quantity = testQLIs[index].Quantity__c;
+            olis[index].UnitPrice = testQLIs[index].Unit_Price__c;
+            olis[index].ServiceDate = (Date.today() + index);
+        }
+        update olis;
     }
 
     /**
@@ -219,37 +252,35 @@ public class OppContractTest {
     @isTest
     public static void testCreateContractReplacement() {
 
-        Contract existingContract = [
-            SELECT Id
-            FROM Contract
-        ];
+        // Get Entitlement fields needed
+        String entFieldsString = '';
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            entFieldsString += fm.Entitlement_Field__c + ',';
+        }
+        entFieldsString = entFieldsString.removeEnd(',');
+
+        String contractQuery = ''
+            + 'SELECT Id,'
+                + '('
+                    + 'SELECT '
+                    + entFieldsString 
+                    + ' FROM Contract_Entitlements__r'
+                + ')'
+            + ' FROM Contract';
+        Contract existingContract = Database.query(contractQuery);
 
         Opportunity testOpp = [
             SELECT Id,
                 AccountId
             FROM Opportunity
         ];
+        Id testOppId = testOpp.Id;
 
         Quote testQuote = [
             SELECT Id,
                 Adjustment_of_Contract__c,
+                Adjustment_Type__c,
                 CPQ_Playbook__c,
-                (
-                    SELECT Id,
-                        CPQ_Playbook_Rule_Action__c,
-                        Discount__c,
-                        End_Date__c,
-                        List_Price__c,
-                        Product2Id,
-                        Product2.Do_Not_Create_Entitlement__c,
-                        Quantity__c,
-                        Unit_Price__c,
-                        Start_Date__c,
-                        TotalPrice
-                    FROM QuoteLineItems
-                    WHERE Product2.Do_Not_Create_Entitlement__c != true
-                    ORDER BY Product2Id
-                ),
                 (
                     SELECT Id,
                         CPQ_Playbook_Question__c,
@@ -265,69 +296,81 @@ public class OppContractTest {
             FROM Quote
         ];
 
-        testOpp.Create_Contract__c = true;
-        testOpp.SyncedQuoteId = testQuote.Id;
+        // Opp Line Items
+
+        // Get OLI fields needed
+        String oliFieldsString = '';
+        Set<String> oliFieldsSet = new Set<String>();
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            if (!oliFieldsSet.contains(fm.OpportunityLineItem_Field__c)) {
+                oliFieldsSet.add(fm.OpportunityLineItem_Field__c);
+                oliFieldsString += fm.OpportunityLineItem_Field__c + ',';
+            }
+        }
+        oliFieldsString = oliFieldsString.removeEnd(',');
+
+        // Set query string
+        String oppLinesQuery = ''
+            + 'SELECT '
+                + oliFieldsString
+            + ' FROM OpportunityLineItem'
+            + ' WHERE Product2.Do_Not_Create_Entitlement__c != true'
+                + ' AND OpportunityId=:testOppId'
+            + ' ORDER BY Product2Id';
+
+        List<OpportunityLineItem> olis = Database.query(oppLinesQuery);
 
         Test.startTest();
 
+        OppContractTriggerHandler.firstRunAfterUpdate = true;
+        testOpp.Create_Contract__c = true;
         update testOpp;
 
         Test.stopTest();
 
         // Verify updates
-        Contract newContract = [
-            SELECT Id,
-                AccountId,
-                Adjustment_of_Contract__c,
-                Opportunity__c,
-                Quote__c,
-                CPQ_Playbook__c,
-                (
-                    SELECT Id,
-                        Discount__c,
-                        End_Date__c,
-                        List_Price__c,
-                        Product__c,
-                        Quantity__c,
-                        Quote_Line_Item__c,
-                        Start_Date__c,
-                        Unit_Price__c,
-                        CPQ_Playbook_Rule_Action__c
-                    FROM Contract_Entitlements__r
-                    ORDER BY Product__c
-                ),
-                (
-                    SELECT Id,
-                        CPQ_Playbook_Question__c,
-                        Name,
-                        Value_Boolean__c,
-                        Value_Currency__c,
-                        Value_Date__c,
-                        Value_Decimal__c,
-                        Value_Integer__c,
-                        Value_Text__c
-                    FROM Contract_Playbook_Answers__r
-                    ORDER BY CPQ_Playbook_Question__c
-                )
-            FROM Contract
-            WHERE Opportunity__c=:testOpp.Id
-        ];
+        String newContractQuery = ''
+            + 'SELECT Id,'
+                + 'AccountId,'
+                + 'Adjustment_of_Contract__c,'
+                + 'Adjustment_Type__c,'
+                + 'Opportunity__c,'
+                + 'Quote__c,'
+                + 'CPQ_Playbook__c,'
+                + '('
+                    + 'SELECT '
+                        + entFieldsString
+                        + ' FROM Contract_Entitlements__r'
+                        + ' ORDER BY Product__c'
+                + '),'
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'Name,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
+                    + ' ORDER BY CPQ_Playbook_Question__c'
+                + ')'
+            + ' FROM Contract'
+            + ' WHERE Opportunity__c=:testOppId';
+
+        Contract newContract = Database.query(newContractQuery);
 
         System.assertEquals(testQuote.Adjustment_of_Contract__c, newContract.Adjustment_of_Contract__c);
+        System.assertEquals(testQuote.Adjustment_Type__c, newContract.Adjustment_Type__c);
         System.assertEquals(testQuote.Id, newContract.Quote__c);
         System.assertEquals(testQuote.CPQ_Playbook__c, newContract.CPQ_Playbook__c);
 
-        System.assertEquals(testQuote.QuoteLineItems.size(), newContract.Contract_Entitlements__r.size());
+        System.assertEquals(olis.size(), newContract.Contract_Entitlements__r.size());
         for (Integer index = 0; index < newContract.Contract_Entitlements__r.size(); index++) {
-            System.assertEquals(testQuote.QuoteLineItems[index].Id, newContract.Contract_Entitlements__r[index].Quote_Line_Item__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Discount__c, newContract.Contract_Entitlements__r[index].Discount__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].End_Date__c, newContract.Contract_Entitlements__r[index].End_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].List_Price__c, newContract.Contract_Entitlements__r[index].List_Price__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Product2Id, newContract.Contract_Entitlements__r[index].Product__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Quantity__c, newContract.Contract_Entitlements__r[index].Quantity__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Start_Date__c, newContract.Contract_Entitlements__r[index].Start_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Unit_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].CPQ_Playbook_Rule_Action__c, newContract.Contract_Entitlements__r[index].CPQ_Playbook_Rule_Action__c);
+            for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+                System.assertEquals(olis[index].get(fm.OpportunityLineItem_Field__c), newContract.Contract_Entitlements__r[index].get(fm.Entitlement_Field__c));
+            } 
         }
 
         System.assertEquals(testQuote.CPQ_Playbook_Answers__r.size(), newContract.Contract_Playbook_Answers__r.size());
@@ -345,52 +388,50 @@ public class OppContractTest {
         Contract updatedContract = [
             SELECT Id,
                 Adjusted_by_Contract__c,
-                IsReplaced__c
+                Contract_Status__c
             FROM Contract
             WHERE Id=:existingContract.Id
         ];
         System.assertEquals(newContract.Id, updatedContract.Adjusted_by_Contract__c);
-        System.assertEquals(true, updatedContract.IsReplaced__c);
+        System.assertEquals('Replaced', updatedContract.Contract_Status__c);
 
     }
 
     /**
-     * @description Test to verify on renewal contract creation
+     * @description Test to verify renewal contract creation
      **/
     @isTest
-    public static void testCreateContractOnRenewal() {
+    public static void testCreateContractRenewal() {
 
-        Contract existingContract = [
-            SELECT Id
-            FROM Contract
-        ];
+        // Get Entitlement fields needed
+        String entFieldsString = '';
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            entFieldsString += fm.Entitlement_Field__c + ',';
+        }
+        entFieldsString = entFieldsString.removeEnd(',');
+
+        String contractQuery = ''
+            + 'SELECT Id,'
+                + '('
+                    + 'SELECT '
+                    + entFieldsString 
+                    + ' FROM Contract_Entitlements__r'
+                + ')'
+            + ' FROM Contract';
+        Contract existingContract = Database.query(contractQuery);
 
         Opportunity testOpp = [
             SELECT Id,
                 AccountId
             FROM Opportunity
         ];
+        Id testOppId = testOpp.Id;
 
         Quote testQuote = [
             SELECT Id,
                 Adjustment_of_Contract__c,
+                Adjustment_Type__c,
                 CPQ_Playbook__c,
-                (
-                    SELECT Id,
-                        CPQ_Playbook_Rule_Action__c,
-                        Discount__c,
-                        End_Date__c,
-                        List_Price__c,
-                        Product2Id,
-                        Product2.Do_Not_Create_Entitlement__c,
-                        Quantity__c,
-                        Unit_Price__c,
-                        Start_Date__c,
-                        TotalPrice
-                    FROM QuoteLineItems
-                    WHERE Product2.Do_Not_Create_Entitlement__c != true
-                    ORDER BY Product2Id
-                ),
                 (
                     SELECT Id,
                         CPQ_Playbook_Question__c,
@@ -405,72 +446,84 @@ public class OppContractTest {
                 )
             FROM Quote
         ];
-        testQuote.Adjustment_Type__c = 'On Renewal';
+        testQuote.Adjustment_Type__c = 'Renewal';
         update testQuote;
 
-        testOpp.Create_Contract__c = true;
-        testOpp.SyncedQuoteId = testQuote.Id;
+        // Opp Line Items
+
+        // Get OLI fields needed
+        String oliFieldsString = '';
+        Set<String> oliFieldsSet = new Set<String>();
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            if (!oliFieldsSet.contains(fm.OpportunityLineItem_Field__c)) {
+                oliFieldsSet.add(fm.OpportunityLineItem_Field__c);
+                oliFieldsString += fm.OpportunityLineItem_Field__c + ',';
+            }
+        }
+        oliFieldsString = oliFieldsString.removeEnd(',');
+
+        // Set query string
+        String oppLinesQuery = ''
+            + 'SELECT '
+                + oliFieldsString
+            + ' FROM OpportunityLineItem'
+            + ' WHERE Product2.Do_Not_Create_Entitlement__c != true'
+                + ' AND OpportunityId=:testOppId'
+            + ' ORDER BY Product2Id';
+
+        List<OpportunityLineItem> olis = Database.query(oppLinesQuery);
 
         Test.startTest();
 
+        OppContractTriggerHandler.firstRunAfterUpdate = true;
+        testOpp.Create_Contract__c = true;
         update testOpp;
 
         Test.stopTest();
 
         // Verify updates
-        Contract newContract = [
-            SELECT Id,
-                AccountId,
-                Adjustment_of_Contract__c,
-                Opportunity__c,
-                Quote__c,
-                CPQ_Playbook__c,
-                (
-                    SELECT Id,
-                        Discount__c,
-                        End_Date__c,
-                        List_Price__c,
-                        Product__c,
-                        Quantity__c,
-                        Quote_Line_Item__c,
-                        Start_Date__c,
-                        Unit_Price__c,
-                        CPQ_Playbook_Rule_Action__c
-                    FROM Contract_Entitlements__r
-                    ORDER BY Product__c
-                ),
-                (
-                    SELECT Id,
-                        CPQ_Playbook_Question__c,
-                        Name,
-                        Value_Boolean__c,
-                        Value_Currency__c,
-                        Value_Date__c,
-                        Value_Decimal__c,
-                        Value_Integer__c,
-                        Value_Text__c
-                    FROM Contract_Playbook_Answers__r
-                    ORDER BY CPQ_Playbook_Question__c
-                )
-            FROM Contract
-            WHERE Opportunity__c=:testOpp.Id
-        ];
+        String newContractQuery = ''
+            + 'SELECT Id,'
+                + 'AccountId,'
+                + 'Adjustment_of_Contract__c,'
+                + 'Adjustment_Type__c,'
+                + 'Opportunity__c,'
+                + 'Quote__c,'
+                + 'CPQ_Playbook__c,'
+                + '('
+                    + 'SELECT '
+                        + entFieldsString
+                        + ' FROM Contract_Entitlements__r'
+                        + ' ORDER BY Product__c'
+                + '),'
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'Name,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
+                    + ' ORDER BY CPQ_Playbook_Question__c'
+                + ')'
+            + ' FROM Contract'
+            + ' WHERE Opportunity__c=:testOppId';
+
+        Contract newContract = Database.query(newContractQuery);
 
         System.assertEquals(testQuote.Adjustment_of_Contract__c, newContract.Adjustment_of_Contract__c);
+        System.assertEquals(testQuote.Adjustment_Type__c, newContract.Adjustment_Type__c);
         System.assertEquals(testQuote.Id, newContract.Quote__c);
         System.assertEquals(testQuote.CPQ_Playbook__c, newContract.CPQ_Playbook__c);
 
-        System.assertEquals(testQuote.QuoteLineItems.size(), newContract.Contract_Entitlements__r.size());
+        System.assertEquals(olis.size(), newContract.Contract_Entitlements__r.size());
         for (Integer index = 0; index < newContract.Contract_Entitlements__r.size(); index++) {
-            System.assertEquals(testQuote.QuoteLineItems[index].Id, newContract.Contract_Entitlements__r[index].Quote_Line_Item__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Discount__c, newContract.Contract_Entitlements__r[index].Discount__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].End_Date__c, newContract.Contract_Entitlements__r[index].End_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].List_Price__c, newContract.Contract_Entitlements__r[index].List_Price__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Product2Id, newContract.Contract_Entitlements__r[index].Product__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Quantity__c, newContract.Contract_Entitlements__r[index].Quantity__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Start_Date__c, newContract.Contract_Entitlements__r[index].Start_Date__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].Unit_Price__c, newContract.Contract_Entitlements__r[index].Unit_Price__c);
-            System.assertEquals(testQuote.QuoteLineItems[index].CPQ_Playbook_Rule_Action__c, newContract.Contract_Entitlements__r[index].CPQ_Playbook_Rule_Action__c);
+            for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+                System.assertEquals(olis[index].get(fm.OpportunityLineItem_Field__c), newContract.Contract_Entitlements__r[index].get(fm.Entitlement_Field__c));
+            } 
         }
 
         System.assertEquals(testQuote.CPQ_Playbook_Answers__r.size(), newContract.Contract_Playbook_Answers__r.size());
@@ -488,58 +541,50 @@ public class OppContractTest {
         Contract updatedContract = [
             SELECT Id,
                 Adjusted_by_Contract__c,
-                IsReplaced__c
+                Contract_Status__c
             FROM Contract
             WHERE Id=:existingContract.Id
         ];
         System.assertEquals(newContract.Id, updatedContract.Adjusted_by_Contract__c);
-        System.assertEquals(false, updatedContract.IsReplaced__c);
+        System.assertEquals('Renewed', updatedContract.Contract_Status__c);
 
     }
 
     /**
-     * @description Test to verify on contract creation tripped without any synced quote
+     * @description Test to verify amendment contract creation
      **/
     @isTest
-    public static void testCreateContractNoSyncedQuote() {
+    public static void testCreateContractAmendment() {
+
+        // Get Entitlement fields needed
+        String entFieldsString = '';
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            entFieldsString += fm.Entitlement_Field__c + ',';
+        }
+        entFieldsString = entFieldsString.removeEnd(',');
+
+        String contractQuery = ''
+            + 'SELECT Id,'
+                + '('
+                    + 'SELECT '
+                    + entFieldsString 
+                    + ' FROM Contract_Entitlements__r'
+                + ')'
+            + ' FROM Contract';
+        Contract existingContract = Database.query(contractQuery);
 
         Opportunity testOpp = [
             SELECT Id,
                 AccountId
             FROM Opportunity
         ];
+        Id testOppId = testOpp.Id;
 
-        testOpp.Create_Contract__c = true;
-
-        Test.startTest();
-
-        update testOpp;
-
-        Test.stopTest();
-
-        // Verify updates
-        List<Contract> emptyContractList = new List<Contract>();
-        emptyContractList = [
+        Quote testQuote = [
             SELECT Id,
-                AccountId,
                 Adjustment_of_Contract__c,
-                Opportunity__c,
-                Quote__c,
+                Adjustment_Type__c,
                 CPQ_Playbook__c,
-                (
-                    SELECT Id,
-                        Discount__c,
-                        End_Date__c,
-                        List_Price__c,
-                        Product__c,
-                        Quantity__c,
-                        Quote_Line_Item__c,
-                        Start_Date__c,
-                        Unit_Price__c,
-                        CPQ_Playbook_Rule_Action__c
-                    FROM Contract_Entitlements__r
-                    ORDER BY Product__c
-                ),
                 (
                     SELECT Id,
                         CPQ_Playbook_Question__c,
@@ -550,23 +595,250 @@ public class OppContractTest {
                         Value_Decimal__c,
                         Value_Integer__c,
                         Value_Text__c
-                    FROM Contract_Playbook_Answers__r
-                    ORDER BY CPQ_Playbook_Question__c
+                    FROM CPQ_Playbook_Answers__r
                 )
-            FROM Contract
-            WHERE Opportunity__c=:testOpp.Id
+            FROM Quote
         ];
+        testQuote.Adjustment_Type__c = 'Amendment';
+        update testQuote;
 
-        System.assertEquals(0, emptyContractList.size());
+        // Opp Line Items
+
+        // Get OLI fields needed
+        String oliFieldsString = '';
+        Set<String> oliFieldsSet = new Set<String>();
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            if (!oliFieldsSet.contains(fm.OpportunityLineItem_Field__c)) {
+                oliFieldsSet.add(fm.OpportunityLineItem_Field__c);
+                oliFieldsString += fm.OpportunityLineItem_Field__c + ',';
+            }
+        }
+        oliFieldsString = oliFieldsString.removeEnd(',');
+
+        // Set query string
+        String oppLinesQuery = ''
+            + 'SELECT '
+                + oliFieldsString
+            + ' FROM OpportunityLineItem'
+            + ' WHERE Product2.Do_Not_Create_Entitlement__c != true'
+                + ' AND OpportunityId=:testOppId'
+            + ' ORDER BY Product2Id';
+
+        List<OpportunityLineItem> olis = Database.query(oppLinesQuery);
+
+        Test.startTest();
+
+        OppContractTriggerHandler.firstRunAfterUpdate = true;
+        testOpp.Create_Contract__c = true;
+        update testOpp;
+
+        Test.stopTest();
+
+        // Verify updates
+        String newContractQuery = ''
+            + 'SELECT Id,'
+                + 'AccountId,'
+                + 'Adjustment_of_Contract__c,'
+                + 'Adjustment_Type__c,'
+                + 'Opportunity__c,'
+                + 'Quote__c,'
+                + 'CPQ_Playbook__c,'
+                + '('
+                    + 'SELECT '
+                        + entFieldsString
+                        + ' FROM Contract_Entitlements__r'
+                        + ' ORDER BY Product__c'
+                + '),'
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'Name,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
+                    + ' ORDER BY CPQ_Playbook_Question__c'
+                + ')'
+            + ' FROM Contract'
+            + ' WHERE Opportunity__c=:testOppId';
+
+        Contract newContract = Database.query(newContractQuery);
+
+        System.assertEquals(testQuote.Adjustment_of_Contract__c, newContract.Adjustment_of_Contract__c);
+        System.assertEquals(testQuote.Adjustment_Type__c, newContract.Adjustment_Type__c);
+        System.assertEquals(testQuote.Id, newContract.Quote__c);
+        System.assertEquals(testQuote.CPQ_Playbook__c, newContract.CPQ_Playbook__c);
+
+        System.assertEquals((olis.size() + existingContract.Contract_Entitlements__r.size()), newContract.Contract_Entitlements__r.size());
+
+        System.assertEquals(testQuote.CPQ_Playbook_Answers__r.size(), newContract.Contract_Playbook_Answers__r.size());
+        for (Integer index = 0; index < newContract.Contract_Playbook_Answers__r.size(); index++) {
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].CPQ_Playbook_Question__c, newContract.Contract_Playbook_Answers__r[index].CPQ_Playbook_Question__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Name, newContract.Contract_Playbook_Answers__r[index].Name);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Boolean__c, newContract.Contract_Playbook_Answers__r[index].Value_Boolean__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Currency__c, newContract.Contract_Playbook_Answers__r[index].Value_Currency__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Date__c, newContract.Contract_Playbook_Answers__r[index].Value_Date__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Decimal__c, newContract.Contract_Playbook_Answers__r[index].Value_Decimal__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Integer__c, newContract.Contract_Playbook_Answers__r[index].Value_Integer__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Text__c, newContract.Contract_Playbook_Answers__r[index].Value_Text__c);
+        }
 
         Contract updatedContract = [
             SELECT Id,
                 Adjusted_by_Contract__c,
-                IsReplaced__c
+                Contract_Status__c
             FROM Contract
+            WHERE Id=:existingContract.Id
+        ];
+        System.assertEquals(newContract.Id, updatedContract.Adjusted_by_Contract__c);
+        System.assertEquals('Amended', updatedContract.Contract_Status__c);
+
+    }
+
+    /**
+     * @description Test to verify on contract creation tripped without any upgrade
+     **/
+    @isTest
+    public static void testCreateContractNoUpgrade() {
+
+        // Get Entitlement fields needed
+        String entFieldsString = '';
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            entFieldsString += fm.Entitlement_Field__c + ',';
+        }
+        entFieldsString = entFieldsString.removeEnd(',');
+
+        Opportunity testOpp = [
+            SELECT Id,
+                AccountId
+            FROM Opportunity
+        ];
+        Id testOppId = testOpp.Id;
+
+        Quote testQuote = [
+            SELECT Id,
+                Adjustment_of_Contract__c,
+                Adjustment_Type__c,
+                CPQ_Playbook__c,
+                (
+                    SELECT Id,
+                        CPQ_Playbook_Question__c,
+                        Name,
+                        Value_Boolean__c,
+                        Value_Currency__c,
+                        Value_Date__c,
+                        Value_Decimal__c,
+                        Value_Integer__c,
+                        Value_Text__c
+                    FROM CPQ_Playbook_Answers__r
+                )
+            FROM Quote
+        ];
+
+        testQuote.Adjustment_of_Contract__c = null;
+        update testQuote;
+
+        // Opp Line Items
+
+        // Get OLI fields needed
+        String oliFieldsString = '';
+        Set<String> oliFieldsSet = new Set<String>();
+        for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+            if (!oliFieldsSet.contains(fm.OpportunityLineItem_Field__c)) {
+                oliFieldsSet.add(fm.OpportunityLineItem_Field__c);
+                oliFieldsString += fm.OpportunityLineItem_Field__c + ',';
+            }
+        }
+        oliFieldsString = oliFieldsString.removeEnd(',');
+
+        // Set query string
+        String oppLinesQuery = ''
+            + 'SELECT '
+                + oliFieldsString
+            + ' FROM OpportunityLineItem'
+            + ' WHERE Product2.Do_Not_Create_Entitlement__c != true'
+                + ' AND OpportunityId=:testOppId'
+            + ' ORDER BY Product2Id';
+
+        List<OpportunityLineItem> olis = Database.query(oppLinesQuery);
+
+        Test.startTest();
+
+        OppContractTriggerHandler.firstRunAfterUpdate = true;
+        testOpp.Create_Contract__c = true;
+        update testOpp;
+
+        Test.stopTest();
+
+        // Verify updates
+        String newContractQuery = ''
+            + 'SELECT Id,'
+                + 'AccountId,'
+                + 'Adjustment_of_Contract__c,'
+                + 'Adjustment_Type__c,'
+                + 'Opportunity__c,'
+                + 'Quote__c,'
+                + 'CPQ_Playbook__c,'
+                + '('
+                    + 'SELECT '
+                        + entFieldsString
+                        + ' FROM Contract_Entitlements__r'
+                        + ' ORDER BY Product__c'
+                + '),'
+                + '('
+                    + 'SELECT Id,'
+                        + 'CPQ_Playbook_Question__c,'
+                        + 'Name,'
+                        + 'Value_Boolean__c,'
+                        + 'Value_Currency__c,'
+                        + 'Value_Date__c,'
+                        + 'Value_Decimal__c,'
+                        + 'Value_Integer__c,'
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
+                    + ' ORDER BY CPQ_Playbook_Question__c'
+                + ')'
+            + ' FROM Contract'
+            + ' WHERE Opportunity__c=:testOppId';
+
+        Contract newContract = Database.query(newContractQuery);
+
+        System.assertEquals(testQuote.Adjustment_of_Contract__c, newContract.Adjustment_of_Contract__c);
+        System.assertEquals(testQuote.Adjustment_Type__c, newContract.Adjustment_Type__c);
+        System.assertEquals(testQuote.Id, newContract.Quote__c);
+        System.assertEquals(testQuote.CPQ_Playbook__c, newContract.CPQ_Playbook__c);
+
+        System.assertEquals(olis.size(), newContract.Contract_Entitlements__r.size());
+        for (Integer index = 0; index < newContract.Contract_Entitlements__r.size(); index++) {
+            for (Entitlement_Field_Mapping__mdt fm : Entitlement_Field_Mapping__mdt.getAll().values()) {
+                System.assertEquals(olis[index].get(fm.OpportunityLineItem_Field__c), newContract.Contract_Entitlements__r[index].get(fm.Entitlement_Field__c));
+            } 
+        }
+
+        System.assertEquals(testQuote.CPQ_Playbook_Answers__r.size(), newContract.Contract_Playbook_Answers__r.size());
+        for (Integer index = 0; index < newContract.Contract_Playbook_Answers__r.size(); index++) {
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].CPQ_Playbook_Question__c, newContract.Contract_Playbook_Answers__r[index].CPQ_Playbook_Question__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Name, newContract.Contract_Playbook_Answers__r[index].Name);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Boolean__c, newContract.Contract_Playbook_Answers__r[index].Value_Boolean__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Currency__c, newContract.Contract_Playbook_Answers__r[index].Value_Currency__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Date__c, newContract.Contract_Playbook_Answers__r[index].Value_Date__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Decimal__c, newContract.Contract_Playbook_Answers__r[index].Value_Decimal__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Integer__c, newContract.Contract_Playbook_Answers__r[index].Value_Integer__c);
+            System.assertEquals(testQuote.CPQ_Playbook_Answers__r[index].Value_Text__c, newContract.Contract_Playbook_Answers__r[index].Value_Text__c);
+        }
+
+        Contract updatedContract = [
+            SELECT Id,
+                Adjusted_by_Contract__c,
+                Contract_Status__c
+            FROM Contract
+            WHERE Id!=:newContract.Id
         ];
         System.assertEquals(null, updatedContract.Adjusted_by_Contract__c);
-        System.assertEquals(false, updatedContract.IsReplaced__c);
+        System.assertEquals('Past', updatedContract.Contract_Status__c);
 
     }
 }

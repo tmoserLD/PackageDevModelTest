@@ -1,0 +1,80 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Loading Spinner -->
+    <template if:true={loading}>
+        <div
+            class="slds-align_absolute-center"
+            style="height:20vh"    
+        >
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </div>
+    </template>
+
+    <template if:false={loading}>
+
+        <!-- User has NO access -->
+        <!-- <template if:false={hasAcctAccess}>
+            <lightning-card>
+                <p class="slds-align_absolute-center slds-text-heading_medium">
+                    Whoops! Unauthorized Access
+                </p>
+                <p class="slds-align_absolute-center slds-p-horizontal_small">
+                    You do not have authorization to access Contracts for this account.
+                </p>
+            </lightning-card>
+        </template> -->
+
+        <!-- User has access -->
+        <!-- <template if:true={hasAcctAccess}> -->
+
+            <!-- Account Info -->
+            <div class="slds-p-horizontal_x-small slds-p-vertical_small">
+        
+                <ul class="slds-list_horizontal">
+                    <li class="slds-p-top_xx-small">
+                        <lightning-icon
+                            icon-name="standard:account"
+                        >
+                        </lightning-icon>
+                    </li>
+                    <li class="slds-p-left_small slds-m-left_x-small slds-truncate">
+                        <p 
+                            class="slds-text-heading_small slds-truncate slds-m-bottom_xx-small"
+                            title={acct.acctInfo.Name}
+                        >
+                            <b
+                                class="slds-truncate"
+                                style="text-decoration: underline;cursor: pointer;"
+                                onclick={navToAcct}
+                            >
+                                {acct.acctInfo.Name}
+                            </b>
+                        </p>
+                        <p
+                            class="slds-truncate"
+                            style="color:gray"
+                            title={acct.acctInfo.Owner.Name}
+                        >
+                            Owner: {acct.acctInfo.Owner.Name}
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Contract List -->
+            <c-cpq_-contract-list
+                source-info={acct}
+                onvoidcontract={voidContract}
+            >
+            </c-cpq_-contract-list>
+        <!-- </template> -->
+    </template>
+</template>

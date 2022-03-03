@@ -6,8 +6,8 @@
     <externalId>false</externalId>
     <label>Adjusted by Contract</label>
     <referenceTo>Contract</referenceTo>
-    <relationshipLabel>Adjusted Contracts</relationshipLabel>
-    <relationshipName>Adjusted_Contracts</relationshipName>
+    <relationshipLabel>Source Contracts</relationshipLabel>
+    <relationshipName>Source_Contracts</relationshipName>
     <required>false</required>
     <trackHistory>false</trackHistory>
     <type>Lookup</type>

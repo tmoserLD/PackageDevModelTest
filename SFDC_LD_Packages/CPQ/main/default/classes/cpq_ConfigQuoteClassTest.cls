@@ -613,7 +613,7 @@ public class cpq_ConfigQuoteClassTest {
             Pricebook2Id = testPBE.Pricebook2Id,
             Name = 'Test Quote',
             Adjustment_of_Contract__c = testContract.Id,
-            Adjustment_Type__c = 'On Renewal',
+            Adjustment_Type__c = 'Renewal',
             CPQ_Playbook__c = testPlaybook.Id,
             IsClone__c = false,
             Playbook_Status__c = 'Complete'

@@ -88,6 +88,13 @@ public with sharing class cpq_ContainerClass {
                         + 'Value_Text__c'
                     + ' FROM Contract_Playbook_Answers__r'
                 + '),'
+                + '( '
+                    + 'SELECT Id, '
+                        + 'ContractNumber, '
+                        + 'Contract_Status__c, '
+                        + 'Contract_Total__c '
+                    + 'FROM Source_Contracts__r '
+                + '), '
                 + '('
                     + 'SELECT Id,'
                         + 'CPQ_Playbook_Rule_Action__c,'
@@ -95,13 +102,15 @@ public with sharing class cpq_ContainerClass {
                         + 'End_Date__c,'
                         + 'List_Price__c,'
                         + 'Product__c,'
+                        + 'Product_Name__c,'
                         + 'Quantity__c,'
                         + 'Start_Date__c,'
                         + 'Total_Price__c,'
                         + 'Unit_Price__c'
                     + ' FROM Contract_Entitlements__r'
+                    + ' ORDER BY Start_Date__c DESC, End_Date__c DESC, Product_Name__c'
                 + ')';
-            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' AND Contract_Status__c != \'Replaced\' AND Contract_Status__c != \'Void\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC'; 
+            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC'; 
             contracts = Database.query(contractsQuery);
             cpqObj.contracts = contracts;
 
@@ -133,7 +142,8 @@ public with sharing class cpq_ContainerClass {
                         + 'Product2.Name,'
                         + 'Quantity__c,'
                         + 'Unit_Price__c,'
-                        + 'Start_Date__c'
+                        + 'Start_Date__c,'
+                        + 'Total_Price__c'
                     + ' FROM QuoteLineItems'
                 + '), '
                 + '('
@@ -204,14 +214,17 @@ public with sharing class cpq_ContainerClass {
         Set<String> quoteFields = new Set<String>{
             'Id',
             'Adjustment_of_Contract__c',
+            'Adjustment_of_Contract__r.ContractNumber',
             'Adjustment_Type__c',
             'CPQ_Playbook__c',
             'CPQ_Playbook__r.Default_Term_in_Months__c',
             'CPQ_Playbook__r.Label__c',
             'CPQ_Playbook__r.Pricebook__c',
+            'End_Date__c',
             'IsSyncing',
             'Name',
             'Playbook_Status__c',
+            'Start_Date__c',
             'TotalPrice',
             'Total_Price__c'
         };
@@ -255,7 +268,10 @@ public with sharing class cpq_ContainerClass {
         // Contract
         Set<String> contractFields = new Set<String>{
             'Id',
+            'Adjusted_by_Contract__c',
+            'Adjusted_by_Contract__r.ContractNumber',
             'Contract_End_Date__c',
+            'ContractNumber',
             'Contract_Start_Date__c',
             'Contract_Status__c',
             'Contract_Total__c',

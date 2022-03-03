@@ -13,14 +13,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Amendment</fullName>
+                <default>false</default>
+                <label>Amendment</label>
+            </value>
+            <value>
                 <fullName>Replacement</fullName>
                 <default>false</default>
                 <label>Replacement</label>
             </value>
             <value>
-                <fullName>On Renewal</fullName>
+                <fullName>Renewal</fullName>
                 <default>false</default>
-                <label>On Renewal</label>
+                <label>Renewal</label>
             </value>
         </valueSetDefinition>
     </valueSet>

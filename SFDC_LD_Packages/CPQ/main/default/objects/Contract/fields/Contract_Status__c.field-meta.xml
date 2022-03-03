@@ -2,30 +2,44 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Contract_Status__c</fullName>
     <externalId>false</externalId>
-    <formula>IF (
- IsReplaced__c = TRUE,
- &apos;Replaced&apos;,
- IF (
-  IsVoid__c = TRUE,
-  &apos;Void&apos;,
-  IF (
-   AND(
-    Contract_Start_Date__c &lt;= TODAY(),
-    Contract_End_Date__c &gt;= TODAY()
-   ),
-   &apos;Active&apos;,
-   IF (
-    Contract_Start_Date__c &gt; TODAY(),
-    &apos;Upcoming&apos;,
-    IF (
-     Contract_End_Date__c &lt; TODAY(),
-     &apos;Past&apos;,
-     &apos;Invalid&apos;
-    )
-   )
-  )
- )
-)</formula>
+    <formula>
+        IF (
+            ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Amendment&apos;),
+            &apos;Amended&apos;,
+            IF (
+                ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Replacement&apos;),
+                &apos;Replaced&apos;,
+                IF (
+                    ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Renewal&apos;),
+                    IF (
+                        Contract_End_Date__c &gt;= TODAY(),
+                        &apos;Awaiting Renewal&apos;,
+                        &apos;Renewed&apos;
+                    ),
+                    IF (
+                        IsVoid__c = TRUE,
+                        &apos;Void&apos;,
+                            IF (
+                                AND(
+                                    Contract_Start_Date__c &lt;= TODAY(),
+                                    Contract_End_Date__c &gt;= TODAY()
+                                ),
+                                &apos;Active&apos;,
+                            IF (
+                                Contract_Start_Date__c &gt; TODAY(),
+                                &apos;Upcoming&apos;,
+                                IF (
+                                    Contract_End_Date__c &lt; TODAY(),
+                                    &apos;Past&apos;,
+                                    &apos;Invalid&apos;
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+</formula>
     <label>Contract Status</label>
     <required>false</required>
     <trackHistory>false</trackHistory>

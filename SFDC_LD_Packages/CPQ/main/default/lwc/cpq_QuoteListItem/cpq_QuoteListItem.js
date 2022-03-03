@@ -1,6 +1,7 @@
 import { LightningElement, api, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class CPQ_QuoteListItem extends LightningElement {
+export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement) {
 
     // All Quotes on opp
     @api allQuotes = [];
@@ -28,6 +29,9 @@ export default class CPQ_QuoteListItem extends LightningElement {
 
     // Quote PDF Proposal Modal toggle
     @track showProposalModal = false;
+
+    // Quote Details Modal toggle
+    @track showQuoteDetails = false;
 
     // Prompt to show in Delete Quote Confirmation Modal
     @track confirmDeletePrompt = '';
@@ -447,5 +451,27 @@ export default class CPQ_QuoteListItem extends LightningElement {
                 detail: this.quote.Id
             });
         this.dispatchEvent(unsyncQuoteEvent);
+    }
+
+    // View clicked
+    viewQuote() {
+        this.showQuoteDetails = true;
+    }
+
+    // Hide details event
+    hideQuoteDetails() {
+        this.showQuoteDetails = false;
+    }
+
+    navToQuote() {
+        // Navigate to the Quote home page
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.quote.Id,
+                objectApiName: 'Quote',
+                actionName: 'view',
+            },
+        });
     }
 }

@@ -49,16 +49,9 @@
                             <div
                                 class="slds-col slds-size_1-of-3 slds-p-horizontal_xx-small"
                                 style="overflow:auto"
-                                title="Source Opportunity"
+                                title="Number"
                             >
-                                Source Opportunity
-                            </div>
-                            <div
-                                class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
-                                style="overflow:auto"
-                                title="Playbook"
-                            >
-                                Playbook
+                                Number
                             </div>
                             <div
                                 class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
@@ -74,6 +67,13 @@
                             >
                                 End Date
                             </div>
+                            <div
+                                class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
+                                style="overflow:auto"
+                                title="Status"
+                            >
+                                Status
+                            </div>
                             <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
                             </div>
                         </div>
@@ -87,9 +87,11 @@
                             <c-cpq_-contract-list-item
                                 all-contracts={activeContracts}
                                 contract={contract}
-                                opp-info={oppInfo}
+                                source-info={sourceInfo}
+                                onamendcontract={amendContract}
                                 onreplacecontract={replaceContract}
                                 onrenewcontract={renewContract}
+                                onvoidcontract={voidContract}
                             >
                             </c-cpq_-contract-list-item>
                         </div>
@@ -113,19 +115,19 @@
                             class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
                             style="border-bottom: 1px double gray;font-weight: bold;"
                         >
-                            <div class="slds-col slds-size_1-of-3">
-                                Source Opportunity
+                            <div class="slds-col slds-size_1-of-3 slds-p-horizontal_xx-small">
+                                Number
                             </div>
-                            <div class="slds-col slds-size_1-of-6">
-                                Playbook
-                            </div>
-                            <div class="slds-col slds-size_1-of-6">
+                            <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
                                 Start Date
                             </div>
-                            <div class="slds-col slds-size_1-of-6">
+                            <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
                                 End Date
                             </div>
-                            <div class="slds-col slds-size_1-of-6">
+                            <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
+                                Status
+                            </div>
+                            <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
                             </div>
                         </div>
 
@@ -138,9 +140,11 @@
                             <c-cpq_-contract-list-item
                                 all-contracts={pastContracts}
                                 contract={contract}
-                                opp-info={oppInfo}
+                                source-info={sourceInfo}
+                                onamendcontract={amendContract}
                                 onreplacecontract={replaceContract}
                                 onrenewcontract={renewContract}
+                                onvoidcontract={voidContract}
                             >
                             </c-cpq_-contract-list-item>
                         </div>

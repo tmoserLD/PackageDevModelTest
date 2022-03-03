@@ -69,6 +69,16 @@
         </c-cpq_-proposal-p-d-f>
     </template>
 
+    <!-- Quote Details -->
+    <template if:true={showQuoteDetails}>
+        <c-cpq_-quote-details-modal
+            opp-info={oppInfo}
+            quote={quote}
+            onhidedetails={hideQuoteDetails}
+        >
+        </c-cpq_-quote-details-modal>
+    </template>
+
     <div
         class={mainCSS}
         style="border-bottom: 0.25px solid gray"
@@ -106,7 +116,11 @@
                         </lightning-icon>
                     </li>
                 </template>
-                <li title={quoteName}>
+                <li
+                    title={quoteName}
+                    style="cursor:pointer;text-decoration:underline;"
+                    onclick={navToQuote}
+                >
                     {quoteName}
                 </li>
             </ul>
@@ -139,6 +153,21 @@
         </div>
         <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
             <ul class="slds-list_horizontal slds-wrap">
+
+                <!-- View Details -->
+                <li
+                    class="slds-m-horizontal_x-small"
+                    style="cursor:pointer"
+                    onclick={viewQuote}
+                >
+                    <lightning-icon
+                        icon-name="utility:preview"
+                        alternative-text="View Quote Details"
+                        title="View Quote Details"
+                        size="x-small"
+                    >
+                    </lightning-icon>
+                </li>
 
                 <!-- Edit Quote -->
                 <template if:true={canEdit}>
@@ -250,7 +279,7 @@
                         onclick={showProposal}
                         >
                         <lightning-icon
-                            icon-name="utility:description"
+                            icon-name="utility:share_file"
                             alternative-text={proposalTitle}
                             title={proposalTitle}
                             size="x-small"
@@ -264,7 +293,7 @@
                         style="opacity: 0.5"
                         >
                         <lightning-icon
-                            icon-name="utility:description"
+                            icon-name="utility:share_file"
                             alternative-text={proposalTitle}
                             title={proposalTitle}
                             size="x-small"

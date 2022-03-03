@@ -1,20 +1,52 @@
 import { LightningElement, api, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class CPQ_ContractListItem extends LightningElement {
+export default class CPQ_ContractListItem extends NavigationMixin(LightningElement) {
 
-    // All Contracts on opp's account
+    // All Contracts with source
     @api allContracts = [];
 
     // Contract record
     @api contract;
 
-    // Opportunity Info
-    @api oppInfo;
+    // Source Info
+    @api sourceInfo;
+
+    // Contract Details modal toggle
+    @track showContractDetails = false;
+
+    // Account Sourec
+    get accountSource() {
+        return this.sourceInfo.sourceType === 'Account';
+    }
+
+    // Can amend
+    get canAmend() {
+        if (this.sourceInfo.Lock_CPQ__c ||
+            !['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // Amend button title
+    get amendTitle() {
+        let title = 'Amend Contract';
+        if (this.sourceInfo.Lock_CPQ__c) {
+            title = 'Cannot Amend. Opportunity is locked';
+        }
+        else if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
+            title = 'Cannot Amend. Contract already past, void and/or adjusted';
+        }
+        return title;
+    }
 
     // Can replace
     get canReplace() {
-        if (this.oppInfo.Lock_CPQ__c ||
-            this.contract.Contract_Status__c == 'Past'  
+        if (this.sourceInfo.Lock_CPQ__c ||
+            !['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)
         ) {
             return false;
         } else {
@@ -25,18 +57,20 @@ export default class CPQ_ContractListItem extends LightningElement {
     // Replace button title
     get replaceTitle() {
         let title = 'Replace Contract';
-        if (this.oppInfo.Lock_CPQ__c) {
+        if (this.sourceInfo.Lock_CPQ__c) {
             title = 'Cannot Replace. Opportunity is locked';
         }
-        else if (this.contract.Contract_Status__c == 'Past') {
-            title = 'Cannot Replace. Contract in past';
+        else if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
+            title = 'Cannot Replace. Contract already past, void and/or adjusted';
         }
         return title;
     }
 
     // Can renew
     get canRenew() {
-        if (this.oppInfo.Lock_CPQ__c) {
+        if (this.sourceInfo.Lock_CPQ__c ||
+            !['Active', 'Upcoming', 'Past'].includes(this.contract.Contract_Status__c)    
+        ) {
             return false;
         } else {
             return true;
@@ -46,8 +80,28 @@ export default class CPQ_ContractListItem extends LightningElement {
     // Renew button title
     get renewTitle() {
         let title = 'Renew Contract';
-        if (this.oppInfo.Lock_CPQ__c) {
+        if (this.sourceInfo.Lock_CPQ__c) {
             title = 'Cannot Renew. Opportunity is locked';
+        } else if (!['Active', 'Upcoming', 'Past'].includes(this.contract.Contract_Status__c)) {
+            title = 'Cannot Renew. Contract void and/or already adjusted';
+        }
+        return title;
+    }
+
+    // Can void
+    get canVoid() {
+        if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // Void button title
+    get voidTitle() {
+        let title = 'Void Contract';
+        if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
+            title = 'Cannot Void. Contract already past, void and/or adjusted';
         }
         return title;
     }
@@ -61,9 +115,14 @@ export default class CPQ_ContractListItem extends LightningElement {
         return mainCSS;
     }
 
-    // Opp Link
-    get oppLink() {
-        return '/' + this.contract.Opportunity__c;
+    // Amend clicked
+    amendContract() {
+        // Send Amend Contract call to parent
+        const amendContractEvent = new CustomEvent(
+            'amendcontract', {
+                detail: this.contract.Id
+            });
+        this.dispatchEvent(amendContractEvent);
     }
 
     // Replace clicked
@@ -86,4 +145,35 @@ export default class CPQ_ContractListItem extends LightningElement {
         this.dispatchEvent(renewContractEvent);
     }
 
+    // Void clicked
+    voidContract() {
+        // Send Void Contract call to parent
+        const voidContractEvent = new CustomEvent(
+            'voidcontract', {
+                detail: this.contract.Id
+            });
+        this.dispatchEvent(voidContractEvent);
+    }
+
+    // View clicked
+    viewContract() {
+        this.showContractDetails = true;
+    }
+
+    // Hide details event
+    hideContractDetails() {
+        this.showContractDetails = false;
+    }
+
+    navToContract() {
+        // Navigate to the Contract home page
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.contract.Id,
+                objectApiName: 'Contract',
+                actionName: 'view',
+            },
+        });
+    }
 }

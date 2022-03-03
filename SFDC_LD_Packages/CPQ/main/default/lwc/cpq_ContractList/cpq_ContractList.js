@@ -2,17 +2,17 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_ContractList extends LightningElement {
 
-    // Opportunity Info
-    @api oppInfo;
+    // Source Object Info
+    @api sourceInfo;
 
     // Loading / Show Spinner
     @track loading = false;
 
     // Boolean indicator if Active/Upcoming Contracts exist on Account
     get noActiveContractsToDisplay() {
-        if (this.oppInfo.Contracts) {
-            return this.oppInfo.Contracts.filter(
-                contract => ['Active', 'Upcoming'].includes(contract.Contract_Status__c)
+        if (this.sourceInfo.Contracts) {
+            return this.sourceInfo.Contracts.filter(
+                contract => ['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
             ).length <= 0;
         } else {
             return true;
@@ -21,9 +21,9 @@ export default class CPQ_ContractList extends LightningElement {
 
     get activeContracts() {
         let activeContracts = [];
-        if (this.oppInfo.Contracts) {
-            activeContracts = this.oppInfo.Contracts.filter(
-                contract => ['Active', 'Upcoming'].includes(contract.Contract_Status__c)
+        if (this.sourceInfo.Contracts) {
+            activeContracts = this.sourceInfo.Contracts.filter(
+                contract => ['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
             );
         }
         return activeContracts;
@@ -31,9 +31,9 @@ export default class CPQ_ContractList extends LightningElement {
 
     // Boolean indicator if Past Contracts exist on Account
     get noPastContractsToDisplay() {
-        if (this.oppInfo.Contracts) {
-            return this.oppInfo.Contracts.filter(
-                contract => ['Past'].includes(contract.Contract_Status__c)
+        if (this.sourceInfo.Contracts) {
+            return this.sourceInfo.Contracts.filter(
+                contract => !['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
             ).length <= 0;
         } else {
             return true;
@@ -42,9 +42,9 @@ export default class CPQ_ContractList extends LightningElement {
 
     get pastContracts() {
         let pastContracts = [];
-        if (this.oppInfo.Contracts) {
-            pastContracts = this.oppInfo.Contracts.filter(
-                contract => ['Past'].includes(contract.Contract_Status__c)
+        if (this.sourceInfo.Contracts) {
+            pastContracts = this.sourceInfo.Contracts.filter(
+                contract => !['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
             );
         }
         return pastContracts;
@@ -52,11 +52,21 @@ export default class CPQ_ContractList extends LightningElement {
 
     // Number of Contracts currently associated to Account
     get numberOfContracts() {
-        if (this.oppInfo.Contracts) {
-            return this.oppInfo.Contracts.length;
+        if (this.sourceInfo.Contracts) {
+            return this.sourceInfo.Contracts.length;
         } else {
             return 0;
         }
+    }
+
+    // Amend Contract event
+    amendContract(event) {
+        // Send Amend Contract call to parent
+        const amendContractEvent = new CustomEvent(
+            'amendcontract', {
+                detail: event.detail
+            });
+        this.dispatchEvent(amendContractEvent);
     }
 
     // Replace Contract event
@@ -77,6 +87,16 @@ export default class CPQ_ContractList extends LightningElement {
                 detail: event.detail
             });
         this.dispatchEvent(renewContractEvent);
+    }
+
+    // Void Contract event
+    voidContract(event) {
+        // Send Void Contract call to parent
+        const voidContractEvent = new CustomEvent(
+            'voidcontract', {
+                detail: event.detail
+            });
+        this.dispatchEvent(voidContractEvent);
     }
 
 }

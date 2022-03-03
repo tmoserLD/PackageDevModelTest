@@ -1,24 +1,24 @@
 <template>
 
+    <template if:true={showContractDetails}>
+        <c-cpq_-contract-details-modal
+            contract={contract}
+            onhidedetails={hideContractDetails}
+        >
+        </c-cpq_-contract-details-modal>
+    </template>
+
     <div
         class={mainCSS}
         style="border-bottom: 0.25px solid gray"
     >
         <div
             class="slds-col slds-size_1-of-3 slds-p-horizontal_xx-small"
-            style="overflow:auto"
-            title={contract.Opportunity__r.Name}
+            style="overflow:auto;cursor:pointer;text-decoration:underline"
+            title={contract.ContractNumber}
+            onclick={navToContract}
         >
-            <a href={oppLink}>
-                {contract.Opportunity__r.Name}
-            </a>
-        </div>
-        <div
-            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
-            style="overflow:auto"
-            title={contract.CPQ_Playbook__r.Label__c}
-        >
-            {contract.CPQ_Playbook__r.Label__c}
+            {contract.ContractNumber}
         </div>
         <div
             class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
@@ -40,71 +40,164 @@
             >
             </lightning-formatted-date-time>
         </div>
+        <div
+            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
+            style="overflow:auto"
+            title={contract.Contract_Status__c}
+        >
+            {contract.Contract_Status__c}
+        </div>
         <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
             <ul class="slds-list_horizontal slds-wrap">
 
-                <!-- Replace Contract -->
-                <template if:true={canReplace}>
-                    <li
-                        class="slds-m-horizontal_x-small"
-                        style="cursor:pointer"
-                        onclick={replaceContract}
+                <li
+                    class="slds-m-horizontal_x-small"
+                    style="cursor:pointer"
+                    onclick={viewContract}
+                >
+                    <lightning-icon
+                        icon-name="utility:preview"
+                        alternative-text="View Contract Details"
+                        title="View Contract Details"
+                        size="x-small"
                     >
-                        <lightning-icon
-                            icon-name="utility:replace"
-                            alternative-text={replaceTitle}
-                            title={replaceTitle}
-                            size="x-small"
-                            variant="error"
+                    </lightning-icon>
+                </li>
+
+                <!-- Account Source -->
+                <template if:true={accountSource}>
+
+                    <!-- Void Contract -->
+                    <template if:true={canVoid}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="cursor:pointer"
+                            onclick={voidContract}
                         >
-                        </lightning-icon>
-                    </li>
-                </template>
-                <template if:false={canReplace}>
-                    <li
-                        class="slds-m-horizontal_x-small"
-                        style="opacity: 0.5"
-                    >
-                        <lightning-icon
-                            icon-name="utility:replace"
-                            alternative-text={replaceTitle}
-                            title={replaceTitle}
-                            size="x-small"
+                            <lightning-icon
+                                icon-name="utility:cancel_file_request"
+                                alternative-text={voidTitle}
+                                title={voidTitle}
+                                size="x-small"
+                                variant="error"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+                    <template if:false={canVoid}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
                         >
-                        </lightning-icon>
-                    </li>
+                            <lightning-icon
+                                icon-name="utility:cancel_file_request"
+                                alternative-text={voidTitle}
+                                title={voidTitle}
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
                 </template>
 
-                <!-- Renew Contract -->
-                <template if:true={canRenew}>
-                    <li
-                        class="slds-m-horizontal_x-small"
-                        style="cursor:pointer"
-                        onclick={renewContract}
-                    >
-                        <lightning-icon
-                            icon-name="utility:clock"
-                            alternative-text={renewTitle}
-                            title={renewTitle}
-                            size="x-small"
-                            variant="success"
+                <!-- Opportunity Source -->
+                <template if:false={accountSource}>
+
+                    <!-- Amend Contract -->
+                    <template if:true={canAmend}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="cursor:pointer"
+                            onclick={amendContract}
                         >
-                        </lightning-icon>
-                    </li>
-                </template>
-                <template if:false={canRenew}>
-                    <li
-                        class="slds-m-horizontal_x-small"
-                        style="opacity: 0.5"
-                    >
-                        <lightning-icon
-                            icon-name="utility:clock"
-                            alternative-text={renewTitle}
-                            title={renewTitle}
-                            size="x-small"
+                            <lightning-icon
+                                icon-name="utility:relate"
+                                alternative-text={amendTitle}
+                                title={amendTitle}
+                                size="x-small"
+                                variant="warning"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+                    <template if:false={canAmend}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
                         >
-                        </lightning-icon>
-                    </li>
+                            <lightning-icon
+                                icon-name="utility:relate"
+                                alternative-text={amendTitle}
+                                title={amendTitle}
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+
+                    <!-- Replace Contract -->
+                    <template if:true={canReplace}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="cursor:pointer"
+                            onclick={replaceContract}
+                        >
+                            <lightning-icon
+                                icon-name="utility:replace"
+                                alternative-text={replaceTitle}
+                                title={replaceTitle}
+                                size="x-small"
+                                variant="error"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+                    <template if:false={canReplace}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
+                        >
+                            <lightning-icon
+                                icon-name="utility:replace"
+                                alternative-text={replaceTitle}
+                                title={replaceTitle}
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+
+                    <!-- Renew Contract -->
+                    <template if:true={canRenew}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="cursor:pointer"
+                            onclick={renewContract}
+                        >
+                            <lightning-icon
+                                icon-name="utility:clock"
+                                alternative-text={renewTitle}
+                                title={renewTitle}
+                                size="x-small"
+                                variant="success"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+                    <template if:false={canRenew}>
+                        <li
+                            class="slds-m-horizontal_x-small"
+                            style="opacity: 0.5"
+                        >
+                            <lightning-icon
+                                icon-name="utility:clock"
+                                alternative-text={renewTitle}
+                                title={renewTitle}
+                                size="x-small"
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
                 </template>
             </ul>
         </div>

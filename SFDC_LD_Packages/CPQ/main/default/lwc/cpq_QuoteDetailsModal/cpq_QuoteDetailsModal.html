@@ -1,0 +1,243 @@
+<template>
+
+    <section
+        role="dialog"
+        tabindex="-1"
+        aria-labelledby="modal-heading-01"
+        aria-modal="true"
+        aria-describedby="modal-content-id-1"
+        class="slds-modal slds-modal_medium slds-fade-in-open"
+    >
+        <div class="slds-modal__container">
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Header -->
+            <header class="slds-modal__header slds-theme_shade">
+                <button
+                    class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                    title="Close"
+                    onclick={closeClick}
+                >
+                    <lightning-icon
+                        icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small"
+                    >
+                    </lightning-icon>
+                    <span class="slds-assistive-text">
+                        Close
+                    </span>
+                </button>
+                <h2
+                    id="modal-heading-01"
+                    class="slds-text-heading_medium slds-hyphenate"
+                >
+                    Quote Details for "{quote.Name}"
+                </h2>
+            </header>
+
+            <!-- Body -->
+            <div
+                class="slds-modal__content slds-p-around_medium"
+                id="modal-content-id-1"
+            >
+
+                <!-- Quote Info -->
+                <h2 class="slds-text-heading_small slds-m-bottom_x-small">
+                    Quote Info
+                </h2>
+
+                <!-- Table Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 0.5px solid gray;font-weight: bold;"
+                >
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Name
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Playbook
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Start Date
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        End Date
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Total
+                    </div>
+                </div>
+
+                <!-- Table Row -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 0.25px solid gray;"
+                >
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto;cursor:pointer;text-decoration:underline;"
+                        title={quote.Name}
+                        onclick={navToQuote}
+                    >
+                        {quote.Name}
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto;"
+                        title={quote.CPQ_Playbook__r.Label__c}
+                    >
+                        {quote.CPQ_Playbook__r.Label__c}
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto"
+                        title={quote.Start_Date__c}
+                    >
+                        <lightning-formatted-date-time
+                            value={quote.Start_Date__c}
+                        >
+                        </lightning-formatted-date-time>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto"
+                        title={quote.End_Date__c}
+                    >
+                        <lightning-formatted-date-time
+                            value={quote.End_Date__c}
+                        >
+                        </lightning-formatted-date-time>
+                    </div>
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto"
+                        title={quote.Total_Price__c}
+                    >
+                        <lightning-formatted-number
+                            value={quote.Total_Price__c}
+                            format-style="currency"
+                            currency-code={oppInfo.CurrencyIsoCode}
+                        >
+                        </lightning-formatted-number> 
+                    </div>
+                </div>
+
+                <!-- Contract Info -->
+                <h2 class="slds-text-heading_small slds-m-top_medium slds-m-bottom_x-small">
+                    Contract Info
+                </h2>
+
+                <!-- Table Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 0.5px solid gray;font-weight: bold;"
+                >
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Source Contract
+                    </div>
+                    <div class="slds-col slds-size_4-of-5 slds-p-horizontal_xx-small">
+                        Adjustment Type
+                    </div>
+                </div>
+
+                <!-- Table Row -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 0.25px solid gray;"
+                >
+                    <div
+                        class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto;"
+                        title={sourceContractName}
+                    >
+                        {sourceContractName}
+                    </div>
+                    <div
+                        class="slds-col slds-size_4-of-5 slds-p-horizontal_xx-small"
+                        style="overflow:auto;"
+                        title={quote.Adjustment_Type__c}
+                    >
+                        {quote.Adjustment_Type__c}
+                    </div>
+                </div>
+
+                <!-- Line Items -->
+                <h2 class="slds-text-heading_small slds-m-top_medium slds-m-bottom_x-small">
+                    Line Items
+                </h2>
+
+                <!-- Table Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
+                    style="border-bottom: 0.5px solid gray;font-weight: bold;"
+                >
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Product
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Start Date
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        End Date
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Quantity
+                    </div>
+                    <div class="slds-col slds-size_1-of-5 slds-p-horizontal_xx-small">
+                        Total
+                    </div>
+                </div>
+
+                <div
+                    class="slds-col slds-grid_vertical"
+                    style="max-height: 30vh;overflow:auto;"
+                >
+                    <template
+                        for:each={quote.QuoteLineItems}
+                        for:item="qli"
+                    >
+                        <div key={qli.Id}>
+                            <c-cpq_-quote-details-q-l-i
+                                all-lines={quote.QuoteLineItems}
+                                opp-info={oppInfo}
+                                qli={qli}
+                            >
+                            </c-cpq_-quote-details-q-l-i>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="slds-modal__footer">
+
+                <ul class="slds-list_horizontal slds-align_absolute-center">
+                    <!-- Close Button -->
+                    <li>
+                        <lightning-button
+                            onclick={closeClick}
+                            label="Close"
+                            variant="neutral"
+                        >
+                        </lightning-button>
+                    </li>
+                </ul>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>
