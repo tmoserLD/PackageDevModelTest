@@ -99,4 +99,14 @@ export default class CPQ_ContractList extends LightningElement {
         this.dispatchEvent(voidContractEvent);
     }
 
+    // View Contract event
+    viewContract(event) {
+        // Send Void Contract call to parent
+        const viewContractEvent = new CustomEvent(
+            'viewcontract', {
+                detail: event.detail
+            });
+        this.dispatchEvent(viewContractEvent);
+    }
+
 }

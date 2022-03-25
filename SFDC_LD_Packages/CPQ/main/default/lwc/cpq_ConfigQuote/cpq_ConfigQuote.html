@@ -13,27 +13,20 @@
             {configTitle}
         </div>
         <div class="slds-col_bump-left">
-            <ul class="slds-list_horizontal">
-                <li class="slds-m-right_x-small">
-                    <lightning-button
-                        label="Cancel"
-                        title="Cancel"
-                        onclick={cancel}
-                        disabled={disableCancelButton}
-                    >
-                    </lightning-button>            
-                </li>
-                <li>
-                    <lightning-button
-                        variant="brand"
-                        label="Save"
-                        title="Save"
-                        onclick={saveQuote}
-                        disabled={disableSaveButton}
-                    >
-                    </lightning-button>
-                </li>
-            </ul>
+            <c-cpq_-config-quote-buttons
+                config-type={configType}
+                existing-quote-data={existingQuoteData}
+                opp-info={oppInfo}
+                playbooks={playbooks}
+                quote-approvals={quoteApprovals}
+                quote-name={quoteName}
+                quote-products={quoteProducts}
+                selected-playbook-id={selectedPlaybookId}
+                selected-pricebook={selectedPricebook}
+                oncancelevent={cancel}
+                onsaveevent={save}
+            >
+            </c-cpq_-config-quote-buttons>
         </div>
     </div>
 
@@ -64,6 +57,7 @@
                         label="Name"
                         value={quoteName}
                         onchange={nameChange}
+                        disabled={viewMode}
                     >
                     </lightning-input>
                 </div>
@@ -77,6 +71,7 @@
                         placeholder="Select Playbook"
                         options={playbookOptions}
                         onchange={playbookChange}
+                        disabled={viewMode}
                     >
                     </lightning-combobox>
                 </div>
@@ -114,6 +109,7 @@
             <template if:true={playbookSelected}>
                 <c-cpq_-playbook
                     playbook={selectedPlaybookObj}
+                    config-type={configType}
                     pricebook={selectedPricebook}
                     product-columns={productColumns}
                     entitlement-columns={entitlementColumns}

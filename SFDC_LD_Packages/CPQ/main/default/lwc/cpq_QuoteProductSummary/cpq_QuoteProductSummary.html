@@ -159,6 +159,7 @@
                                 <div key={product.key}>
                                     <c-cpq_-quote-product
                                         columns-to-display={columnsToDisplay}
+                                        config-type={configType}
                                         opp-currency={oppCurrency}
                                         product={product}
                                         sorted-quote-products={sortedQuoteProducts}
@@ -174,37 +175,40 @@
                         </div>
                     </div>
 
-                    <div class="slds-col slds-size_1-of-6 slds-medium-size_1-of-11 slds-large-size_1-of-12 slds-grid_vertical">
-                        <div
-                            class="slds-col slds-theme_default slds-p-horizontal_x-small slds-p-top_x-small"
-                            style="font-weight: bold;"
-                        >
+                    <!-- Normal Mode -->
+                    <template if:false={viewMode}>
+                        <div class="slds-col slds-size_1-of-6 slds-medium-size_1-of-11 slds-large-size_1-of-12 slds-grid_vertical">
                             <div
-                                class="slds-p-horizontal_xx-small slds-p-bottom_xx-small"
-                                style="border-bottom: 0.5px solid gray;"
+                                class="slds-col slds-theme_default slds-p-horizontal_x-small slds-p-top_x-small"
+                                style="font-weight: bold;"
                             >
-                                Actions
+                                <div
+                                    class="slds-p-horizontal_xx-small slds-p-bottom_xx-small"
+                                    style="border-bottom: 0.5px solid gray;"
+                                >
+                                    Actions
+                                </div>
+                            </div>
+
+                            <!-- Quote Actions -->
+                            <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
+                                <template
+                                    for:each={sortedQuoteProducts}
+                                    for:item="product"
+                                >
+                                    <div key={product.key}>
+                                        <c-cpq_-quote-product-action
+                                            product={product}
+                                            sorted-quote-products={sortedQuoteProducts}
+                                            onremove={removeProduct}
+                                            onupdate={updateProduct}
+                                        >
+                                        </c-cpq_-quote-product-action>
+                                    </div>
+                                </template>
                             </div>
                         </div>
-
-                        <!-- Quote Actions -->
-                        <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
-                            <template
-                                for:each={sortedQuoteProducts}
-                                for:item="product"
-                            >
-                                <div key={product.key}>
-                                    <c-cpq_-quote-product-action
-                                        product={product}
-                                        sorted-quote-products={sortedQuoteProducts}
-                                        onremove={removeProduct}
-                                        onupdate={updateProduct}
-                                    >
-                                    </c-cpq_-quote-product-action>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
+                    </template>
                 </div>
             </template>
         </div>

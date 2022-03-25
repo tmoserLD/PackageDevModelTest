@@ -30,9 +30,6 @@ export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement)
     // Quote PDF Proposal Modal toggle
     @track showProposalModal = false;
 
-    // Quote Details Modal toggle
-    @track showQuoteDetails = false;
-
     // Prompt to show in Delete Quote Confirmation Modal
     @track confirmDeletePrompt = '';
 
@@ -114,18 +111,18 @@ export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement)
             this.quote.Playbook_Status__c === 'Complete'
         ) {
 
-            if (
-                (
-                    this.quote.CPQ_Quote_Approvals__r !== undefined &&
-                    this.quote.CPQ_Quote_Approvals__r.filter(approval => approval.Status__c === 'Approved').length ===  this.quote.CPQ_Quote_Approvals__r.length
-                ) ||
-                this.quote.CPQ_Quote_Approvals__r === undefined
-            ) {
+            // if (
+            //     (
+            //         this.quote.CPQ_Quote_Approvals__r !== undefined &&
+            //         this.quote.CPQ_Quote_Approvals__r.filter(approval => approval.Status__c === 'Approved').length ===  this.quote.CPQ_Quote_Approvals__r.length
+            //     ) ||
+            //     this.quote.CPQ_Quote_Approvals__r === undefined
+            // ) {
                 return true;
-            }
-            else {
-                return false;
-            }
+            // }
+            // else {
+            //     return false;
+            // }
         } else {
             return false;
         }
@@ -143,17 +140,17 @@ export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement)
         else if (this.quote.Playbook_Status__c !== 'Complete') {
             title = 'Cannot Generate Proposal. Playbook is incomplete';
         }
-        else if (
-            !(
-                (
-                    this.quote.CPQ_Quote_Approvals__r !== undefined &&
-                    this.quote.CPQ_Quote_Approvals__r.filter(approval => approval.Status__c === 'Approved').length ===  this.quote.CPQ_Quote_Approvals__r.length
-                ) ||
-                this.quote.CPQ_Quote_Approvals__r === undefined
-            )
-        ) {
-            title = 'Cannot Generate Proposal. Outstanding approvals';
-        }
+        // else if (
+        //     !(
+        //         (
+        //             this.quote.CPQ_Quote_Approvals__r !== undefined &&
+        //             this.quote.CPQ_Quote_Approvals__r.filter(approval => approval.Status__c === 'Approved').length ===  this.quote.CPQ_Quote_Approvals__r.length
+        //         ) ||
+        //         this.quote.CPQ_Quote_Approvals__r === undefined
+        //     )
+        // ) {
+        //     title = 'Cannot Generate Proposal. Outstanding approvals';
+        // }
         return title;
     }
 
@@ -455,12 +452,12 @@ export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement)
 
     // View clicked
     viewQuote() {
-        this.showQuoteDetails = true;
-    }
-
-    // Hide details event
-    hideQuoteDetails() {
-        this.showQuoteDetails = false;
+        // Send view call to parent
+        const viewQuoteEvent = new CustomEvent(
+            'viewquote', {
+                detail: this.quote.Id
+            });
+        this.dispatchEvent(viewQuoteEvent);
     }
 
     navToQuote() {

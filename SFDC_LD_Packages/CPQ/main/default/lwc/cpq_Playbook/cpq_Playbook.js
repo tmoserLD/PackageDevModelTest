@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_Playbook extends LightningElement {
 
+    // Configuration Type
+    @api configType;
+
     // Opportunity Info
     @api oppInfo;
 

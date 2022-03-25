@@ -683,7 +683,7 @@ public class cpq_ConfigQuoteClassTest {
         Test.startTest();
 
         // Save initial quote data
-        cpq_ConfigQuoteClass.saveQuoteConfiguration(
+        Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
             testQLIs,
             testAnswers,
@@ -722,7 +722,7 @@ public class cpq_ConfigQuoteClassTest {
         }
 
         // Save quote data again with quote already existing
-        cpq_ConfigQuoteClass.saveQuoteConfiguration(
+        quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
             testQLIs,
             testAnswers,

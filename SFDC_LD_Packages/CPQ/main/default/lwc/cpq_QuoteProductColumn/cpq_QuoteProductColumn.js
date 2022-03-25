@@ -5,6 +5,9 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
     // Column
     @api column;
 
+    // Configuration Type
+    @api configType;
+
     // Opportunity Currency Iso Code
     @api oppCurrency;
 
@@ -29,6 +32,10 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
             this.product.List_Price_Editable === true
         ) {
             isEditable = true;
+        }
+
+        if (this.configType === 'View') {
+            isEditable = false;
         }
 
         return isEditable;

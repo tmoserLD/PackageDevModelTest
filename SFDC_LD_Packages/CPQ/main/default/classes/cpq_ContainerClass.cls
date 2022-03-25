@@ -88,13 +88,6 @@ public with sharing class cpq_ContainerClass {
                         + 'Value_Text__c'
                     + ' FROM Contract_Playbook_Answers__r'
                 + '),'
-                + '( '
-                    + 'SELECT Id, '
-                        + 'ContractNumber, '
-                        + 'Contract_Status__c, '
-                        + 'Contract_Total__c '
-                    + 'FROM Source_Contracts__r '
-                + '), '
                 + '('
                     + 'SELECT Id,'
                         + 'CPQ_Playbook_Rule_Action__c,'
@@ -153,7 +146,7 @@ public with sharing class cpq_ContainerClass {
                         + 'Status__c'
                     + ' FROM CPQ_Quote_Approvals__r'
                 + ')';
-            String quotesQuery = 'SELECT ' + objFieldsStrings.get('Quote') + quotesSubQueries + ' FROM Quote WHERE OpportunityId=\'' + oppId + '\' ORDER BY CreatedDate DESC'; 
+            String quotesQuery = 'SELECT ' + objFieldsStrings.get('Quote') + quotesSubQueries + ' FROM Quote WHERE OpportunityId=\'' + oppId + '\' AND Shell_Quote__c != true ORDER BY CreatedDate DESC'; 
             quotes = Database.query(quotesQuery);
             cpqObj.quotes = quotes;
 
@@ -270,6 +263,9 @@ public with sharing class cpq_ContainerClass {
             'Id',
             'Adjusted_by_Contract__c',
             'Adjusted_by_Contract__r.ContractNumber',
+            'Adjustment_of_Contract__c',
+            'Adjustment_of_Contract__r.ContractNumber',
+            'Adjustment_Type__c',
             'Contract_End_Date__c',
             'ContractNumber',
             'Contract_Start_Date__c',

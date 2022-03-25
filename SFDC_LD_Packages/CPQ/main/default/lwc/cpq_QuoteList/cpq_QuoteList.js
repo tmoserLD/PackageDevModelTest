@@ -125,6 +125,15 @@ export default class CPQ_QuoteList extends LightningElement {
         this.dispatchEvent(editQuoteEvent);
     }
 
+    // View Quote
+    async viewQuote(event) {
+        const viewQuoteEvent = new CustomEvent(
+            'viewquote', {
+                detail: event.detail
+            });
+        this.dispatchEvent(viewQuoteEvent);
+    }
+
     recallApproval(event) {
         const reloadEvent = new CustomEvent(
             'reload', {

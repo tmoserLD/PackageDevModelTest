@@ -1,0 +1,75 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Loading Spinner -->
+    <template if:true={loading}>
+        <lightning-spinner
+            alternative-text="Loading"
+            size="medium"
+        >
+        </lightning-spinner>
+    </template>
+
+    <!-- Proposal Peview Modal -->
+    <template if:true={showPreview}>
+        <c-cpq_-proposal-p-d-f
+            opp-info={oppInfo}
+            quote={quoteToPreview}
+            onclose={closedPreview}
+            onsave={closedPreview}
+        >
+        </c-cpq_-proposal-p-d-f>
+    </template>
+
+    <ul class="slds-list_horizontal">
+
+        <!-- Normal Mode -->
+        <template if:false={viewMode}>
+            <li class="slds-m-right_x-small">
+                <lightning-button
+                    label="Preview Proposal"
+                    title="Preview Proposal"
+                    variant="base"
+                    onclick={previewProposal}
+                    disabled={disablePreviewButton}
+                >
+                </lightning-button>            
+            </li>
+            <li class="slds-m-right_x-small">
+                <lightning-button
+                    label="Cancel"
+                    title="Cancel"
+                    onclick={cancel}
+                    disabled={disableCancelButton}
+                >
+                </lightning-button>            
+            </li>
+            <li>
+                <lightning-button
+                    variant="brand"
+                    label="Save"
+                    title="Save"
+                    onclick={saveQuote}
+                    disabled={disableSaveButton}
+                >
+                </lightning-button>
+            </li>
+        </template>
+
+        <!-- Preview Mode -->
+        <template if:true={viewMode}>
+            <li class="slds-m-right_x-small">
+                <lightning-button
+                    label="Close"
+                    title="Close"
+                    onclick={cancel}
+                    disabled={disableCancelButton}
+                >
+                </lightning-button>            
+            </li>
+        </template>
+    </ul>
+</template>

@@ -610,7 +610,7 @@ public class cpq_ContainerClassTest {
         testApprovers.add(testApproversSubBase);
 
         // Save initial quote data
-        cpq_ConfigQuoteClass.saveQuoteConfiguration(
+        Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
             new List<QuoteLineItem>(),
             new List<CPQ_Playbook_Answer__c>(),
@@ -774,7 +774,7 @@ public class cpq_ContainerClassTest {
         testApprovers.add(testApproversSubBase);
 
         // Save initial quote data
-        cpq_ConfigQuoteClass.saveQuoteConfiguration(
+        Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
             new List<QuoteLineItem>(),
             new List<CPQ_Playbook_Answer__c>(),
@@ -1041,7 +1041,7 @@ public class cpq_ContainerClassTest {
         testApprovers.add(testApproversSubBase);
 
         // Save initial quote data
-        cpq_ConfigQuoteClass.saveQuoteConfiguration(
+        Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
             testQLIs,
             testAnswers,

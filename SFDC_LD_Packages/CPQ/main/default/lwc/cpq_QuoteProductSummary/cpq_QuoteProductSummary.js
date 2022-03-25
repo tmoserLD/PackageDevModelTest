@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteProductSummary extends LightningElement {
     
+    // Configuration Type
+    @api configType;
+
     // Products added to Quote
     @api quoteProducts = [];
 
@@ -133,6 +136,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
             colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-3 slds-large-size_1-of-3';
         }
         return colCSS;
+    }
+
+    get viewMode() {
+        return this.configType === 'View';
     }
 
     // Determine if any Products are currently on quote

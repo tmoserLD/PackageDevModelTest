@@ -51,6 +51,15 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         this.showQuoteConfig = true;
     }
 
+    // View Quote event received
+    viewQuote(event) {
+        this.configType = 'View';
+        this.quoteForConfig = this.oppInfo.Quotes.find(
+            quote => quote.Id === event.detail
+        );
+        this.showQuoteConfig = true;
+    }
+
     // Amend Contract event received
     amendContract(event) {
         this.configType = 'New';
@@ -61,7 +70,7 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         );
 
         // Set 'Quote' data
-        tempQuoteObj.Name = 'Contract Amendment';
+        tempQuoteObj.Name = 'Amendment of Contract #' + tempQuoteObj.ContractNumber;
         tempQuoteObj.QuoteLineItems = [];
         tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
         tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
@@ -85,7 +94,7 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         );
 
         // Set 'Quote' data
-        tempQuoteObj.Name = 'Contract Replacement';
+        tempQuoteObj.Name = 'Replacement of Contract #' + tempQuoteObj.ContractNumber;
         tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
         tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
         tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
@@ -109,7 +118,7 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         );
 
         // Set 'Quote' data
-        tempQuoteObj.Name = 'Contract Renewal';
+        tempQuoteObj.Name = 'Renewal of Contract #' + tempQuoteObj.ContractNumber;
         tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
         tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
         tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
@@ -152,6 +161,30 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
                 qli.End_Date__c = year + '-' + month + '-' + day;
             }, this);
         }
+
+        // Remove Id -- since not quote
+        tempQuoteObj.contractId = tempQuoteObj.Id;
+        tempQuoteObj.Id = undefined;
+
+        this.quoteForConfig = tempQuoteObj;
+        this.showQuoteConfig = true;
+    }
+
+    // View Contract event received
+    viewContract(event) {
+        this.configType = 'View';
+        
+        // Contract
+        let tempQuoteObj = this.oppInfo.Contracts.find(
+            contract => contract.Id === event.detail
+        );
+
+        console.log(JSON.parse(JSON.stringify(tempQuoteObj)));
+
+        // Set 'Quote' data
+        tempQuoteObj.Name = 'Contract #' + tempQuoteObj.ContractNumber;
+        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
+        tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
 
         // Remove Id -- since not quote
         tempQuoteObj.contractId = tempQuoteObj.Id;

@@ -11,9 +11,6 @@ export default class CPQ_ProposalPDF extends LightningElement {
     // Quote Info
     @api quote;
 
-    // HTML display text
-    @track displayText = 'LMNOP';
-
     // Spinner
     @track loading = false;
 
@@ -23,7 +20,18 @@ export default class CPQ_ProposalPDF extends LightningElement {
 
     // On Mount
     connectedCallback() {
-        this.pdfURL = '/apex/cpq_ProposalVF?quoteId=' + this.quote.Id;
+
+        // Determine if draft
+        let isDraft = false;
+        if (
+            this.quote.CPQ_Quote_Approvals__r !== undefined &&
+            this.quote.CPQ_Quote_Approvals__r.filter(approval => approval.Status__c != 'Approved').length > 0
+        ) {
+            isDraft = true;
+        }
+
+        // Set PDF VF page URL
+        this.pdfURL = '/apex/cpq_ProposalVF?quoteId=' + this.quote.Id + '&isDraft=' + isDraft;
     }
 
 

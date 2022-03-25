@@ -4,7 +4,7 @@
     <description>End Date of entitlement</description>
     <externalId>false</externalId>
     <label>End Date</label>
-    <required>true</required>
+    <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Date</type>
 </CustomField>

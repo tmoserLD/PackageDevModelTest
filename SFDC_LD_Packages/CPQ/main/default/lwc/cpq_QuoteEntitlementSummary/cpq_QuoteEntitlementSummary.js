@@ -64,6 +64,14 @@ export default class CPQ_QuoteEntitlementSummary extends LightningElement {
         return this.sorter(this.sortCol);
     }
 
+    get contractNumber() {
+        if (this.entitlements.length > 0) {
+            return this.entitlements[0].Contract__r.ContractNumber;
+        } else {
+            return '';
+        }
+    }
+
     // Sorter
     sorter(sortCol) {
         return JSON.parse(JSON.stringify(this.entitlements)).sort(function(entA, entB) {

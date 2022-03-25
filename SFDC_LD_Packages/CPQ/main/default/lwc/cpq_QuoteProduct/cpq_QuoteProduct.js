@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteProduct extends LightningElement {
 
+    // Configuration Type
+    @api configType;
+
     // Product
     @api product;
 

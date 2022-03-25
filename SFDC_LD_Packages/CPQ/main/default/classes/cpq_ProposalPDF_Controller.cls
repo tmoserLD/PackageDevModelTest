@@ -12,6 +12,7 @@ public with sharing class cpq_ProposalPDF_Controller {
     public String playbookHeaderImageId {get; set;}
     public List<sectionObj> sections {get; set;}
     public String sectionsPassed {get; set;}
+    public Boolean isDraft {get; set;}
 
     /**
     * @description Constuctor method to build out PDF layout based on criteria and quote configuration
@@ -22,6 +23,8 @@ public with sharing class cpq_ProposalPDF_Controller {
 
         Id quoteRecordId = ApexPages.currentPage().getParameters().get('quoteId');
         sectionsPassed = '';
+
+        isDraft = ApexPages.currentPage().getParameters().get('isDraft') == 'true' ? true : false;
 
         // Quote Info
         Quote quoteInfo = [
@@ -55,12 +58,15 @@ public with sharing class cpq_ProposalPDF_Controller {
             playbookHeaderImageId = playbook.AttachedContentDocuments[0].ContentDocument.LatestPublishedVersionId;
         }
 
-        // EOL text wrap fix
+        // EOL text wrap / Empty Span fix
+        String emptySpanRegex = '<span[^>]*></span>';
         if (playbook.Proposal_Header__c != null) {
             playbook.Proposal_Header__c = playbook.Proposal_Header__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
+            playbook.Proposal_Header__c = playbook.Proposal_Header__c.replaceAll(emptySpanRegex, '');
         }
         if (playbook.Proposal_Footer__c != null) {
             playbook.Proposal_Footer__c = playbook.Proposal_Footer__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
+            playbook.Proposal_Footer__c = playbook.Proposal_Footer__c.replaceAll(emptySpanRegex, '');
         }
 
         // Sections that meet critieria
@@ -937,15 +943,18 @@ public with sharing class cpq_ProposalPDF_Controller {
                     }
                 }
 
-                // EOL Text wrap resolution
+                // EOL Text wrap / Empty Span resolution
                 if (section.Body_Text_Block_1__c != null) {
                     section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
+                    section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replaceAll(emptySpanRegex, '');
                 }
                 if (section.Body_Text_Block_2__c != null) {
                     section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
+                    section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replaceAll(emptySpanRegex, '');
                 }
                 if (section.Body_Text_Block_3__c != null) {
                     section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
+                    section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replaceAll(emptySpanRegex, '');
                 }
 
                 // Add section

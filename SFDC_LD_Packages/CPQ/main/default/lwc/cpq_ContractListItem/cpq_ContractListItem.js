@@ -12,9 +12,6 @@ export default class CPQ_ContractListItem extends NavigationMixin(LightningEleme
     // Source Info
     @api sourceInfo;
 
-    // Contract Details modal toggle
-    @track showContractDetails = false;
-
     // Account Sourec
     get accountSource() {
         return this.sourceInfo.sourceType === 'Account';
@@ -157,12 +154,12 @@ export default class CPQ_ContractListItem extends NavigationMixin(LightningEleme
 
     // View clicked
     viewContract() {
-        this.showContractDetails = true;
-    }
-
-    // Hide details event
-    hideContractDetails() {
-        this.showContractDetails = false;
+        // Send View Contract call to parent
+        const viewContractEvent = new CustomEvent(
+            'viewcontract', {
+                detail: this.contract.Id
+            });
+        this.dispatchEvent(viewContractEvent);
     }
 
     navToContract() {

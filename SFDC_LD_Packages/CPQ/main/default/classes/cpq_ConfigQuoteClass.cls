@@ -75,7 +75,8 @@ public with sharing class cpq_ConfigQuoteClass {
             'Start_Date__c',
             'SubTotal_Price__c',
             'Total_Price__c',
-            'Unit_Price__c'
+            'Unit_Price__c',
+            'Contract__r.ContractNumber'
         };
 
         // PLAYBOOKS
@@ -1005,7 +1006,7 @@ public with sharing class cpq_ConfigQuoteClass {
     * @param quoteApprovers List of List of List of Unsaved CPQ_Quote_Approver__c record data
     */
     @AuraEnabled
-    public static void saveQuoteConfiguration(
+    public static Id saveQuoteConfiguration(
         Quote quoteToSave,
         List<QuoteLineItem> quoteLineItems,
         List<CPQ_Playbook_Answer__c> playbookAnswers,
@@ -1121,6 +1122,8 @@ public with sharing class cpq_ConfigQuoteClass {
 
         // Save Approvers
         insert approvers;
+
+        return quoteToSave.Id;
     }
 }
     
