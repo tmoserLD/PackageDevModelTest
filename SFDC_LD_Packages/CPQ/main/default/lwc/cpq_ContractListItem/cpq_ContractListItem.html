@@ -1,5 +1,20 @@
 <template>
 
+    <!-- Confirm Void -->
+    <template if:true={showConfirmVoid}>
+        <c-confirmation-modal
+            variant="error"
+            add-texture="false"
+            title="Confirm Void Transaction"
+            body={confirmVoidPrompt}
+            confirm-button-title="Confirm"
+            cancel-button-title="Cancel"
+            onconfirm={confirmVoid}
+            oncancel={cancelVoid}
+        >
+        </c-confirmation-modal>
+    </template>
+
     <div
         class={mainCSS}
         style="border-bottom: 0.25px solid gray"

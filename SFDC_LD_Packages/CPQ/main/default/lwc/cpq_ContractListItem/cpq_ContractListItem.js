@@ -12,7 +12,13 @@ export default class CPQ_ContractListItem extends NavigationMixin(LightningEleme
     // Source Info
     @api sourceInfo;
 
-    // Account Sourec
+    // Void Confirmation Modal toggle
+    @track showConfirmVoid = false;
+
+    // Prompt to show in Void Confirmation Modal
+    @track confirmVoidPrompt = 'Are you sure you want to void this contract?';
+
+    // Account Source
     get accountSource() {
         return this.sourceInfo.sourceType === 'Account';
     }
@@ -144,6 +150,17 @@ export default class CPQ_ContractListItem extends NavigationMixin(LightningEleme
 
     // Void clicked
     voidContract() {
+        this.showConfirmVoid = true;
+    }
+
+    // Cancel void
+    cancelVoid() {
+        this.showConfirmVoid = false;
+    }
+
+    // Confirmation received to void
+    async confirmVoid() {
+
         // Send Void Contract call to parent
         const voidContractEvent = new CustomEvent(
             'voidcontract', {
