@@ -496,7 +496,7 @@ public class cpq_ConfigQuoteClassTest {
 
         Test.startTest();
 
-        configData = cpq_ConfigQuoteClass.getConfigInfo(testContract.Id);
+        configData = cpq_ConfigQuoteClass.getConfigInfo(testContract.Id, false);
         List<cpq_ConfigQuoteClass.ProductColumn> emptyProductColumnList = new List<cpq_ConfigQuoteClass.ProductColumn>();
         for (cpq_ConfigQuoteClass.PlaybookInfo playbook : configData.playbooks) {
             System.assert(playbook.entitlementColumns.size() > 0);
@@ -515,7 +515,7 @@ public class cpq_ConfigQuoteClassTest {
 
         Test.startTest();
 
-        configData = cpq_ConfigQuoteClass.getConfigInfo(null);
+        configData = cpq_ConfigQuoteClass.getConfigInfo(null, true);
         List<cpq_ConfigQuoteClass.ProductColumn> emptyProductColumnList = new List<cpq_ConfigQuoteClass.ProductColumn>();
         for (cpq_ConfigQuoteClass.PlaybookInfo playbook : configData.playbooks) {
             System.assertEquals(emptyProductColumnList, playbook.entitlementColumns);

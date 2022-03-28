@@ -71,46 +71,80 @@ public with sharing class cpq_ContractsByAccountClass {
             WHERE Id =:acctId
         ];
 
+        // Contract Entitlement Fields
+        Set<String> entitlementFields = new Set<String>{
+            'Id',
+            'CPQ_Playbook_Rule_Action__c',
+            'Discount__c',
+            'End_Date__c',
+            'List_Price__c',
+            'Product__c',
+            'Product_Name__c',
+            'Quantity__c',
+            'Start_Date__c',
+            'Total_Price__c',
+            'Unit_Price__c'
+        };
+        // Query all active playbooks
+        for (CPQ_Playbook__c playbook : [
+            SELECT Id,
+                Entitlement_Summary_Columns__c
+            FROM CPQ_Playbook__c
+            WHERE IsActive__c=true AND
+                Entitlement_Summary_Columns__c != null
+        ]) {
+            // Extract each field
+            for (String field : playbook.Entitlement_Summary_Columns__c.split(';')) {
+
+                entitlementFields.add(field);
+            }
+        }
+        // Convert Set to String
+        String entitlementFieldsString = '';
+        for (String field : entitlementFields) {
+            entitlementFieldsString += field + ',';
+        }
+        entitlementFieldsString = entitlementFieldsString.removeEnd(',');
+
+        // Query Contracts
         acctObj.Contracts = new List<Contract>();
         String contractQuery = ''
             + 'SELECT Id, '
                 + 'Adjusted_by_Contract__c, '
                 + 'Adjusted_by_Contract__r.ContractNumber, '
+                + 'Adjustment_of_Contract__c, '
+                + 'Adjustment_of_Contract__r.ContractNumber, '
+                + 'Adjustment_Type__c, '
+                + 'Contract_End_Date__c, '
                 + 'ContractNumber, '
                 + 'Contract_Start_Date__c, '
-                + 'Contract_End_Date__c, '
                 + 'Contract_Status__c, '
                 + 'Contract_Total__c, '
                 + 'CPQ_Playbook__c, '
+                + 'CPQ_Playbook__r.Default_Term_in_Months__c, '
                 + 'CPQ_Playbook__r.Label__c, '
+                + 'CPQ_Playbook__r.Pricebook__c, '
                 + 'Opportunity__c, '
                 + 'Opportunity__r.Name, '
                 + 'Quote__c, '
-                + 'Quote__r.Name, '
-                + (multiCurrency == true ? 'CurrencyIsoCode' : '')
+                + (multiCurrency == true ? 'CurrencyIsoCode, ' : '')
                 + '( '
-                    + 'SELECT Id, '
-                        + 'ContractNumber, '
-                        + 'Contract_Status__c, '
-                        + 'Contract_Total__c '
-                    + 'FROM Source_Contracts__r '
+                    + 'SELECT '
+                        + entitlementFieldsString
+                    + ' FROM Contract_Entitlements__r '
                 + '), '
                 + '( '
                     + 'SELECT Id, '
-                        + 'Discount__c, '
-                        + 'End_Date__c, '
-                        + 'List_Price__c, '
-                        + 'Product__c, '
-                        + 'Product_Name__c, '
-                        + 'Quantity__c, '
-                        + 'Start_Date__c, '
-                        + 'SubTotal_Price__c, '
-                        + 'Total_Price__c, '
-                        + 'Unit_Price__c '
-                    + 'FROM Contract_Entitlements__r '
-                    + 'ORDER BY Start_Date__c DESC, '
-                        + 'End_Date__c DESC, '
-                        + 'Product_Name__c '
+                        + 'CPQ_Playbook_Question__c, '
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c, '
+                        + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c, '
+                        + 'Value_Boolean__c, '
+                        + 'Value_Currency__c, '
+                        + 'Value_Date__c, '
+                        + 'Value_Decimal__c, '
+                        + 'Value_Integer__c, '
+                        + 'Value_Text__c'
+                    + ' FROM Contract_Playbook_Answers__r'
                 + ') '
             + 'FROM Contract '
             + 'WHERE AccountId =:acctId '

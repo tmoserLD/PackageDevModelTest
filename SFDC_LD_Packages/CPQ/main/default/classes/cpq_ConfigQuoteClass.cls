@@ -17,7 +17,7 @@ public with sharing class cpq_ConfigQuoteClass {
     * @return ConfigInfo object
     */
     @AuraEnabled
-    public static ConfigInfo getConfigInfo(Id adjustingContract) {
+    public static ConfigInfo getConfigInfo(Id adjustingContract, Boolean contractView) {
 
         // Return wrapper obj
         ConfigInfo configObj = new ConfigInfo();
@@ -123,7 +123,9 @@ public with sharing class cpq_ConfigQuoteClass {
                 for (String prodCol : playbook.Product_Summary_Columns__c.split(';')) {
                     customQLIFields.add(prodCol);
 
-                    if (!standardFields.contains(prodCol)) {
+                    if (!standardFields.contains(prodCol) &&
+                        contractView != true
+                    ) {
                         hasCustomField = true;
                     }
                 }
@@ -217,7 +219,9 @@ public with sharing class cpq_ConfigQuoteClass {
             }
 
             // Get Label Info on entitlement fields
-            if (adjustingContract != null) {
+            if (adjustingContract != null ||
+                contractView == true
+            ) {
                 if (entType == null) {
                     entType = ((SObject)(Type.forName('Schema.Contract_Entitlement__c').newInstance())).getSObjectType();
                     entObject = entType.getDescribe();
@@ -277,6 +281,11 @@ public with sharing class cpq_ConfigQuoteClass {
                         playbookInfoSet.entitlementColumns.add(newCol);
                     }
                 }
+            }
+
+            // Show Contract fields as product fields when viewing contract
+            if (contractView == true) {
+                playbookInfoSet.productColumns = playbookInfoSet.entitlementColumns;
             }
         }
 

@@ -69,12 +69,28 @@
                 </ul>
             </div>
 
+            <!-- View Contract -->
+            <template if:true={showConfig}>
+                <c-cpq_-config-quote
+                    config-type="View"
+                    default-currency={acct.defaultCurrency}
+                    existing-quote-data={contractForConfig}
+                    opp-info={oppForConfig}
+                    user-info={userForConfig}
+                    oncancel={hideConfig}
+                >
+                </c-cpq_-config-quote>
+            </template>
+
             <!-- Contract List -->
-            <c-cpq_-contract-list
-                source-info={acct}
-                onvoidcontract={voidContract}
-            >
-            </c-cpq_-contract-list>
+            <template if:false={showConfig}>
+                <c-cpq_-contract-list
+                    source-info={acct}
+                    onvoidcontract={voidContract}
+                    onviewcontract={viewContract}
+                >
+                </c-cpq_-contract-list>
+            </template>
         <!-- </template> -->
     </template>
 </template>

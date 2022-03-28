@@ -64,7 +64,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
         let configInfo;
         try {
             configInfo = await getConfigInfo({
-                adjustingContract: this.existingQuoteData.Adjustment_of_Contract__c
+                adjustingContract: this.existingQuoteData.Adjustment_of_Contract__c,
+                contractView: (this.configType === 'View' && this.existingQuoteData.contractId !== undefined)
             });
 
             let playbooks = configInfo.playbooks;
@@ -86,7 +87,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     contractId: this.existingQuoteData.Adjustment_of_Contract__c,
                     entitlementFields: configInfo.entitlementFields
                 });
-                console.log(JSON.parse(JSON.stringify(this.contractInfo)));
                 // Currency for non-MultiCurrency orgs
                 if (this.contractInfo.CurrencyIsoCode === undefined) {
                     this.contractInfo.CurrencyIsoCode = this.defaultCurrency;
@@ -344,6 +344,11 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 entry.Product2Id === qli.Product__c    
                             ) {
                                 let productToAdd = JSON.parse(JSON.stringify(entry));
+
+                                // Get all qli attributes
+                                for (const [key, value] of Object.entries(qli)) {
+                                    productToAdd[key] = value;
+                                  }
 
                                 // Product Name
                                 productToAdd.Product_Name = entry.Product2.Name;

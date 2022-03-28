@@ -179,8 +179,6 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
             contract => contract.Id === event.detail
         );
 
-        console.log(JSON.parse(JSON.stringify(tempQuoteObj)));
-
         // Set 'Quote' data
         tempQuoteObj.Name = 'Contract #' + tempQuoteObj.ContractNumber;
         tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;

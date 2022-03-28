@@ -14,7 +14,17 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
 
     @track acct = {};
 
+    // Contract object to pass in as quote to CPQ Config
+    @track contractForConfig;
+
+    // Config objects
+    @track oppForConfig;
+    @track userForConfig;
+
     @track loading = false;
+
+    // Toggle to display CPQ Config
+    @track showConfig = false;
 
     connectedCallback() {
         this.queryContractRecords();
@@ -66,6 +76,34 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
                 actionName: 'view',
             },
         });
+    }
+
+    // Hide Config event received
+    hideConfig(event) {
+        this.showConfig = false;
+    }
+
+    // View Contract event received
+    viewContract(event) {
+        
+        // Contract
+        let tempQuoteObj = JSON.parse(JSON.stringify(this.acct.Contracts.find(
+            contract => contract.Id === event.detail
+        )));
+
+        // Set 'Quote' data
+        tempQuoteObj.Name = 'Contract #' + tempQuoteObj.ContractNumber;
+        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
+        tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
+
+        // Remove Id -- since not quote
+        tempQuoteObj.contractId = tempQuoteObj.Id;
+        tempQuoteObj.Id = undefined;
+
+        this.contractForConfig = tempQuoteObj;
+        this.oppForConfig = {CurrencyIsoCode : tempQuoteObj.CurrencyIsoCode};
+        this.userForConfig = {};
+        this.showConfig = true;
     }
 
     // Void contract event

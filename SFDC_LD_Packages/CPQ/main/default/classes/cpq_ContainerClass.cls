@@ -89,21 +89,11 @@ public with sharing class cpq_ContainerClass {
                     + ' FROM Contract_Playbook_Answers__r'
                 + '),'
                 + '('
-                    + 'SELECT Id,'
-                        + 'CPQ_Playbook_Rule_Action__c,'
-                        + 'Discount__c,'
-                        + 'End_Date__c,'
-                        + 'List_Price__c,'
-                        + 'Product__c,'
-                        + 'Product_Name__c,'
-                        + 'Quantity__c,'
-                        + 'Start_Date__c,'
-                        + 'Total_Price__c,'
-                        + 'Unit_Price__c'
+                    + 'SELECT '
+                        + objFieldsStrings.get('Contract_Entitlement__c')
                     + ' FROM Contract_Entitlements__r'
-                    + ' ORDER BY Start_Date__c DESC, End_Date__c DESC, Product_Name__c'
                 + ')';
-            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC'; 
+            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC, ContractNumber'; 
             contracts = Database.query(contractsQuery);
             cpqObj.contracts = contracts;
 
@@ -125,18 +115,8 @@ public with sharing class cpq_ContainerClass {
                     + ' FROM CPQ_Playbook_Answers__r'
                 + '), '
                 + '('
-                    + 'SELECT Id,'
-                        + 'CPQ_Playbook_Rule_Action__c,'
-                        + 'Discount__c,'
-                        + 'End_Date__c,'
-                        + 'List_Price__c,'
-                        + 'PricebookEntryId,'
-                        + 'Product2Id,'
-                        + 'Product2.Name,'
-                        + 'Quantity__c,'
-                        + 'Unit_Price__c,'
-                        + 'Start_Date__c,'
-                        + 'Total_Price__c'
+                    + 'SELECT '
+                        + objFieldsStrings.get('QuoteLineItem')   
                     + ' FROM QuoteLineItems'
                 + '), '
                 + '('
@@ -223,6 +203,23 @@ public with sharing class cpq_ContainerClass {
         };
         objFieldSets.put('Quote', quoteFields);
 
+        // QuoteLineItem
+        Set<String> quoteLineItemFields = new Set<String>{
+            'Id',
+            'CPQ_Playbook_Rule_Action__c',
+            'Discount__c',
+            'End_Date__c',
+            'List_Price__c',
+            'PricebookEntryId',
+            'Product2Id',
+            'Product2.Name',
+            'Quantity__c',
+            'Unit_Price__c',
+            'Start_Date__c',
+            'Total_Price__c'
+        };
+        objFieldSets.put('QuoteLineItem', quoteLineItemFields);
+
         // Opportunity
         Set<String> oppFields = new Set<String>{
             'Id',
@@ -284,7 +281,23 @@ public with sharing class cpq_ContainerClass {
         }
         objFieldSets.put('Contract', contractFields);
 
-        // Query all active questions from active groups from active playbooks
+        // Contract Entitlement
+        Set<String> entitlementFields = new Set<String>{
+            'Id',
+            'CPQ_Playbook_Rule_Action__c',
+            'Discount__c',
+            'End_Date__c',
+            'List_Price__c',
+            'Product__c',
+            'Product_Name__c',
+            'Quantity__c',
+            'Start_Date__c',
+            'Total_Price__c',
+            'Unit_Price__c'
+        };
+        objFieldSets.put('Contract_Entitlement__c', entitlementFields);
+
+        // Query all active default field value questions from active groups from active playbooks
         for (CPQ_Playbook_Question__c question : [
             SELECT Id,
                 Default_Field_Value__c
@@ -303,10 +316,6 @@ public with sharing class cpq_ContainerClass {
                 // Only add fields from valid objects
                 if (objFieldSets.containsKey(obj)) {
 
-
-                    // NEED TO BE REMOVED ONCE OUT OF SCRATCH ORGS
-                    // if (field.endsWith('__c') != true) {
-
                     // Base level queries: Quote, Opportunity, User
                     if (obj == 'Quote' ||
                         obj == 'Opportunity' ||
@@ -324,9 +333,52 @@ public with sharing class cpq_ContainerClass {
                     else if (obj == 'UserRole') {
                         objFieldSets.get('User').add('UserRole.' + field);
                     }
-
-                    // }
                 }
+            }
+        }
+
+        Set<String> standardProductFields = new Set<String>{
+            'Quantity',
+            'Unit_Price',
+            'List_Price',
+            'Start_Date',
+            'End_Date',
+            'Quantity_Editable',
+            'Dates_Editable',
+            'Discountable',
+            'List_Price_Editable',
+            'Manually_Addible',
+            'Removable'
+        };
+        // Query all active product stamping actions from active rules from active playbooks
+        for (CPQ_Playbook_Rule_Action__c action : [
+            SELECT Id,
+                Product_Adjustment_Field__c
+            FROM CPQ_Playbook_Rule_Action__c
+            WHERE IsActive__c=true AND
+                CPQ_Playbook_Rule__r.IsActive__c=true AND
+                CPQ_Playbook_Rule__r.CPQ_Playbook__r.IsActive__c=true AND
+                Action_Type__c = 'Adjust product field'
+        ]) {
+            // Valid field values are not standard CPQ fields
+            if (!standardProductFields.contains(action.Product_Adjustment_Field__c)) {
+
+                objFieldSets.get('QuoteLineItem').add(action.Product_Adjustment_Field__c);
+            }
+        }
+
+        // Query all active playbooks
+        for (CPQ_Playbook__c playbook : [
+            SELECT Id,
+                Entitlement_Summary_Columns__c
+            FROM CPQ_Playbook__c
+            WHERE IsActive__c=true AND
+                Entitlement_Summary_Columns__c != null
+        ]) {
+            // Extract each field
+            for (String field : playbook.Entitlement_Summary_Columns__c.split(';')) {
+
+                objFieldSets.get('Contract_Entitlement__c').add(field);
             }
         }
 
