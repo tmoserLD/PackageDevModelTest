@@ -1,0 +1,263 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <lightning-card
+        title="View Status of CPQ Approvals"
+        variant="narrow"    
+    >
+
+        <!-- Loading Spinner -->
+        <template if:true={loading}>
+            <lightning-spinner
+                alternative-text="Loading"
+                size="medium"
+            >
+            </lightning-spinner>
+        </template>
+
+        <ul class="slds-list_horizontal slds-wrap slds-p-horizontal_medium slds-m-bottom_large">
+
+            <li class="slds-m-right_medium">
+                <lightning-combobox
+                    name="Approval Category"
+                    label="Approval Category"
+                    value={approvalCategory}
+                    placeholder="Select Category"
+                    options={approvalCategories}
+                    onchange={categoryChange}
+                >
+                </lightning-combobox>
+            </li>
+
+            <li class="slds-m-right_medium">
+                <c-search-component
+                    obj-name="User"
+                    icon-name="standard:user"
+                    label-name="User"
+                    placeholder="Search" 
+                    fields={userFields}
+                    display-fields={userDisplayFields}
+                    disabled={disableSearch}
+                    onlookup={userChange}
+                >
+                </c-search-component>
+            </li>
+
+            <li>
+                <lightning-combobox
+                    name="Approval Status"
+                    label="Approval Status"
+                    value={approvalStatus}
+                    placeholder="Select Status"
+                    options={approvalStatuses}
+                    onchange={statusChange}
+                >
+                </lightning-combobox>
+            </li>
+        </ul>
+
+        <template for:each={opportunities} for:item="opp">
+            <div
+                key={opp.oppInfo.Id}
+                class="slds-p-horizontal_medium slds-m-bottom_medium"
+            >
+                <!-- Opportunity Info -->
+                <div class="slds-p-horizontal_x-small slds-p-vertical_small">
+
+                    <ul class="slds-list_horizontal">
+                        <li class="slds-p-top_xx-small">
+                            <lightning-icon
+                                icon-name="standard:opportunity"
+                            >
+                            </lightning-icon>
+                        </li>
+                        <li class="slds-p-left_small slds-m-left_x-small slds-truncate">
+                            <p 
+                                class="slds-text-heading_small slds-truncate slds-m-bottom_xx-small"
+                                title={opp.oppInfo.Name}
+                            >
+                                <b
+                                    class="slds-truncate"
+                                    style="text-decoration: underline;cursor: pointer;"
+                                    onclick={navToOpp}
+                                >
+                                    {opp.oppInfo.Name}
+                                </b>
+                            </p>
+                            <p
+                                class="slds-truncate"
+                                style="color:gray"
+                                title={opp.oppInfo.Owner.Name}
+                            >
+                                Owner: {opp.oppInfo.Owner.Name}
+                            </p>
+                            <ul
+                                class="slds-list_horizontal"
+                                style="color:gray"
+                                title={opp.oppInfo.Account.Name}
+                            >
+                                <li class="slds-truncate">
+                                    Account:
+                                </li>
+                                <li class="slds-m-left_xx-small"
+                                    style="text-decoration: underline;cursor: pointer;"
+                                    onclick={navToAcct}
+                                >
+                                    {opp.oppInfo.Account.Name}
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Quotes -->
+                <div class="slds-m-left_large slds-p-horizontal_x-small slds-p-vertical_small">
+                    <!-- Banner -->
+                    <div
+                        class="slds-col slds-grid slds-text-heading_small slds-p-around_x-small slds-theme_shade"
+                        style="border-radius: 10px;"
+                    >
+                        Quote Approvals
+                    </div>
+                    <!-- Column Headers -->
+                    <div
+                        class="slds-grid slds-p-horizontal_small slds-p-vertical_small"
+                        style="border-bottom: 1px solid gray"
+                    >
+
+                        <!-- Quote Name -->
+                        <div class="slds-col slds-size_1-of-4">
+                            <b>
+                                Quote
+                            </b>
+                        </div>
+
+                        <!-- Approval -->
+                        <div class="slds-col slds-size_1-of-4">
+                            <b>
+                                Approval
+                            </b>
+                        </div>
+
+                        <!-- Approval Reason -->
+                        <div class="slds-col slds-size_2-of-4">
+                            <b>
+                                Reason
+                            </b>
+                        </div>
+                    </div>
+                    <template for:each={opp.quotes} for:item="quote">
+                        <div
+                            key={quote.quoteInfo.Id}
+                            class="slds-grid"
+                            style="border-bottom: 1px solid gray"
+                        >
+                            <!-- Quote Name -->
+                            <div
+                                class="slds-col slds-size_1-of-4 slds-p-horizontal_small slds-p-vertical_small"
+                                style="border-right: 1px solid gray"
+                            >
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col">
+                                        {quote.quoteInfo.Name}
+                                    </div>
+                                    <div class="slds-col_bump-left">
+                                        <ul
+                                            class="slds-list_horizontal slds-p-vertical_xx-small slds-p-horizontal_x-small"
+                                            style="cursor:pointer;border: 0.5px solid gray;border-radius: 10px"
+                                        >
+                                            <li class="slds-m-right_small">
+                                                <lightning-icon
+                                                    icon-name="utility:preview"
+                                                    alternative-text="View Quote"
+                                                    title="View Quote"
+                                                    size="xx-small"
+                                                >
+                                                </lightning-icon>
+                                            </li>
+                                            <li>
+                                                View
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Approval -->
+                            <div class="slds-col slds-size_3-of-4">
+                                <template for:each={quote.approvals} for:item="approval">
+                                    <div
+                                        key={approval.approvalInfo.Id}
+                                        class="slds-grid"
+                                        style="border-bottom: 0.5px solid gray"
+                                    >
+                                        <!-- Label -->
+                                        <div
+                                            class="slds-col slds-size_1-of-3 slds-p-horizontal_small slds-p-vertical_small"
+                                            style="border-right: 1px solid gray"
+                                        >
+                                            <div class="slds-grid slds-wrap">
+                                                <div class="slds-col">
+                                                    {approval.approvalInfo.CPQ_Playbook_Approval__r.Label__c}
+                                                </div>
+                                                <div class="slds-col_bump-left">
+                                                    <ul class="slds-list_horizontal slds-wrap">
+                                                        <li class="slds-m-right_small slds-m-bottom_xx-small">
+                                                            <ul
+                                                                class="slds-list_horizontal slds-p-vertical_xx-small slds-p-horizontal_x-small"
+                                                                style="cursor:pointer;border: 0.5px solid gray;border-radius: 10px"
+                                                            >
+                                                                <li class="slds-m-right_small">
+                                                                    <lightning-icon
+                                                                        icon-name="utility:close"
+                                                                        alternative-text="Reject Approval"
+                                                                        title="Reject Approval"
+                                                                        size="xx-small"
+                                                                    >
+                                                                    </lightning-icon>
+                                                                </li>
+                                                                <li>
+                                                                    Reject
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                        <li class="slds-m-bottom_xx-small">
+                                                            <ul
+                                                                class="slds-list_horizontal slds-p-vertical_xx-small slds-p-horizontal_x-small"
+                                                                style="cursor:pointer;border: 0.5px solid gray;border-radius: 10px"
+                                                            >
+                                                                <li class="slds-m-right_small">
+                                                                    <lightning-icon
+                                                                        icon-name="utility:check"
+                                                                        alternative-text="Approve Approval"
+                                                                        title="Approve Approval"
+                                                                        size="xx-small"
+                                                                    >
+                                                                    </lightning-icon>
+                                                                </li>
+                                                                <li>
+                                                                    Approve
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reason -->
+                                        <div class="slds-col slds-size_2-of-3 slds-p-horizontal_small slds-p-vertical_small">
+                                            {approval.approvalInfo.CPQ_Playbook_Approval__r.Reason__c}
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

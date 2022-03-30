@@ -9,6 +9,7 @@
     <navType>Standard</navType>
     <tabs>CPQ_Admin_Console</tabs>
     <tabs>CPQ_by_Opportunity</tabs>
+    <tabs>CPQ_Approvals</tabs>
     <tabs>Contracts_by_Account</tabs>
     <tabs>standard-Account</tabs>
     <tabs>standard-Opportunity</tabs>

@@ -258,6 +258,9 @@ public class OppContractTest {
             entFieldsString += fm.Entitlement_Field__c + ',';
         }
         entFieldsString = entFieldsString.removeEnd(',');
+        if (entFieldsString == '') {
+            entFieldsString = 'Id';
+        }
 
         String contractQuery = ''
             + 'SELECT Id,'
@@ -308,6 +311,9 @@ public class OppContractTest {
             }
         }
         oliFieldsString = oliFieldsString.removeEnd(',');
+        if (oliFieldsString == '') {
+            oliFieldsString = 'Id';
+        }
 
         // Set query string
         String oppLinesQuery = ''
@@ -409,6 +415,9 @@ public class OppContractTest {
             entFieldsString += fm.Entitlement_Field__c + ',';
         }
         entFieldsString = entFieldsString.removeEnd(',');
+        if (entFieldsString == '') {
+            entFieldsString = 'Id';
+        }
 
         String contractQuery = ''
             + 'SELECT Id,'
@@ -461,6 +470,9 @@ public class OppContractTest {
             }
         }
         oliFieldsString = oliFieldsString.removeEnd(',');
+        if (oliFieldsString == '') {
+            oliFieldsString = 'Id';
+        }
 
         // Set query string
         String oppLinesQuery = ''
@@ -562,6 +574,9 @@ public class OppContractTest {
             entFieldsString += fm.Entitlement_Field__c + ',';
         }
         entFieldsString = entFieldsString.removeEnd(',');
+        if (entFieldsString == '') {
+            entFieldsString = 'Id';
+        }
 
         String contractQuery = ''
             + 'SELECT Id,'
@@ -614,6 +629,9 @@ public class OppContractTest {
             }
         }
         oliFieldsString = oliFieldsString.removeEnd(',');
+        if (oliFieldsString == '') {
+            oliFieldsString = 'Id';
+        }
 
         // Set query string
         String oppLinesQuery = ''
@@ -710,6 +728,9 @@ public class OppContractTest {
             entFieldsString += fm.Entitlement_Field__c + ',';
         }
         entFieldsString = entFieldsString.removeEnd(',');
+        if (entFieldsString == '') {
+            entFieldsString = 'Id';
+        }
 
         Opportunity testOpp = [
             SELECT Id,
@@ -753,6 +774,9 @@ public class OppContractTest {
             }
         }
         oliFieldsString = oliFieldsString.removeEnd(',');
+        if (oliFieldsString == '') {
+            oliFieldsString = 'Id';
+        }
 
         // Set query string
         String oppLinesQuery = ''

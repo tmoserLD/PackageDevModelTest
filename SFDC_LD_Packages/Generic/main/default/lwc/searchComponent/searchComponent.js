@@ -16,6 +16,7 @@ export default class SearchComponent extends LightningElement {
     @api createRecord;
     @api fields = ['Name'];
     @api displayFields = 'Name, Rating, AccountNumber';
+    @api disabled = false;
 
     @track error;
 
@@ -30,6 +31,7 @@ export default class SearchComponent extends LightningElement {
     field;
     field1;
     field2;
+    only1Field = false;
 
     ICON_URL = '/apexpages/slds/latest/assets/icons/{0}-sprite/svg/symbols.svg#{1}';
 
@@ -51,10 +53,13 @@ export default class SearchComponent extends LightningElement {
         }else{
             fieldList       = this.displayFields;
         }
-        
-        if(fieldList.length > 1){
+        if(fieldList.length > 0) {
             this.field  = fieldList[0].trim();
+        }
+        if(fieldList.length > 1){
             this.field1 = fieldList[1].trim();
+        } else {
+            this.only1Field = true;
         }
         if(fieldList.length > 2){
             this.field2 = fieldList[2].trim();

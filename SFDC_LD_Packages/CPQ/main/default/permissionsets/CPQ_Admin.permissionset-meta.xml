@@ -1473,4 +1473,8 @@
         <tab>Contracts_by_Account</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <tabSettings>
+        <tab>CPQ_Approvals</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

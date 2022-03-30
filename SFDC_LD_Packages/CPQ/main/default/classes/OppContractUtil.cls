@@ -414,6 +414,9 @@ public with sharing class OppContractUtil {
                 entFieldsString += fm.Entitlement_Field__c + ',';
             }
             entFieldsString = entFieldsString.removeEnd(',');
+            if (entFieldsString == '') {
+                entFieldsString = 'Id';
+            }
 
             // Set query string
             String contractQuery = ''

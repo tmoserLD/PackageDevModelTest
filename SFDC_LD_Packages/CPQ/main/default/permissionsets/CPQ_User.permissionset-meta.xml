@@ -1470,4 +1470,8 @@
         <tab>CPQ_by_Opportunity</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <tabSettings>
+        <tab>CPQ_Approvals</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>
