@@ -123,6 +123,7 @@ public with sharing class cpq_ContainerClass {
                     + 'SELECT Id,'
                         + 'CPQ_Playbook_Approval__r.Label__c,'
                         + 'CPQ_Playbook_Approval__r.Reason__c,'
+                        + 'Notes_for_Approvers__c,'
                         + 'Status__c'
                     + ' FROM CPQ_Quote_Approvals__r'
                 + ')';
@@ -144,6 +145,7 @@ public with sharing class cpq_ContainerClass {
                             CPQ_Playbook_Approver__r.Approver__c,
                             CPQ_Playbook_Approver__r.Approver__r.Name,
                             CPQ_Playbook_Approver__r.Manager_Approver__c,
+                            Decision_Reason__c,
                             Status__c
                         FROM CPQ_Quote_Approvers__r
                         ORDER BY CPQ_Playbook_Approver__r.Manager_Approver__c DESC
@@ -421,82 +423,68 @@ public with sharing class cpq_ContainerClass {
     * @param quoteId Id of Quote record where approvals are being submitted
     */
     @AuraEnabled
-    public static void submitForApproval(Id quoteId) {
+    public static void submitForApproval(List<CPQ_Quote_Approval__c> approvals) {
 
-        // Incomplete approvals
-        List<CPQ_Quote_Approval__c> incompleteApprovals = new List<CPQ_Quote_Approval__c>();
-        incompleteApprovals = [
-            SELECT Id,
-                Status__c
-            FROM CPQ_Quote_Approval__c
-            WHERE Quote__c=:quoteId AND
-                Status__c!='Approved' AND
-                Status__c!='Submitted'
-        ];
-
+        // To be submitted - approvals
         Set<Id> approvalIDs = new Set<Id>();
-        for (CPQ_Quote_Approval__c approval : incompleteApprovals) {
-            approval.Status__c = 'Submitted';
-            approvalIDs.add(approval.Id);
+        List<CPQ_Quote_Approval__c> approvalsToSubmit = new List<CPQ_Quote_Approval__c>();
+        for (CPQ_Quote_Approval__c approval : approvals) {
+            if (approval.Status__c != 'Submitted' &&
+                approval.Status__c != 'Approved'
+            ) {
+                approval.Status__c = 'Submitted';
+                approvalsToSubmit.add(approval);
+                approvalIDs.add(approval.Id);
+            }
         }
 
         // Update approvals
-        update incompleteApprovals;
+        update approvalsToSubmit;
 
-        // Associated Approval Steps
+        // Associated Approval Steps/Approvers
         List<CPQ_Quote_Approval_Step__c> steps = new List<CPQ_Quote_Approval_Step__c>();
+        List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
         steps = [
             SELECT Id,
                 Approval_Order__c,
                 CPQ_Quote_Approval__c,
-                Status__c
+                Status__c,
+                (
+                    SELECT Id,
+                        Status__c
+                    FROM CPQ_Quote_Approvers__r
+                )
             FROM CPQ_Quote_Approval_Step__c
             WHERE CPQ_Quote_Approval__c IN:approvalIDs
             ORDER BY Approval_Order__c ASC
         ];
 
-        // Determine first step for each approval
-        Map<Id, CPQ_Quote_Approval_Step__c> firstStepMap = new Map<Id, CPQ_Quote_Approval_Step__c>();
+        // Submit first step, mark pending for all others
         for (CPQ_Quote_Approval_Step__c step : steps) {
-            if (!firstStepMap.containsKey(step.CPQ_Quote_Approval__c)) {
-                firstStepMap.put(step.CPQ_Quote_Approval__c, step);
+            String stepStatus = 'Pending';
+            if (step.Approval_Order__c == steps[0].Approval_Order__c) {
+                stepStatus = 'Submitted';
             }
-        }
-
-        // Submit steps
-        Set<Id> stepIDs = new Set<Id>();
-        for (CPQ_Quote_Approval_Step__c step : firstStepMap.values()) {
-            step.Status__c = 'Submitted';
-            stepIDs.add(step.Id);
+            step.Status__c = stepStatus;
+            for (CPQ_Quote_Approver__c approver: step.CPQ_Quote_Approvers__r) {
+                approver.Status__c = stepStatus;
+                approvers.add(approver);
+            }
         }
 
         // Update approval steps
         update steps;
 
-        // Associated Approvers
-        List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
-        approvers = [
-            SELECT Id,
-                Status__c
-            FROM CPQ_Quote_Approver__c
-            WHERE CPQ_Quote_Approval_Step__c IN:stepIDs
-        ];
-
-        for (CPQ_Quote_Approver__c approver : approvers) {
-            approver.Status__c = 'Submitted';
-        }
-
         // Update approvers
         update approvers;
-
     }
 
     /**
-    * @description Recall all pending approvers that exist for a given approval
-    * @param approvalId Id of Quote Approval record where approvers are being recalled
+    * @description Recall all pending approvers that exist for given approvals on a quote
+    * @param quoteId Id of Quote record where approvers are being recalled
     */
     @AuraEnabled
-    public static void recallApproval(Id approvalId) {
+    public static void recallApprovals(Id quoteId) {
 
         // Associated Approvers
         List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
@@ -504,7 +492,7 @@ public with sharing class cpq_ContainerClass {
             SELECT Id,
                 Status__c
             FROM CPQ_Quote_Approver__c
-            WHERE CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__c =:approvalId AND
+            WHERE CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__c =:quoteId AND
                 Status__c != 'Approved' AND
                 Status__c != 'Rejected'
         ];
@@ -524,10 +512,30 @@ public with sharing class cpq_ContainerClass {
     */
     @AuraEnabled
     public static void generatePDF(Quote quoteInfo, Opportunity oppInfo){
+
+        // Get unapproved approvals, shell info
+        Quote quoteData = [
+            SELECT Id,
+                Shell_Quote__c,
+                (
+                    SELECT Id
+                    FROM CPQ_Quote_Approvals__r
+                    WHERE Status__c != 'Approved'
+                )
+            FROM Quote
+            WHERE Id=:quoteInfo.Id
+        ];
+        Boolean isDraft = false;
+        if (quoteData.CPQ_Quote_Approvals__r.size() > 0 ||
+            quoteData.Shell_Quote__c == true
+        ) {
+            isDraft = true;
+        }
         
         // Proposal VF Page
         Pagereference pg = Page.cpq_ProposalVF;
         pg.getParameters().put('quoteId', quoteInfo.Id);
+        pg.getParameters().put('isDraft', String.valueOf(isDraft));
 
         // PDF File
         ContentVersion pdfAttachment = new ContentVersion();
@@ -647,6 +655,7 @@ public with sharing class cpq_ContainerClass {
             SELECT Id,
                 CPQ_Playbook_Approval__c,
                 Name,
+                Notes_for_Approvers__c,
                 Quote__c,
                 Status__c
             FROM CPQ_Quote_Approval__c

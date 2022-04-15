@@ -59,17 +59,17 @@
                     class="slds-col slds-grid slds-theme_default slds-p-around_x-small"
                     style="border-bottom: 0.5px solid gray;font-weight: bold;"
                 >
-                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_xx-small">
+                    <div class="slds-col slds-size_1-of-7 slds-p-horizontal_xx-small">
                         Approval
                     </div>
-                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_xx-small">
+                    <div class="slds-col slds-size_2-of-7 slds-p-horizontal_xx-small">
                         Reason
                     </div>
-                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_xx-small">
-                        Approvers
+                    <div class="slds-col slds-size_2-of-7 slds-p-horizontal_xx-small">
+                        Notes for Approver(s)
                     </div>
-                    <div class="slds-col slds-size_1-of-4 slds-p-horizontal_xx-small">
-                        Status
+                    <div class="slds-col slds-size_2-of-7 slds-p-horizontal_xx-small">
+                        Approvers
                     </div>
                 </div>
 
@@ -89,6 +89,7 @@
                                 quote-approvals={quoteApprovals}
                                 user-info={userInfo}
                                 onrecall={recallApproval}
+                                onapprovernoteupdate={updateApproverNotes}
                             >
                             </c-cpq_-quote-approval-modal-item>
                         </div>
@@ -120,6 +121,18 @@
                         >
                         </lightning-button>
                     </li>
+
+                    <!-- Recall Button -->
+                    <template if:true={canRecall}>
+                        <li class="slds-m-left_small">
+                            <lightning-button
+                                onclick={recallClick}
+                                variant="destructive-text"
+                                label="Recall"
+                            > 
+                            </lightning-button>
+                        </li>
+                    </template>
                 </ul>
 
                 <template if:true={cannotSubmit}>

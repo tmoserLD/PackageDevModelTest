@@ -15,15 +15,12 @@
         <div class="slds-grid_vertical slds-m-top_x-small slds-p-horizontal_x-small">
             <div
                 class="slds-col slds-grid slds-text-heading_small slds-p-around_x-small"
-                style="border-radius: 10px;background-color: rgb(163, 206, 241)"
+                style="border-radius: 10px;background-color: rgb(163, 206, 241);cursor:pointer"
+                onclick={toggleCollapse}
             >
                 <div>
                     <ul class="slds-list_horizontal">
-                        <li
-                            class="slds-m-right_small"
-                            style="cursor:pointer"
-                            onclick={toggleCollapse}    
-                        >
+                        <li class="slds-m-right_small">
                             <template if:true={collapsed}>
                                 <lightning-icon
                                     icon-name="utility:expand_alt"

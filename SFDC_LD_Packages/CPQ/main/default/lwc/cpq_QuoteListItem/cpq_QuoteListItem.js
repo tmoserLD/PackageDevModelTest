@@ -471,4 +471,14 @@ export default class CPQ_QuoteListItem extends NavigationMixin(LightningElement)
             },
         });
     }
+
+    // Notes update
+    updateApproverNotes(event) {
+        // Send approvernoteupdate event to parent
+        const approvernoteupdateEvent = new CustomEvent(
+            'approvernoteupdate', {
+                detail: event.detail
+            });
+        this.dispatchEvent(approvernoteupdateEvent);
+    }
 }

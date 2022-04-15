@@ -7,9 +7,15 @@
 * Tested by CPQ_Approval_Automation_Test
 */
 public with sharing class CPQ_Quote_Approver_TriggerHandler {
-    
-    // track current loop for Apex transaction
-    // public static Boolean firstRunAfterUpdate = true;
+
+    /**
+    * @description Process to be run in the BEFORE UPDATE trigger context
+    * @param approvers records in trigger execution
+    * @param oldApproversMap (Map) Record Id => Old version of record before updates
+    */
+    public static void beforeUpdate(List<CPQ_Quote_Approver__c> approvers, Map<Id, CPQ_Quote_Approver__c> oldApproversMap) {
+        CPQ_Quote_Approver_UpdatesUtil.processBeforeUpdate(approvers, oldApproversMap);      
+    }
     
     /**
     * @description Process to be run in the AFTER UPDATE trigger context
@@ -17,10 +23,7 @@ public with sharing class CPQ_Quote_Approver_TriggerHandler {
     * @param oldApproversMap (Map) Record Id => Old version of record before updates
     */
     public static void afterUpdate(List<CPQ_Quote_Approver__c> approvers, Map<Id, CPQ_Quote_Approver__c> oldApproversMap) {
-        // if (firstRunAfterUpdate) {
-            // firstRunAfterUpdate = false;
-        	CPQ_Quote_Approver_UpdatesUtil.processAfterUpdate(approvers, oldApproversMap);
-        // }        
+        CPQ_Quote_Approver_UpdatesUtil.processAfterUpdate(approvers, oldApproversMap);      
     }
 
 }

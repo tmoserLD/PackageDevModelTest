@@ -4,27 +4,32 @@
     <externalId>false</externalId>
     <formula>
         IF (
-            ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Amendment&apos;),
-            &apos;Amended&apos;,
+            IsVoid__c = TRUE,
+            &apos;Void&apos;,
             IF (
-                ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Replacement&apos;),
-                &apos;Replaced&apos;,
+                AND (
+                    Adjusted_by_Contract__r.IsVoid__c = FALSE,
+                    ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Amendment&apos;)
+                ),
+                &apos;Amended&apos;,
                 IF (
-                    ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Renewal&apos;),
-                    IF (
-                        Contract_End_Date__c &gt;= TODAY(),
-                        &apos;Awaiting Renewal&apos;,
-                        &apos;Renewed&apos;
+                    AND (
+                        Adjusted_by_Contract__r.IsVoid__c = FALSE,
+                        ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Replacement&apos;)
                     ),
+                    &apos;Replaced&apos;,
                     IF (
-                        IsVoid__c = TRUE,
-                        &apos;Void&apos;,
-                            IF (
-                                AND(
-                                    Contract_Start_Date__c &lt;= TODAY(),
-                                    Contract_End_Date__c &gt;= TODAY()
-                                ),
-                                &apos;Active&apos;,
+                        AND(
+                            Contract_Start_Date__c &lt;= TODAY(),
+                            Contract_End_Date__c &gt;= TODAY()
+                        ),
+                        &apos;Active&apos;,
+                        IF (
+                            AND (
+                                Adjusted_by_Contract__r.IsVoid__c = FALSE,
+                                ISPICKVAL(Adjusted_by_Contract__r.Adjustment_Type__c, &apos;Renewal&apos;)
+                            ),
+                            &apos;Renewed&apos;,
                             IF (
                                 Contract_Start_Date__c &gt; TODAY(),
                                 &apos;Upcoming&apos;,

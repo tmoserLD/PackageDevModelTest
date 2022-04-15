@@ -16,6 +16,22 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
     ****************/
 
     /**
+    * @description Logic run before a CPQ_Quote_Approver__c Update
+    * Handles updates on CPQ_Quote_Approver__c itself
+    * @param updatedApprovers CPQ_Quote_Approver__c records with updated values in trigger context
+    * @param oldApproversMap Map - CPQ_Quote_Approver__c Id to Old version of CPQ_Quote_Approver__c
+    */ 
+    public static void processBeforeUpdate(
+        List<CPQ_Quote_Approver__c> updatedApprovers,
+        Map<Id, CPQ_Quote_Approver__c> oldApproversMap
+    ) {
+        sameApproverBeforeUpdates(
+            updatedApprovers,
+            oldApproversMap
+        );
+    }
+
+    /**
     * @description Logic run after a CPQ_Quote_Approver__c Update
     * Handles updates of related records
     * @param updatedApprovers CPQ_Quote_Approver__c records with updated values in trigger context
@@ -34,6 +50,51 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
     /****************
      * MAIN METHODS
     ****************/
+
+    /**
+    * @description All same CPQ_Quote_Approver__c updates that should run on Before Insert AND Before Update
+    * @param approvers CPQ_Quote_Approver__c records with updated/inserted values in trigger context
+    * @param oldApproversMap Map - CPQ_Quote_Approver__c Id to Old version of CPQ_Quote_Approver__c
+    */ 
+    public static void sameApproverBeforeUpdates(
+        List<CPQ_Quote_Approver__c> approvers,
+        Map<Id, CPQ_Quote_Approver__c> oldApproversMap
+    ) {
+
+        // Evaluate each CPQ_Quote_Approver__c
+        for (CPQ_Quote_Approver__c approver : approvers) {
+
+            CPQ_Quote_Approver__c oldApprover = new CPQ_Quote_Approver__c();
+            // Not in Insert context
+            if (approver.Id != null) {
+                oldApprover = oldApproversMap.get(approver.Id);
+            }
+
+            // Track Status Changes
+            if (approver.Status__c != oldApprover.Status__c) {
+
+                // Approved
+                if (approver.Status__c == 'Approved') {
+                    approver.Approved_Date__c = Date.today();
+                }
+
+                // Rejected
+                else if (approver.Status__c == 'Rejected') {
+                    approver.Rejected_Date__c = Date.today();
+                }
+
+                // Recalled
+                else if (approver.Status__c == 'Recalled') {
+                    approver.Recalled_Date__c = Date.today();
+                }
+
+                // Submitted
+                else if (approver.Status__c == 'Submitted') {
+                    approver.Submitted_Date__c = Date.today();
+                }
+            }
+        }
+    }
 
     /**
     * @description All same Related Object updates that should run on After Insert AND After Update
@@ -89,7 +150,7 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
                         queriedRecords
                     );
                     Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
-                    req.setComments(approvalStep.CPQ_Quote_Approval__r?.CPQ_Playbook_Approval__r?.Reason__c);
+                    req.setComments(approvalStep.CPQ_Quote_Approval__r?.Notes_for_Approvers__c);
                     req.setObjectId(approver.Id);
                     approverSubmissions.add(req);
                 }
@@ -112,6 +173,24 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
                         CPQ_Quote_Approval_Step__c stepToUpdate = (CPQ_Quote_Approval_Step__c) relatedRecordMapUpdate(approvalStep, relatedRecordsToUpdate);
                         stepToUpdate.Status__c = 'Approved';
                     }
+
+                    // Get approval work item for this approver
+                    ProcessInstanceWorkItem approverWorkItem = getWorkItem(
+                        approver.Id,
+                        approverIDs,
+                        queriedRecords
+                    );
+                    if (approverWorkItem != null) {
+                        Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
+                        req.setAction('Approve');
+                        req.setWorkitemId(approverWorkItem.Id);
+                        if (approver.Decision_Reason__c != null) {
+                            req.setComments(approver.Decision_Reason__c);
+                        }
+                        workItemsToUpdate.add(req);
+
+                        approversToUnlock.add(new CPQ_Quote_Approver__c(Id=approver.Id));
+                    }
                 }
 
                 // Rejected
@@ -132,6 +211,24 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
                     if (numberRejected > (approvalStep.Total_Approvers__c - approvalStep.CPQ_Playbook_Approver_Group__r.Approvers_Required__c)) {
                         CPQ_Quote_Approval_Step__c stepToUpdate = (CPQ_Quote_Approval_Step__c) relatedRecordMapUpdate(approvalStep, relatedRecordsToUpdate);
                         stepToUpdate.Status__c = 'Rejected';
+                    }
+
+                    // Get approval work item for this approver
+                    ProcessInstanceWorkItem approverWorkItem = getWorkItem(
+                        approver.Id,
+                        approverIDs,
+                        queriedRecords
+                    );
+                    if (approverWorkItem != null) {
+                        Approval.ProcessWorkitemRequest req = new Approval.ProcessWorkitemRequest();
+                        req.setAction('Reject');
+                        req.setWorkitemId(approverWorkItem.Id);
+                        if (approver.Decision_Reason__c != null) {
+                            req.setComments(approver.Decision_Reason__c);
+                        }
+                        workItemsToUpdate.add(req);
+
+                        approversToUnlock.add(new CPQ_Quote_Approver__c(Id=approver.Id));
                     }
                 }
 
@@ -245,7 +342,7 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
                     Approvers_Approved__c,
                     Approvers_Rejected__c,
                     CPQ_Playbook_Approver_Group__r.Approvers_Required__c,
-                    CPQ_Quote_Approval__r.CPQ_Playbook_Approval__r.Reason__c,
+                    CPQ_Quote_Approval__r.Notes_for_Approvers__c,
                     Status__c,
                     Total_Approvers__c,
                     (

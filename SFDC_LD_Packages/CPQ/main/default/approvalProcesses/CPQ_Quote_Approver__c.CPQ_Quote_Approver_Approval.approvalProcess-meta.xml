@@ -9,13 +9,15 @@
         <type>owner</type>
     </allowedSubmitters>
     <approvalPageFields>
-        <field>Approval__c</field>
-        <field>CreatedBy</field>
-        <field>Account__c</field>
-        <field>Opportunity__c</field>
-        <field>Quote__c</field>
-        <field>Name</field>
+        <field>Approver__c</field>
         <field>Status__c</field>
+        <field>Decision_Reason__c</field>
+        <field>Approval__c</field>
+        <field>Quote_ID__c</field>
+        <field>Opportunity_ID__c</field>
+        <field>Account_ID__c</field>
+        <field>CreatedBy</field>
+        <field>Approvals_Hub_Link__c</field>
     </approvalPageFields>
     <approvalStep>
         <allowDelegate>true</allowDelegate>
@@ -52,7 +54,7 @@
         </action>
     </finalRejectionActions>
     <finalRejectionRecordLock>false</finalRejectionRecordLock>
-    <label>CPQ Quote Approver Approval</label>
+    <label>CPQ Quote Approver</label>
     <processOrder>1</processOrder>
     <recallActions>
         <action>

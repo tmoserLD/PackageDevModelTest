@@ -297,4 +297,14 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
             },
         });
     }
+
+    // Notes update
+    updateApproverNotes(event) {
+
+        this.oppInfo.Quotes.find(
+            quote => quote.Id === event.detail.quoteId
+        ).CPQ_Quote_Approvals__r.find(
+            approval => approval.Id === event.detail.approvalId
+        ).Notes_for_Approvers__c = event.detail.notes;
+    }
 }

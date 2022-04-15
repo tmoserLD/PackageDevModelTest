@@ -6,7 +6,7 @@
             style="border-radius: 10px;"
         >
             <div>
-                {playbook.playbookInfo.Name}
+                {playbook.playbookInfo.Label__c}
             </div>
 
             <template if:true={hasApprovals}>
@@ -44,14 +44,6 @@
             </c-cpq_-playbook-question-group>
         </template>
 
-        <!-- Entitlement Summary -->
-        <c-cpq_-quote-entitlement-summary
-            entitlement-columns={entitlementColumns}
-            entitlements={entitlements}
-            opp-currency={oppCurrency}
-        >
-        </c-cpq_-quote-entitlement-summary>
-
         <!-- Product Summary -->
         <c-cpq_-quote-product-summary
             config-type={configType}
@@ -64,6 +56,14 @@
             onupdate={updateProduct}
         >
         </c-cpq_-quote-product-summary>
+
+        <!-- Entitlement Summary -->
+        <c-cpq_-quote-entitlement-summary
+            entitlement-columns={entitlementColumns}
+            entitlements={entitlements}
+            opp-currency={oppCurrency}
+        >
+        </c-cpq_-quote-entitlement-summary>
 
         <!-- Approval Summary -->
         <template if:true={hasApprovals}>

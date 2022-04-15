@@ -1,0 +1,19 @@
+{
+    "objects": [
+        {
+            "query": "SELECT Id,Evaluation_Order__c,Is_Active__c,Mapping_Name__c,Object__c,Target_Field__c FROM Territory_Mapping__c WHERE Object__c != null",
+            "operation": "Upsert",
+            "externalId": "Mapping_Name__c;Evaluation_Order__c;Object__c;Target_Field__c"
+        },
+        {
+            "query": "SELECT Id,Evaluation_Order__c,Is_Active__c,Name,Target_Value__c,Territory_Mapping__c FROM Territory_Mapping_Condition_Set__c",
+            "operation": "Upsert",
+            "externalId": "Name;Evaluation_Order__c;Target_Value__c"
+        },
+        {
+            "query": "SELECT Id,Case_Insensitive__c,Eligible_Values__c,Ineligible_Values__c,Is_Active__c,Name,Source_Field__c,Territory_Mapping_Condition_Set__c FROM Territory_Mapping_Condition__c",
+            "operation": "Upsert",
+            "externalId": "Name;Eligible_Values__c;Ineligible_Values__c;Source_Field__c"
+        }
+    ]
+}

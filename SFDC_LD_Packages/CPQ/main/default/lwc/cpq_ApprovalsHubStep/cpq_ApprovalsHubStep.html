@@ -1,0 +1,46 @@
+<template>
+    <div style="border-bottom: 0.25px solid gray;min-height:78px;">
+
+        <!-- Group -->
+        <ul class="slds-list_horizontal slds-p-horizontal_xx-small slds-p-vertical_xxx-small">
+            <li class="slds-m-right_x-small">
+                <template if:true={approved}>
+                    <lightning-icon
+                        icon-name="utility:check"
+                        alternative-text="Approved"
+                        title="Approved"
+                        size="xx-small"
+                        variant="success"
+                    >
+                    </lightning-icon>
+                </template>
+                <template if:true={rejected}>
+                    <lightning-icon
+                        icon-name="utility:close"
+                        alternative-text="Rejected"
+                        title="Rejected"
+                        size="xx-small"
+                        variant="error"
+                    >
+                    </lightning-icon>
+                </template>
+            </li>
+            <li style="font-weight: 200">
+                {groupNumber}
+            </li>
+        </ul>
+
+        <!-- Approvers -->
+        <ul class="slds-list slds-p-horizontal_small slds-p-vertical_x-small">
+            <template for:each={step.approvers} for:item="approver">
+                <c-cpq_-approvals-hub-approver
+                    key={approver.approverInfo.Id}
+                    approver={approver}
+                    current-user={currentUser}
+                    onreload={reload}
+                >
+                </c-cpq_-approvals-hub-approver>
+            </template>
+        </ul>
+    </div>
+</template>

@@ -4,7 +4,7 @@ import { LightningElement, api, track } from 'lwc';
 import submitForApproval from '@salesforce/apex/cpq_ContainerClass.submitForApproval';
 
 // Recall Approval Method
-import recallApproval from '@salesforce/apex/cpq_ContainerClass.recallApproval';
+import recallApprovals from '@salesforce/apex/cpq_ContainerClass.recallApprovals';
 export default class CPQ_QuoteApprovalsModal extends LightningElement {
 
     // Opportunity Info
@@ -26,6 +26,20 @@ export default class CPQ_QuoteApprovalsModal extends LightningElement {
         } else {
             return []
         }
+    }
+
+    // Can recall approvals
+    get canRecall() {
+        let canRecall = false;
+        if (this.quote.CPQ_Quote_Approvals__r &&
+            this.quote.CPQ_Quote_Approvals__r.filter(
+                approval => approval.Status__c === 'Submitted'
+            ).length > 0 &&
+            this.oppInfo.Lock_CPQ__c !== true  
+        ) {
+            canRecall = true;
+        }
+        return canRecall;
     }
 
     // Cannot submit for approval
@@ -82,7 +96,7 @@ export default class CPQ_QuoteApprovalsModal extends LightningElement {
         // Send object to database
         try {
             await submitForApproval({
-                quoteId: this.quote.Id
+                approvals: this.quote.CPQ_Quote_Approvals__r
             });
 
             // Send submit event to parent
@@ -105,14 +119,14 @@ export default class CPQ_QuoteApprovalsModal extends LightningElement {
     }
 
     // Recall clicked
-    async recallApproval(event) {
+    async recallClick() {
 
         this.loading = true;
 
         // Send object to database
         try {
-            await recallApproval({
-                approvalId: event.detail
+            await recallApprovals({
+                quoteId: this.quote.Id
             });
 
             // Send submit event to parent
@@ -124,7 +138,7 @@ export default class CPQ_QuoteApprovalsModal extends LightningElement {
         } catch (e) {
             this.template.querySelector('c-error-modal').showError(
                 {
-                    title: 'An error occurred while trying to recall the approval',
+                    title: 'An error occurred while trying to recall the approval(s)',
                     body: JSON.stringify(e),
                     forceRefresh: false
                 }
@@ -132,5 +146,19 @@ export default class CPQ_QuoteApprovalsModal extends LightningElement {
         }
 
         this.loading = false;
+    }
+
+    // Notes update
+    updateApproverNotes(event) {
+        // Send approvernoteupdate event to parent
+        const approvernoteupdateEvent = new CustomEvent(
+            'approvernoteupdate', {
+                detail: {
+                    approvalId: event.detail.approvalId,
+                    notes: event.detail.notes,
+                    quoteId: this.quote.Id
+                }
+            });
+        this.dispatchEvent(approvernoteupdateEvent);
     }
 }

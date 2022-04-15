@@ -40,6 +40,18 @@
         <apexClass>cpq_ProposalPDF_Controller</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>cpq_AnyOppContainerClass</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cpq_ApprovalsHubClass</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>cpq_ContractsByAccountClass</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>Gives access to all CPQ objects and CPQ Admin Console</description>
     <fieldPermissions>
         <editable>true</editable>
@@ -842,6 +854,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approval__c.Notes_for_Approvers__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
         <field>CPQ_Quote_Approval_Step__c.Approval_Order__c</field>
         <readable>true</readable>
@@ -898,7 +915,37 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>CPQ_Quote_Approver__c.Approvals_Hub_Link__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>CPQ_Quote_Approver__c.Quote__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approver__c.Decision_Reason__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approver__c.Approved_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approver__c.Rejected_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approver__c.Recalled_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Quote_Approver__c.Submitted_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

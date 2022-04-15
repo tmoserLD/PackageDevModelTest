@@ -11,18 +11,18 @@
             "path": "Generic",
             "package": "GenericComponents",
             "versionName": "ver 1.1",
-            "versionNumber": "1.1.1.NEXT",
+            "versionNumber": "1.1.2.NEXT",
             "default": false
         },
         {
             "path": "CPQ",
             "package": "CPQ",
             "versionName": "ver 1.1",
-            "versionNumber": "1.1.0.NEXT",
+            "versionNumber": "1.1.1.NEXT",
             "default": true,
             "dependencies": [
                 {
-                    "package": "GenericComponents@1.1.0-3"
+                    "package": "GenericComponents@1.1.2-1"
                 }
             ],
             "definitionFile": "config/project-scratch-def.json"
@@ -53,6 +53,7 @@
         "GenericComponents@1.1.0-2": "04t1K000002qqEeQAI",
         "GenericComponents@1.1.0-3": "04t1K000002qqIWQAY",
         "GenericComponents@1.1.1-1": "04t1K000002qqRsQAI",
+        "GenericComponents@1.1.2-1": "04t1K000002qqZ4QAI",
         "TerritoryMapping": "0Ho1K000000fxVjSAI",
         "TerritoryMapping@1.1.0-1": "04t1K000002qqAcQAI",
         "TerritoryMapping@1.1.0-2": "04t1K000002qqB1QAI",
@@ -63,6 +64,7 @@
         "CPQ": "0Ho1K000000fxVtSAI",
         "CPQ@1.1.0-1": "04t1K000002qqIlQAI",
         "CPQ@1.1.0-2": "04t1K000002qqIqQAI",
-        "CPQ@1.1.0-3": "04t1K000002qqP3QAI"
+        "CPQ@1.1.0-3": "04t1K000002qqP3QAI",
+        "CPQ@1.1.1-1": "04t1K000002qqZ9QAI"
     }
 }

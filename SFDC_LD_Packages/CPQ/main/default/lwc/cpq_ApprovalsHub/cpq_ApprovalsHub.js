@@ -39,11 +39,20 @@ export default class CPQ_ApprovalsHub extends LightningElement {
     // Selected approval status
     @track approvalStatus = 'Submitted';
 
+    // Info for current user
+    @track currentUser;
+
+    // Default currency for org
+    @track defaultCurrency;
+
     // Loading spinner
     @track loading = false;
 
     // Approval data by Opportunity
     @track opportunities = [];
+
+    // Selected 'since' date
+    @track sinceDate;
 
     // User to show approvals for
     @track userId;
@@ -56,6 +65,21 @@ export default class CPQ_ApprovalsHub extends LightningElement {
 
     // On Mount
     connectedCallback() {
+
+        // Set Since date to 7 days ago
+        let today = new Date();
+        today.setUTCDate(new Date().getUTCDate() - 7);
+        let newYear = today.getUTCFullYear().toString();
+        let newMonth = (today.getUTCMonth() + 1).toString();
+        if ((today.getUTCMonth() + 1) < 10) {
+            newMonth = '0' + newMonth;
+        }
+        let newDay = today.getUTCDate().toString();
+        if (today.getUTCDate() < 10) {
+            newDay = '0' + newDay;
+        }
+        this.sinceDate = newYear + '-' + newMonth + '-' + newDay;
+
         this.getApprovals();
     }
 
@@ -73,7 +97,8 @@ export default class CPQ_ApprovalsHub extends LightningElement {
                 {
                     relationship: this.approvalCategory,
                     status: this.approvalStatus,
-                    userId: this.userId
+                    userId: this.userId,
+                    sinceDate: this.sinceDate
                 }
             );
 
@@ -86,7 +111,8 @@ export default class CPQ_ApprovalsHub extends LightningElement {
             // Show selected user in search
             this.template.querySelector('c-search-component').selectFromParent(data.userObj);
 
-            console.log(data);
+            this.currentUser = data.currentUser;
+            this.defaultCurrency = data.defaultCurrency;
             this.userId = data.userObj.Id;
             this.opportunities = data.opportunities;
         } catch (e) {
@@ -108,7 +134,21 @@ export default class CPQ_ApprovalsHub extends LightningElement {
         this.approvalCategory = event.detail.value;
         if (this.userId !== undefined &&
             this.userId !== null &&
-            this.userId !== ''    
+            this.userId !== ''
+        ) {
+            this.getApprovals();
+        } else {
+            this.opportunities = [];
+            this.userId = undefined;
+        }
+    }
+
+    // Since Date Changed
+    sinceDateChange(event) {
+        this.sinceDate = event.detail.value;
+        if (this.userId !== undefined &&
+            this.userId !== null &&
+            this.userId !== ''
         ) {
             this.getApprovals();
         } else {
@@ -122,7 +162,7 @@ export default class CPQ_ApprovalsHub extends LightningElement {
         this.approvalStatus = event.detail.value;
         if (this.userId !== undefined &&
             this.userId !== null &&
-            this.userId !== ''    
+            this.userId !== ''
         ) {
             this.getApprovals();
         } else {
@@ -136,7 +176,7 @@ export default class CPQ_ApprovalsHub extends LightningElement {
         this.userId = event.detail;
         if (this.userId !== undefined &&
             this.userId !== null &&
-            this.userId !== ''    
+            this.userId !== ''
         ) {
             this.getApprovals();
         } else {

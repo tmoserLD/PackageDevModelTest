@@ -12,7 +12,7 @@ export default class CPQ_ContractList extends LightningElement {
     get noActiveContractsToDisplay() {
         if (this.sourceInfo.Contracts) {
             return this.sourceInfo.Contracts.filter(
-                contract => ['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
+                contract => ['Active', 'Upcoming'].includes(contract.Contract_Status__c)
             ).length <= 0;
         } else {
             return true;
@@ -23,7 +23,7 @@ export default class CPQ_ContractList extends LightningElement {
         let activeContracts = [];
         if (this.sourceInfo.Contracts) {
             activeContracts = this.sourceInfo.Contracts.filter(
-                contract => ['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
+                contract => ['Active', 'Upcoming'].includes(contract.Contract_Status__c)
             );
         }
         return activeContracts;
@@ -33,7 +33,7 @@ export default class CPQ_ContractList extends LightningElement {
     get noPastContractsToDisplay() {
         if (this.sourceInfo.Contracts) {
             return this.sourceInfo.Contracts.filter(
-                contract => !['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
+                contract => !['Active', 'Upcoming'].includes(contract.Contract_Status__c)
             ).length <= 0;
         } else {
             return true;
@@ -44,7 +44,7 @@ export default class CPQ_ContractList extends LightningElement {
         let pastContracts = [];
         if (this.sourceInfo.Contracts) {
             pastContracts = this.sourceInfo.Contracts.filter(
-                contract => !['Active', 'Upcoming', 'Awaiting Renewal'].includes(contract.Contract_Status__c)
+                contract => !['Active', 'Upcoming'].includes(contract.Contract_Status__c)
             );
         }
         return pastContracts;
