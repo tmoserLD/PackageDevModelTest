@@ -1,6 +1,6 @@
 /**
  * @author Tristan Moser
- * @date 2/25/2022
+ * @date 4/19/2022
  *
  * @description Test class for cpq_AnyOppContainerClass class
  *
@@ -13,6 +13,45 @@ public class cpq_ContractsByAccountTest {
      **/
     @testSetup
     public static void setup() {
+
+        // System Settings
+        CPQ_System_Settings__c systemSettings = new CPQ_System_Settings__c(
+            Contract_Table_Actions__c = 'View',
+            Contract_Table_Columns__c = 'ContractNumber;Contract_Start_Date__c;Contract_Total__c;ContractTerm;isVoid__c',
+            Default_Playbook__c = null,
+            Quote_Table_Actions__c = 'View',
+            Quote_Table_Columns__c = 'Name;Shell_Quote__c;Total_Price__c;End_Date__c;Discount'
+        );
+        insert systemSettings;
+
+        // Pricebooks
+        List<Pricebook2> testPricebooks = new List<Pricebook2>();
+        testPricebooks.add(
+            new Pricebook2(
+                Id=Test.getStandardPricebookId(),
+                Description = 'Standard Pricebook',
+                IsActive = true
+            )
+        );
+        update testPricebooks;
+
+        // Playbooks
+        List<CPQ_Playbook__c> testPlaybooks = new List<CPQ_Playbook__c>();
+        testPlaybooks.add(
+            new CPQ_Playbook__c(
+                Default_Term_in_Months__c = 12,
+                Entitlement_Summary_Columns__c = 'Quantity__c;End_Date__c',
+                IsActive__c = true,
+                Label__c = 'Playbook ' + 0,
+                Name = 'Playbook ' + 0,
+                Pricebook__c = testPricebooks[0].Id,
+                Product_Summary_Columns__c = 'Quantity;End_Date',
+                Proposal_Header__c = 'Header Text',
+                Proposal_Header_Type__c = 'Text',
+                Proposal_Footer__c = 'Footer Text'
+            )
+        );
+        insert testPlaybooks;
 
         // Accounts
         List<Account> testAccounts = new List<Account>();

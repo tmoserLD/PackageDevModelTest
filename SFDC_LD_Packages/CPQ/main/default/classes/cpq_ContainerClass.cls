@@ -1,6 +1,6 @@
 /**
 * @author Tristan Moser
-* @date 1/12/2022
+* @date 4/19/2022
 *
 * @description CPQ Main Container controller class
 *
@@ -19,12 +19,30 @@ public with sharing class cpq_ContainerClass {
     @AuraEnabled
     public static CPQInfo getCPQInfo(Id oppId) {
 
-        // Get Object Fields for Default Field Values and Product Cacluations
-        Boolean multiCurrency = System.UserInfo.isMultiCurrencyOrganization();
-        Map<String, String> objFieldsStrings = getObjectFields(multiCurrency);
-
         // Return wrapper obj
         CPQInfo cpqObj = new CPQInfo();
+
+        // System Settings
+        CPQ_System_Settings__c systemSettings = [
+            SELECT Id,
+                Contract_Table_Actions__c,
+                Contract_Table_Columns__c,
+                Default_Playbook__c,
+                Quote_Table_Actions__c,
+                Quote_Table_Columns__c
+            FROM CPQ_System_Settings__c
+            LIMIT 1
+        ];
+        cpqObj.systemSettings = systemSettings;
+
+        // Get Object Fields for Default Field Values and Product Cacluations
+        Boolean multiCurrency = System.UserInfo.isMultiCurrencyOrganization();
+        Map<String, String> objFieldsStrings = getObjectFields(multiCurrency, systemSettings);
+        Map<String, List<ProductColumn>> tableColumns = getTableColumns(systemSettings);
+        cpqObj.quoteTableColumns = tableColumns.get('Quote');
+        cpqObj.contractTableColumns = tableColumns.get('Contract');
+
+        // Default Currency
         if (multiCurrency == true) {
             List<sObject> currencies = new List<sObject>();
             currencies = Database.query('SELECT Id, ConversionRate, IsoCode FROM CurrencyType WHERE IsActive = TRUE AND IsCorporate = TRUE');
@@ -93,7 +111,7 @@ public with sharing class cpq_ContainerClass {
                         + objFieldsStrings.get('Contract_Entitlement__c')
                     + ' FROM Contract_Entitlements__r'
                 + ')';
-            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_Start_Date__c DESC, Contract_End_Date__c DESC, ContractNumber'; 
+            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_End_Date__c DESC, Contract_Start_Date__c DESC, ContractNumber'; 
             contracts = Database.query(contractsQuery);
             cpqObj.contracts = contracts;
 
@@ -173,14 +191,24 @@ public with sharing class cpq_ContainerClass {
         @AuraEnabled public User userInfo;
         @AuraEnabled public Boolean hasOppAccess;
         @AuraEnabled public String defaultCurrency;
+        @AuraEnabled public CPQ_System_Settings__c systemSettings;
+        @AuraEnabled public List<ProductColumn> quoteTableColumns; 
+        @AuraEnabled public List<ProductColumn> contractTableColumns;
+    }
+
+    public class ProductColumn {
+        @AuraEnabled public String label;
+        @AuraEnabled public String field;
+        @AuraEnabled public String type;
     }
 
     /**
     * @description Retrieve all necessary fields for object queries
     * @param multiCurrency Whether or not org is a multicurrency org or not
+    * @param systemSettings Defined CPQ System Settings record
     * @return Object/Field Map: Object Name => Comma delineated list of field API names
     */
-    public static Map<String, String> getObjectFields(Boolean multiCurrency) {
+    public static Map<String, String> getObjectFields(Boolean multiCurrency, CPQ_System_Settings__c systemSettings) {
 
         Map<String, String> objFieldQueryStrings = new Map<String, String>();
         Map<String, Set<String>> objFieldSets = new Map<String, Set<String>>();
@@ -384,6 +412,14 @@ public with sharing class cpq_ContainerClass {
             }
         }
 
+        // Get fields from system settings
+        for (String field : systemSettings.Contract_Table_Columns__c.split(';')) {
+            objFieldSets.get('Contract').add(field);
+        }
+        for (String field : systemSettings.Quote_Table_Columns__c.split(';')) {
+            objFieldSets.get('Quote').add(field);
+        }
+
         // Convert sets to comma delineated strings
         for (String obj : objFieldSets.keySet()) {
             String fieldsString = '';
@@ -395,6 +431,125 @@ public with sharing class cpq_ContainerClass {
         }
 
         return objFieldQueryStrings;
+    }
+
+
+    /**
+    * @description Configure table column info
+    * @param systemSettings Defined CPQ System Settings record
+    * @return Object/Field Map: Object Name => ProductColumn list
+    */
+    public static Map<String, List<ProductColumn>> getTableColumns(CPQ_System_Settings__c systemSettings) {
+
+        Map<String, List<ProductColumn>> tableColumns = new Map<String, List<ProductColumn>>();
+
+        // Describe objects
+        SObjectType quoteType = ((SObject)(Type.forName('Schema.Quote').newInstance())).getSObjectType();
+        DescribeSObjectResult quoteObject = quoteType.getDescribe();
+        SObjectType contractType = ((SObject)(Type.forName('Schema.Contract').newInstance())).getSObjectType();
+        DescribeSObjectResult contractObject = contractType.getDescribe();
+
+        // Evaluate Quote Table Columns
+        tableColumns.put('Quote', new List<ProductColumn>());
+        for (String field : systemSettings.Quote_Table_Columns__c.split(';')) {
+            
+            // Valid Quote field
+            if (quoteObject.fields
+                .getMap()
+                .containsKey(field)
+            ) {
+                ProductColumn newCol = new ProductColumn();
+                newCol.label = quoteObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getLabel();
+                newCol.field = field;
+                Schema.DisplayType fieldType = quoteObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getType();
+
+                if (fieldType == Schema.DisplayType.Boolean) {
+                    newCol.type = 'Boolean';
+                }
+                else if (fieldType == Schema.DisplayType.Currency) {
+                    newCol.type = 'Currency';
+                }
+                else if (fieldType == Schema.DisplayType.Date ||
+                    fieldType == Schema.DisplayType.DateTime
+                ) {
+                    newCol.type = 'Date';
+                }
+                else if (fieldType == Schema.DisplayType.Double ||
+                    fieldType == Schema.DisplayType.Integer ||
+                    fieldType == Schema.DisplayType.Long
+                ) {
+                    newCol.type = 'Number';
+                }
+                else if (fieldType == Schema.DisplayType.Percent) {
+                    newCol.type = 'Percent';
+                }
+                else {
+                    newCol.type = 'Text';
+                }
+
+                tableColumns.get('Quote').add(newCol);
+            }
+        }
+
+        // Evaluate Quote Table Columns
+        tableColumns.put('Contract', new List<ProductColumn>());
+        for (String field : systemSettings.Contract_Table_Columns__c.split(';')) {
+            
+            // Valid Contract field
+            if (contractObject.fields
+                .getMap()
+                .containsKey(field)
+            ) {
+                ProductColumn newCol = new ProductColumn();
+                newCol.label = contractObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getLabel();
+                newCol.field = field;
+                Schema.DisplayType fieldType = contractObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getType();
+
+                if (fieldType == Schema.DisplayType.Boolean) {
+                    newCol.type = 'Boolean';
+                }
+                else if (fieldType == Schema.DisplayType.Currency) {
+                    newCol.type = 'Currency';
+                }
+                else if (fieldType == Schema.DisplayType.Date ||
+                    fieldType == Schema.DisplayType.DateTime
+                ) {
+                    newCol.type = 'Date';
+                }
+                else if (fieldType == Schema.DisplayType.Double ||
+                    fieldType == Schema.DisplayType.Integer ||
+                    fieldType == Schema.DisplayType.Long
+                ) {
+                    newCol.type = 'Number';
+                }
+                else if (fieldType == Schema.DisplayType.Percent) {
+                    newCol.type = 'Percent';
+                }
+                else {
+                    newCol.type = 'Text';
+                }
+
+                tableColumns.get('Contract').add(newCol);
+            }
+        }
+
+        return tableColumns;
     }
 
     // /////////////////////////////////////////////////////

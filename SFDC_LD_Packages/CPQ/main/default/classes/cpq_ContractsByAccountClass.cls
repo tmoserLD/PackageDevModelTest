@@ -1,6 +1,6 @@
 /**
 * @author Tristan Moser
-* @date 2/25/2022
+* @date 4/19/2022
 *
 * @description Contracts by Account controller class
 *
@@ -59,9 +59,31 @@ public with sharing class cpq_ContractsByAccountClass {
     @AuraEnabled
     public static AccountObj queryAccountWithContracts(Id acctId) {
 
+        AccountObj acctObj = new AccountObj();
+
         Boolean multiCurrency = System.UserInfo.isMultiCurrencyOrganization();
 
-        AccountObj acctObj = new AccountObj();
+        User currentUser = [
+            SELECT Id,
+                (
+                    SELECT Id
+                    FROM PermissionSetAssignments
+                    WHERE PermissionSet.Name = 'CPQ_Contract_Admin'
+                )
+            FROM User
+            WHERE Id=:System.UserInfo.getUserId()
+        ];
+        acctObj.isContractAdmin = currentUser.PermissionSetAssignments.size() > 0;
+
+        // System Settings
+        CPQ_System_Settings__c SystemSettings = [
+            SELECT Id,
+                Contract_Table_Actions__c,
+                Contract_Table_Columns__c
+            FROM CPQ_System_Settings__c
+            LIMIT 1
+        ];
+        acctObj.SystemSettings = SystemSettings;
 
         acctObj.acctInfo = [
             SELECT Id,
@@ -70,6 +92,43 @@ public with sharing class cpq_ContractsByAccountClass {
             FROM Account
             WHERE Id =:acctId
         ];
+
+        // Contract Fields
+        Set<String> contractFields = new Set<String>{
+            'Id',
+            'Adjusted_by_Contract__c',
+            'Adjusted_by_Contract__r.ContractNumber',
+            'Adjustment_of_Contract__c',
+            'Adjustment_of_Contract__r.ContractNumber',
+            'Adjustment_Type__c',
+            'Contract_End_Date__c',
+            'ContractNumber',
+            'Contract_Start_Date__c',
+            'Contract_Status__c',
+            'Contract_Total__c',
+            'CPQ_Playbook__c',
+            'CPQ_Playbook__r.Default_Term_in_Months__c',
+            'CPQ_Playbook__r.Label__c',
+            'CPQ_Playbook__r.Pricebook__c',
+            'Opportunity__c',
+            'Opportunity__r.Name',
+            'Quote__c'
+        };
+
+        if (multiCurrency == true) {
+            contractFields.add('CurrencyIsoCode');
+        }
+
+        // Get fields from system settings
+        for (String field : SystemSettings.Contract_Table_Columns__c.split(';')) {
+            contractFields.add(field);
+        }
+
+        // Convert Set to String
+        String contractFieldsString = '';
+        for (String field : contractFields) {
+            contractFieldsString += field + ',';
+        }
 
         // Contract Entitlement Fields
         Set<String> entitlementFields = new Set<String>{
@@ -109,25 +168,8 @@ public with sharing class cpq_ContractsByAccountClass {
         // Query Contracts
         acctObj.Contracts = new List<Contract>();
         String contractQuery = ''
-            + 'SELECT Id, '
-                + 'Adjusted_by_Contract__c, '
-                + 'Adjusted_by_Contract__r.ContractNumber, '
-                + 'Adjustment_of_Contract__c, '
-                + 'Adjustment_of_Contract__r.ContractNumber, '
-                + 'Adjustment_Type__c, '
-                + 'Contract_End_Date__c, '
-                + 'ContractNumber, '
-                + 'Contract_Start_Date__c, '
-                + 'Contract_Status__c, '
-                + 'Contract_Total__c, '
-                + 'CPQ_Playbook__c, '
-                + 'CPQ_Playbook__r.Default_Term_in_Months__c, '
-                + 'CPQ_Playbook__r.Label__c, '
-                + 'CPQ_Playbook__r.Pricebook__c, '
-                + 'Opportunity__c, '
-                + 'Opportunity__r.Name, '
-                + 'Quote__c, '
-                + (multiCurrency == true ? 'CurrencyIsoCode, ' : '')
+            + 'SELECT '
+                + contractFieldsString
                 + '( '
                     + 'SELECT '
                         + entitlementFieldsString
@@ -148,8 +190,8 @@ public with sharing class cpq_ContractsByAccountClass {
                 + ') '
             + 'FROM Contract '
             + 'WHERE AccountId =:acctId '
-            + 'ORDER BY Contract_Start_Date__c DESC, '
-                + 'Contract_End_Date__c DESC, '
+            + 'ORDER BY Contract_End_Date__c DESC, '
+                + 'Contract_Start_Date__c DESC, '
                 + 'ContractNumber ';
         acctObj.Contracts = Database.query(contractQuery);
 
@@ -165,6 +207,60 @@ public with sharing class cpq_ContractsByAccountClass {
             acctObj.defaultCurrency = System.UserInfo.getDefaultCurrency();
         }
 
+        // Describe Contract object
+        SObjectType contractType = ((SObject)(Type.forName('Schema.Contract').newInstance())).getSObjectType();
+        DescribeSObjectResult contractObject = contractType.getDescribe();
+
+        // Evaluate Quote Table Columns
+        acctObj.ContractTableColumns = new List<ProductColumn>();
+        for (String field : SystemSettings.Contract_Table_Columns__c.split(';')) {
+            
+            // Valid Contract field
+            if (contractObject.fields
+                .getMap()
+                .containsKey(field)
+            ) {
+                ProductColumn newCol = new ProductColumn();
+                newCol.label = contractObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getLabel();
+                newCol.field = field;
+                Schema.DisplayType fieldType = contractObject.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getType();
+
+                if (fieldType == Schema.DisplayType.Boolean) {
+                    newCol.type = 'Boolean';
+                }
+                else if (fieldType == Schema.DisplayType.Currency) {
+                    newCol.type = 'Currency';
+                }
+                else if (fieldType == Schema.DisplayType.Date ||
+                    fieldType == Schema.DisplayType.DateTime
+                ) {
+                    newCol.type = 'Date';
+                }
+                else if (fieldType == Schema.DisplayType.Double ||
+                    fieldType == Schema.DisplayType.Integer ||
+                    fieldType == Schema.DisplayType.Long
+                ) {
+                    newCol.type = 'Number';
+                }
+                else if (fieldType == Schema.DisplayType.Percent) {
+                    newCol.type = 'Percent';
+                }
+                else {
+                    newCol.type = 'Text';
+                }
+
+                acctObj.ContractTableColumns.add(newCol);
+            }
+        }
+
         return acctObj;
     }
 
@@ -172,6 +268,15 @@ public with sharing class cpq_ContractsByAccountClass {
         @AuraEnabled public Account acctInfo;
         @AuraEnabled public List<Contract> Contracts;
         @AuraEnabled public String defaultCurrency;
+        @AuraEnabled public CPQ_System_Settings__c SystemSettings;
+        @AuraEnabled public List<ProductColumn> ContractTableColumns;
+        @AuraEnabled public Boolean isContractAdmin;
+    }
+
+    public class ProductColumn {
+        @AuraEnabled public String label;
+        @AuraEnabled public String field;
+        @AuraEnabled public String type;
     }
 
     /**

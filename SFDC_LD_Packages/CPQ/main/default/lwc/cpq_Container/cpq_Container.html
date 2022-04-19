@@ -122,11 +122,13 @@
                 </c-cpq_-quote-list>
 
                 <!-- Proposals List -->
-                <c-cpq_-proposal-list
-                    opp-info={oppInfo}
-                    onreload={reload}
-                >
-                </c-cpq_-proposal-list>
+                <template if:true={allowProposal}>
+                    <c-cpq_-proposal-list
+                        opp-info={oppInfo}
+                        onreload={reload}
+                    >
+                    </c-cpq_-proposal-list>
+                </template>
 
                 <!-- Contract List -->
                 <c-cpq_-contract-list

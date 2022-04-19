@@ -1,0 +1,156 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Loading Spinner -->
+    <template if:true={loading}>
+        <lightning-spinner
+            alternative-text="Loading"
+            size="medium"
+        >
+        </lightning-spinner>
+    </template>
+
+    <!-- System Settings Form -->
+    <div
+        class="slds-col slds-p-horizontal_medium"
+        style="height: 60vh;overflow:auto;"
+    >
+
+        <lightning-record-edit-form
+            object-api-name="CPQ_System_Settings__c"
+            record-id={systemSettings.Id}
+            onsubmit={submitSettings}
+            onsuccess={savedSettings}
+            onerror={handleError}
+        >
+            <lightning-card
+                title="Edit System Settings"
+                variant="narrow"
+            >
+
+                <!-- Fields -->
+                <div class="slds-grid_vertical slds-p-horizontal_medium">
+
+                    <div class="slds-col slds-p-vertical_small">
+                        <b>
+                            General Settings
+                        </b>
+                    </div>
+
+                    <!-- Row 1 -->
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Default Playbook -->
+                            <lightning-input-field
+                                field-name="Default_Playbook__c"
+                            >
+                            </lightning-input-field>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Quote Table Actions -->
+                            <lightning-input-field
+                                field-name="Quote_Table_Actions__c"
+                            >
+                            </lightning-input-field>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Contract Table Actions -->
+                            <lightning-input-field
+                                field-name="Contract_Table_Actions__c"
+                            >
+                            </lightning-input-field>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Quote Table Columns -->
+                            <c-list-generator
+                                label="Quote Table Columns"
+                                order-label-title="Adjust Quote Table Column Order"
+                                placeholder="Enter desired Quote field API name"
+                                help-text="Field API names on the Quote object to be shown in the Quote Table view in CPQ."
+                                initial-options={quoteColumns}
+                                initial-options-source="Semicolon delineated"
+                                onupdate={quoteColumnChange}
+                            >
+                            </c-list-generator>
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Quote_Table_Columns__c"
+                                    value={quoteColumns}
+                                    required="true"
+                                >
+                                </lightning-input-field>
+                            </div>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Contract Table Columns -->
+                            <c-list-generator
+                                label="Contract Table Columns"
+                                order-label-title="Adjust Contract Table Column Order"
+                                placeholder="Enter desired Contract field API name"
+                                help-text="Field API names on the Contract object to be shown in the Contract Table view in CPQ."
+                                initial-options={contractColumns}
+                                initial-options-source="Semicolon delineated"
+                                onupdate={contractColumnChange}
+                            >
+                            </c-list-generator>
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Contract_Table_Columns__c"
+                                    value={contractColumns}
+                                    required="true"
+                                >
+                                </lightning-input-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-align_absolute-center slds-docked-form-footer slds-m-top_small">
+
+                    <ul class="slds-list_horizontal">
+
+                        <!-- Save button -->
+                        <li>
+                            <lightning-button
+                                variant="brand"
+                                type="submit"
+                                label="Save"
+                            >
+                            </lightning-button>
+                        </li>
+                    </ul>
+                </div>
+            </lightning-card>
+        </lightning-record-edit-form>
+
+    </div>
+</template>

@@ -1,6 +1,6 @@
 /**
  * @author Tristan Moser
- * @date 1/12/2022
+ * @date 4/19/2022
  *
  * @description Test class for:
  *  - CPQ_Quote_Approval_Step_Trigger
@@ -577,5 +577,77 @@ public class CPQ_Approval_Automation_Test {
             FROM CPQ_Quote_Approval__c
         ];
         System.assertEquals('Recalled', testApproval.Status__c);
+    }
+
+    /**
+     * @description Test to verify approve approver
+     **/
+    @isTest
+    public static void testApproveApproverSubmitted() {
+
+        CPQ_Quote_Approver__c testQuoteApprover = [
+            SELECT Id,
+                CPQ_Quote_Approval_Step__c,
+                Status__c
+            FROM CPQ_Quote_Approver__c
+            WHERE CPQ_Quote_Approval_Step__r.CPQ_Playbook_Approver_Group__r.Approval_Order__c = 1
+            LIMIT 1
+        ];
+
+        testQuoteApprover.Status__c = 'Submitted';
+
+        update testQuoteApprover;
+
+        Test.startTest();
+
+        testQuoteApprover.Decision_Reason__c = 'Test text';
+        testQuoteApprover.Status__c = 'Approved';
+        update testQuoteApprover;
+
+        Test.stopTest();
+
+        // Verify updates
+        List<ProcessInstanceWorkItem> approvalWorkItems = [
+            SELECT Id
+            FROM ProcessInstanceWorkItem
+            WHERE ProcessInstance.TargetObjectId =:testQuoteApprover.Id
+        ];
+        System.assertEquals(0, approvalWorkItems.size());
+    }
+
+    /**
+     * @description Test to verify reject approver
+     **/
+    @isTest
+    public static void testRejectApproverSubmitted() {
+
+        CPQ_Quote_Approver__c testQuoteApprover = [
+            SELECT Id,
+                CPQ_Quote_Approval_Step__c,
+                Status__c
+            FROM CPQ_Quote_Approver__c
+            WHERE CPQ_Quote_Approval_Step__r.CPQ_Playbook_Approver_Group__r.Approval_Order__c = 1
+            LIMIT 1
+        ];
+
+        testQuoteApprover.Status__c = 'Submitted';
+
+        update testQuoteApprover;
+
+        Test.startTest();
+
+        testQuoteApprover.Decision_Reason__c = 'Test text';
+        testQuoteApprover.Status__c = 'Rejected';
+        update testQuoteApprover;
+
+        Test.stopTest();
+
+        // Verify updates
+        List<ProcessInstanceWorkItem> approvalWorkItems = [
+            SELECT Id
+            FROM ProcessInstanceWorkItem
+            WHERE ProcessInstance.TargetObjectId =:testQuoteApprover.Id
+        ];
+        System.assertEquals(0, approvalWorkItems.size());
     }
 }

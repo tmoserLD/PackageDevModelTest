@@ -3,7 +3,7 @@
     <fullName>Contract_End_Date__c</fullName>
     <description>Latest end date of Contract Entitlements</description>
     <externalId>false</externalId>
-    <label>Contract End Date</label>
+    <label>End Date</label>
     <summarizedField>Contract_Entitlement__c.End_Date__c</summarizedField>
     <summaryForeignKey>Contract_Entitlement__c.Contract__c</summaryForeignKey>
     <summaryOperation>max</summaryOperation>

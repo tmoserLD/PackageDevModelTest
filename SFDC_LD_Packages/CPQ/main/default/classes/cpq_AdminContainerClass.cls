@@ -1,6 +1,6 @@
 /**
 * @author Tristan Moser
-* @date 1/12/2022
+* @date 4/19/2022
 *
 * @description CPQ Admin Console controller class
 *
@@ -10,6 +10,43 @@ public with sharing class cpq_AdminContainerClass {
 
     // /////////////////////////////////////////////////////
     // Retrievals
+
+    /**
+    * @description Query system settings record -- create if non-existant
+    * @return CPQ System Settings record
+    */
+    @AuraEnabled
+    public static CPQ_System_Settings__c getSystemSettings() {
+
+        // Find record
+        List<CPQ_System_Settings__c> systemSettings = new List<CPQ_System_Settings__c>();
+        systemSettings = [
+            SELECT Id,
+                Contract_Table_Actions__c,
+                Contract_Table_Columns__c,
+                Default_Playbook__c,
+                Quote_Table_Actions__c,
+                Quote_Table_Columns__c
+            FROM CPQ_System_Settings__c
+            LIMIT 1
+        ];
+
+        // Create initial record if it does not exist
+        if (systemSettings.size() == 0) {
+            CPQ_System_Settings__c initialRecord = new CPQ_System_Settings__c(
+                Contract_Table_Actions__c = 'View;Amend;Replace;Renew;Void',
+                Contract_Table_Columns__c = 'ContractNumber;Contract_Start_Date__c;Contract_End_Date__c;Contract_Status__c',
+                Default_Playbook__c = null,
+                Quote_Table_Actions__c = 'View;Edit;Sync;Proposal;Clone;Delete',
+                Quote_Table_Columns__c = 'Name;CPQ_Playbook__c;Playbook_Status__c;TotalPrice'
+            );
+            insert initialRecord;
+            systemSettings.add(initialRecord);
+        }
+
+        return systemSettings[0];
+
+    }
 
     /**
     * @description Query all playbooks in system as well as all nested child records

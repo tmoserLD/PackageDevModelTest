@@ -2,6 +2,7 @@ import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 // Query Methods
+import getSystemSettings from '@salesforce/apex/cpq_AdminContainerClass.getSystemSettings';
 import getPlaybooks from '@salesforce/apex/cpq_AdminContainerClass.getPlaybooks';
 import getPricebooks from '@salesforce/apex/cpq_AdminContainerClass.getPricebooks';
 import getProducts from '@salesforce/apex/cpq_AdminContainerClass.getProducts';
@@ -38,10 +39,62 @@ export default class CPQ_AdminContainer extends LightningElement {
     // History of productSelected
     @track productSelectedHistory = [];
 
-    // On Mount
-    connectedCallback() {
-        // Query Playbooks since default tab
-        this.reloadPlaybooks();
+    // System Settings
+    @track systemSettings;
+
+    get settingsLoaded() {
+        return this.systemSettings !== undefined;
+    }
+
+    // // On Mount
+    // connectedCallback() {
+    //     // Query System Settings since default tab
+    //     this.reloadSystemSettings();
+    // }
+
+    // Reload System Settings data
+    async reloadSystemSettings(event) {
+
+        // Show Toast
+        if (event) {
+            if (event.detail) {
+                if (event.detail.toast) {
+                    const toastEvent = new ShowToastEvent({
+                        title: event.detail.toast.title,
+                        message: event.detail.toast.message,
+                        variant: event.detail.toast.variant,
+                    });
+                    this.dispatchEvent(toastEvent);
+                }
+            }
+        }
+
+        this.loading = true;
+
+        // Reset data
+        this.systemSettings;
+
+        // Get data
+        try {
+            this.systemSettings = await getSystemSettings();
+        } catch (e) {
+            this.template.querySelector('c-error-modal').showError(
+                {
+                    title: 'An error occurred while trying to retrieve the system settings',
+                    body: JSON.stringify(e),
+                    forceRefresh: false
+                }
+            );
+        }
+
+        this.loading = false;
+    }
+
+    // Playbooks tab clicked
+    playbooksClick() {
+        if (this.playbooks === undefined) {
+            this.reloadPlaybooks();
+        }
     }
 
     // Reload playbook data

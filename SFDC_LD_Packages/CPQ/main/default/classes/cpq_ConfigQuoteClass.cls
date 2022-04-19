@@ -189,15 +189,7 @@ public with sharing class cpq_ConfigQuoteClass {
                         else if (fieldType == Schema.DisplayType.Percent) {
                             newCol.type = 'Percent';
                         }
-                        else if (fieldType == Schema.DisplayType.Combobox ||
-                            fieldType == Schema.DisplayType.Email ||
-                            fieldType == Schema.DisplayType.MultiPicklist ||
-                            fieldType == Schema.DisplayType.Phone ||
-                            fieldType == Schema.DisplayType.Picklist ||
-                            fieldType == Schema.DisplayType.String ||
-                            fieldType == Schema.DisplayType.TextArea||
-                            fieldType == Schema.DisplayType.URL
-                        ) {
+                        else {
                             newCol.type = 'Text';
                         }
 
@@ -266,15 +258,7 @@ public with sharing class cpq_ConfigQuoteClass {
                         else if (fieldType == Schema.DisplayType.Percent) {
                             newCol.type = 'Percent';
                         }
-                        else if (fieldType == Schema.DisplayType.Combobox ||
-                            fieldType == Schema.DisplayType.Email ||
-                            fieldType == Schema.DisplayType.MultiPicklist ||
-                            fieldType == Schema.DisplayType.Phone ||
-                            fieldType == Schema.DisplayType.Picklist ||
-                            fieldType == Schema.DisplayType.String ||
-                            fieldType == Schema.DisplayType.TextArea||
-                            fieldType == Schema.DisplayType.URL
-                        ) {
+                        else {
                             newCol.type = 'Text';
                         }
 

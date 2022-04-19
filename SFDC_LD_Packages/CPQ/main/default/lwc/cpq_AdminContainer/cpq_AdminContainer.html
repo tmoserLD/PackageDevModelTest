@@ -18,8 +18,17 @@
             </lightning-spinner>
         </template>
 
-        <lightning-tabset active-tab-value="playbooks">
-            <lightning-tab label="Playbooks" value="playbooks">
+        <lightning-tabset active-tab-value="systemSettings">
+            <lightning-tab label="System Settings" value="systemSettings" onactive={reloadSystemSettings}>
+                <template if:true={settingsLoaded}>
+                    <c-cpq_-admin-system-settings
+                        system-settings={systemSettings}
+                        onchildsaved={reloadSystemSettings}
+                    >
+                    </c-cpq_-admin-system-settings>
+                </template>
+            </lightning-tab>
+            <lightning-tab label="Playbooks" value="playbooks" onactive={playbooksClick}>
 
                 <!-- Architecture Manager -->
                 <c-cpq_-admin-architecture-manager

@@ -1,193 +1,43 @@
 import { LightningElement, api, track } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
 
-export default class CPQ_ContractListItem extends NavigationMixin(LightningElement) {
+export default class CPQ_ContractListItem extends LightningElement {
 
-    // All Contracts with source
+    // All Contracts on account
     @api allContracts = [];
 
-    // Contract record
-    @api contract;
+    // Account Columns
+    @api columnsToDisplay;
 
     // Source Info
     @api sourceInfo;
 
-    // Void Confirmation Modal toggle
-    @track showConfirmVoid = false;
+    // Contract record
+    @api contract;
 
-    // Prompt to show in Void Confirmation Modal
-    @track confirmVoidPrompt = 'Are you sure you want to void this contract?';
-
-    // Account Source
-    get accountSource() {
-        return this.sourceInfo.sourceType === 'Account';
-    }
-
-    // Can amend
-    get canAmend() {
-        if (this.sourceInfo.Lock_CPQ__c ||
-            !['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)
+    // CSS class names string for component
+    get colCSS() {
+        let colCSS = 'slds-col slds-p-left_xx-small';
+        if (this.allContracts.indexOf(
+            this.allContracts.find(
+                contract => contract.Id === this.contract.Id
+                )
+            ) % 2 === 1
         ) {
-            return false;
-        } else {
-            return true;
+            colCSS += ' slds-theme_shade';
         }
-    }
-
-    // Amend button title
-    get amendTitle() {
-        let title = 'Amend Contract';
-        if (this.sourceInfo.Lock_CPQ__c) {
-            title = 'Cannot Amend. Opportunity is locked';
+        if (this.columnsToDisplay.length > 5) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-5 slds-large-size_1-of-6';
         }
-        else if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
-            title = 'Cannot Amend. Contract already past, void and/or adjusted';
+        else if (this.columnsToDisplay.length === 5) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-5 slds-large-size_1-of-5';
         }
-        return title;
-    }
-
-    // Can replace
-    get canReplace() {
-        if (this.sourceInfo.Lock_CPQ__c ||
-            !['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)
-        ) {
-            return false;
-        } else {
-            return true;
+        else if (this.columnsToDisplay.length === 4) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-4 slds-large-size_1-of-4';
         }
-    }
-
-    // Replace button title
-    get replaceTitle() {
-        let title = 'Replace Contract';
-        if (this.sourceInfo.Lock_CPQ__c) {
-            title = 'Cannot Replace. Opportunity is locked';
+        else if (this.columnsToDisplay.length === 3) {
+            colCSS += ' slds-size_1-of-3 slds-medium-size_1-of-3 slds-large-size_1-of-3';
         }
-        else if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
-            title = 'Cannot Replace. Contract already past, void and/or adjusted';
-        }
-        return title;
+        return colCSS;
     }
 
-    // Can renew
-    get canRenew() {
-        if (this.sourceInfo.Lock_CPQ__c ||
-            !['Active', 'Upcoming', 'Past'].includes(this.contract.Contract_Status__c)    
-        ) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // Renew button title
-    get renewTitle() {
-        let title = 'Renew Contract';
-        if (this.sourceInfo.Lock_CPQ__c) {
-            title = 'Cannot Renew. Opportunity is locked';
-        } else if (!['Active', 'Upcoming', 'Past'].includes(this.contract.Contract_Status__c)) {
-            title = 'Cannot Renew. Contract void and/or already adjusted';
-        }
-        return title;
-    }
-
-    // Can void
-    get canVoid() {
-        if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    // Void button title
-    get voidTitle() {
-        let title = 'Void Contract';
-        if (!['Active', 'Upcoming'].includes(this.contract.Contract_Status__c)) {
-            title = 'Cannot Void. Contract already past, void and/or adjusted';
-        }
-        return title;
-    }
-
-    // CSS classes for main div
-    get mainCSS() {
-        let mainCSS = 'slds-grid slds-p-around_x-small';
-        if (this.allContracts.indexOf(this.contract) % 2 === 1) {
-            mainCSS += ' slds-theme_shade';
-        }
-        return mainCSS;
-    }
-
-    // Amend clicked
-    amendContract() {
-        // Send Amend Contract call to parent
-        const amendContractEvent = new CustomEvent(
-            'amendcontract', {
-                detail: this.contract.Id
-            });
-        this.dispatchEvent(amendContractEvent);
-    }
-
-    // Replace clicked
-    replaceContract() {
-        // Send Replace Contract call to parent
-        const replaceContractEvent = new CustomEvent(
-            'replacecontract', {
-                detail: this.contract.Id
-            });
-        this.dispatchEvent(replaceContractEvent);
-    }
-
-    // Renew clicked
-    renewContract() {
-        // Send Renew Contract call to parent
-        const renewContractEvent = new CustomEvent(
-            'renewcontract', {
-                detail: this.contract.Id
-            });
-        this.dispatchEvent(renewContractEvent);
-    }
-
-    // Void clicked
-    voidContract() {
-        this.showConfirmVoid = true;
-    }
-
-    // Cancel void
-    cancelVoid() {
-        this.showConfirmVoid = false;
-    }
-
-    // Confirmation received to void
-    async confirmVoid() {
-
-        // Send Void Contract call to parent
-        const voidContractEvent = new CustomEvent(
-            'voidcontract', {
-                detail: this.contract.Id
-            });
-        this.dispatchEvent(voidContractEvent);
-    }
-
-    // View clicked
-    viewContract() {
-        // Send View Contract call to parent
-        const viewContractEvent = new CustomEvent(
-            'viewcontract', {
-                detail: this.contract.Id
-            });
-        this.dispatchEvent(viewContractEvent);
-    }
-
-    navToContract() {
-        // Navigate to the Contract home page
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: this.contract.Id,
-                objectApiName: 'Contract',
-                actionName: 'view',
-            },
-        });
-    }
 }

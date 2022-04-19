@@ -1,6 +1,6 @@
 /**
  * @author Tristan Moser
- * @date 1/12/2022
+ * @date 4/19/2022
  *
  * @description Test class for cpq_ContainerClass class
  *
@@ -15,6 +15,16 @@ public class cpq_ContainerClassTest {
     public static void setup() {
 
         Integer testSize = 2;
+
+        // System Settings
+        CPQ_System_Settings__c systemSettings = new CPQ_System_Settings__c(
+            Contract_Table_Actions__c = 'View',
+            Contract_Table_Columns__c = 'ContractNumber;Contract_Start_Date__c;Contract_Total__c;ContractTerm;isVoid__c',
+            Default_Playbook__c = null,
+            Quote_Table_Actions__c = 'View',
+            Quote_Table_Columns__c = 'Name;Shell_Quote__c;Total_Price__c;End_Date__c;Discount'
+        );
+        insert systemSettings;
 
         // Products
         List<Product2> testProducts = new List<Product2>();
@@ -94,6 +104,37 @@ public class cpq_ContainerClassTest {
             );
         }
         insert testPlaybooks;
+        
+
+        // Rules
+        List<CPQ_Playbook_Rule__c> testRules = new List<CPQ_Playbook_Rule__c>();
+        testRules.add(
+            new CPQ_Playbook_Rule__c(
+                CPQ_Playbook__c = testPlaybooks[0].Id,
+                Execution_Order__c = 0,
+                Evaluate_When__c = 'Always',
+                IsActive__c = true,
+                Name = 'Rule ' + 0
+            )
+        );
+        insert testRules;
+
+
+        // Rule Actions
+        List<CPQ_Playbook_Rule_Action__c> testRuleActions = new List<CPQ_Playbook_Rule_Action__c>();
+        testRuleActions.add(
+            new CPQ_Playbook_Rule_Action__c(
+                Action_Type__c = 'Adjust product field',
+                CPQ_Playbook_Rule__c = testRules[0].Id,
+                Execution_Order__c = 0,
+                IsActive__c = true,
+                Name = 'Action ' + 0,
+                Product_Adjustment_Field__c = 'Description',
+                Product_Adjustment_Field_Type__c = 'Text',
+                Value_Source_Type__c = 'Static'
+            )
+        );
+        insert testRuleActions;
 
 
         // Question Groups
@@ -621,7 +662,14 @@ public class cpq_ContainerClassTest {
 
         Test.startTest();
 
-        cpq_ContainerClass.submitForApproval(testQuote.Id);
+        List<CPQ_Quote_Approval__c> approvalsToSubmit = [
+            SELECT Id,
+                Status__c
+            FROM CPQ_Quote_Approval__c
+            WHERE Quote__c =:testQuote.Id
+        ];
+
+        cpq_ContainerClass.submitForApproval(approvalsToSubmit);
 
         Test.stopTest();
 
@@ -683,10 +731,10 @@ public class cpq_ContainerClassTest {
     }
 
     /**
-     * @description Test to recall approval for a quote
+     * @description Test to recall approvals for a quote
      **/
     @isTest
-    public static void testRecallApproval() {
+    public static void testRecallApprovals() {
 
         Opportunity testOpportunity = [
             SELECT Id
@@ -786,7 +834,7 @@ public class cpq_ContainerClassTest {
         Test.startTest();
 
         CPQ_Quote_Approval_Step_TriggerHandler.firstRunAfterUpdate = true;
-        cpq_ContainerClass.recallApproval(testApprovals[0].Id);
+        cpq_ContainerClass.recallApprovals(testQuote.Id);
 
         Test.stopTest();
 
@@ -882,7 +930,8 @@ public class cpq_ContainerClassTest {
             Adjustment_Type__c = null,
             CPQ_Playbook__c = testPlaybook.Id,
             IsClone__c = false,
-            Playbook_Status__c = 'Complete'
+            Playbook_Status__c = 'Complete',
+            Shell_Quote__c = true
         );
         insert testQuote;
 

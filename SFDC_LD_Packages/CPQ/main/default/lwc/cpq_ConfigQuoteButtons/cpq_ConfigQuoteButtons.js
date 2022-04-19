@@ -22,6 +22,18 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
     @track quoteToPreview;
     @track showPreview;
 
+    // Determine if System Settings include Proposal
+    get allowProposal() {
+        if (this.oppInfo.SystemSettings !== undefined &&
+            this.oppInfo.SystemSettings.Quote_Table_Actions__c !== undefined &&
+            this.oppInfo.SystemSettings.Quote_Table_Actions__c.split(';').includes('Proposal')    
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Determine if Cancel button can be clicked
     get disableCancelButton() {
         if (this.loading === true) {

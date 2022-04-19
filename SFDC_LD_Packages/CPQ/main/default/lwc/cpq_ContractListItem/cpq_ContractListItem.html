@@ -1,212 +1,25 @@
 <template>
 
-    <!-- Confirm Void -->
-    <template if:true={showConfirmVoid}>
-        <c-confirmation-modal
-            variant="error"
-            add-texture="false"
-            title="Confirm Void Transaction"
-            body={confirmVoidPrompt}
-            confirm-button-title="Confirm"
-            cancel-button-title="Cancel"
-            onconfirm={confirmVoid}
-            oncancel={cancelVoid}
-        >
-        </c-confirmation-modal>
-    </template>
-
     <div
-        class={mainCSS}
-        style="border-bottom: 0.25px solid gray"
+        class="slds-grid"
+        style="height: 50px;"
     >
-        <div
-            class="slds-col slds-size_1-of-3 slds-p-horizontal_xx-small"
-            style="overflow:auto;cursor:pointer;text-decoration:underline"
-            title={contract.ContractNumber}
-            onclick={navToContract}
+        <template
+            for:each={columnsToDisplay}
+            for:item="col"
         >
-            {contract.ContractNumber}
-        </div>
-        <div
-            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
-            style="overflow:auto"
-            title={contract.Contract_Start_Date__c}
-        >
-            <lightning-formatted-date-time
-                value={contract.Contract_Start_Date__c}
+            <div
+                class={colCSS}
+                style="border-bottom: 0.25px solid gray"
+                key={col.field}
             >
-            </lightning-formatted-date-time>
-        </div>
-        <div
-            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
-            style="overflow:auto"
-            title={contract.Contract_End_Date__c}
-        >
-            <lightning-formatted-date-time
-                value={contract.Contract_End_Date__c}
-            >
-            </lightning-formatted-date-time>
-        </div>
-        <div
-            class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small"
-            style="overflow:auto"
-            title={contract.Contract_Status__c}
-        >
-            {contract.Contract_Status__c}
-        </div>
-        <div class="slds-col slds-size_1-of-6 slds-p-horizontal_xx-small">
-            <ul class="slds-list_horizontal slds-wrap">
-
-                <li
-                    class="slds-m-horizontal_x-small"
-                    style="cursor:pointer"
-                    onclick={viewContract}
+                <c-cpq_-contract-list-item-column
+                    column={col}
+                    currency={sourceInfo.CurrencyIsoCode}
+                    contract={contract}
                 >
-                    <lightning-icon
-                        icon-name="utility:preview"
-                        alternative-text="View Contract Details"
-                        title="View Contract Details"
-                        size="x-small"
-                    >
-                    </lightning-icon>
-                </li>
-
-                <!-- Account Source -->
-                <template if:true={accountSource}>
-
-                    <!-- Void Contract -->
-                    <template if:true={canVoid}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="cursor:pointer"
-                            onclick={voidContract}
-                        >
-                            <lightning-icon
-                                icon-name="utility:cancel_file_request"
-                                alternative-text={voidTitle}
-                                title={voidTitle}
-                                size="x-small"
-                                variant="error"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                    <template if:false={canVoid}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="opacity: 0.5"
-                        >
-                            <lightning-icon
-                                icon-name="utility:cancel_file_request"
-                                alternative-text={voidTitle}
-                                title={voidTitle}
-                                size="x-small"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                </template>
-
-                <!-- Opportunity Source -->
-                <template if:false={accountSource}>
-
-                    <!-- Amend Contract -->
-                    <template if:true={canAmend}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="cursor:pointer"
-                            onclick={amendContract}
-                        >
-                            <lightning-icon
-                                icon-name="utility:relate"
-                                alternative-text={amendTitle}
-                                title={amendTitle}
-                                size="x-small"
-                                variant="warning"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                    <template if:false={canAmend}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="opacity: 0.5"
-                        >
-                            <lightning-icon
-                                icon-name="utility:relate"
-                                alternative-text={amendTitle}
-                                title={amendTitle}
-                                size="x-small"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-
-                    <!-- Replace Contract -->
-                    <template if:true={canReplace}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="cursor:pointer"
-                            onclick={replaceContract}
-                        >
-                            <lightning-icon
-                                icon-name="utility:replace"
-                                alternative-text={replaceTitle}
-                                title={replaceTitle}
-                                size="x-small"
-                                variant="error"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                    <template if:false={canReplace}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="opacity: 0.5"
-                        >
-                            <lightning-icon
-                                icon-name="utility:replace"
-                                alternative-text={replaceTitle}
-                                title={replaceTitle}
-                                size="x-small"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-
-                    <!-- Renew Contract -->
-                    <template if:true={canRenew}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="cursor:pointer"
-                            onclick={renewContract}
-                        >
-                            <lightning-icon
-                                icon-name="utility:clock"
-                                alternative-text={renewTitle}
-                                title={renewTitle}
-                                size="x-small"
-                                variant="success"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                    <template if:false={canRenew}>
-                        <li
-                            class="slds-m-horizontal_x-small"
-                            style="opacity: 0.5"
-                        >
-                            <lightning-icon
-                                icon-name="utility:clock"
-                                alternative-text={renewTitle}
-                                title={renewTitle}
-                                size="x-small"
-                            >
-                            </lightning-icon>
-                        </li>
-                    </template>
-                </template>
-            </ul>
-        </div>
+                </c-cpq_-contract-list-item-column>
+            </div>
+        </template>
     </div>
 </template>

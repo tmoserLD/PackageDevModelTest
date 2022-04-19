@@ -35,6 +35,18 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
         this.reload();
     }
 
+    // Determine if System Settings include Proposal
+    get allowProposal() {
+        if (this.oppInfo.SystemSettings !== undefined &&
+            this.oppInfo.SystemSettings.Quote_Table_Actions__c !== undefined &&
+            this.oppInfo.SystemSettings.Quote_Table_Actions__c.split(';').includes('Proposal')    
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Create Quote event received
     createQuote() {
         this.configType = 'New';
@@ -229,6 +241,9 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
                 let restructuredOppInfo = queriedCPQInfo.oppInfo;
                 restructuredOppInfo.Contracts = queriedCPQInfo.contracts;
                 restructuredOppInfo.Quotes = queriedCPQInfo.quotes;
+                restructuredOppInfo.SystemSettings = queriedCPQInfo.systemSettings;
+                restructuredOppInfo.QuoteTableColumns = queriedCPQInfo.quoteTableColumns;
+                restructuredOppInfo.ContractTableColumns = queriedCPQInfo.contractTableColumns;
 
                 // Currency for non-MultiCurrency orgs
                 this.defaultCurrency = queriedCPQInfo.defaultCurrency;

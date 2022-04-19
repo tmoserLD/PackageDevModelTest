@@ -1,6 +1,6 @@
 /**
  * @author Tristan Moser
- * @date 1/12/2022
+ * @date 4/19/2022
  *
  * @description Test class for cpq_AdminContainerClass class
  *
@@ -621,6 +621,67 @@ public class cpq_AdminContainerClassTest {
         // Verify adjusted fields
         System.assertEquals('CLONE: ' + testQuestion.Name.left(73), clonedQuestion.Name);
         System.assertEquals('*' + testQuestion.Variable_Name__c, clonedQuestion.Variable_Name__c);
+    }
+
+    /**
+     * @description Test to verify System Settings create/query successfully when none exist
+     **/
+    @isTest
+    public static void testSystemSettingsInit() {
+
+        Test.startTest();
+
+        CPQ_System_Settings__c systemSettings = cpq_AdminContainerClass.getSystemSettings();
+
+        Test.stopTest();
+
+        System.assert(systemSettings.Id != null);
+        System.assert(systemSettings.Contract_Table_Actions__c != null);
+        System.assert(systemSettings.Contract_Table_Columns__c != null);
+        System.assert(systemSettings.Quote_Table_Actions__c != null);
+        System.assert(systemSettings.Quote_Table_Columns__c != null);
+
+        List<CPQ_System_Settings__c> allSystemSettings = [
+            SELECT Id
+            FROM CPQ_System_Settings__c
+        ];
+
+        System.assertEquals(1, allSystemSettings.size());
+    }
+
+    /**
+     * @description Test to verify System Settings create/query successfully when one already exists
+     **/
+    @isTest
+    public static void testSystemSettingsExisting() {
+
+        CPQ_System_Settings__c existingSystemSettings = new CPQ_System_Settings__c(
+            Contract_Table_Actions__c = 'View',
+            Contract_Table_Columns__c = 'ContractNumber',
+            Default_Playbook__c = null,
+            Quote_Table_Actions__c = 'View',
+            Quote_Table_Columns__c = 'Name'
+        );
+        insert existingSystemSettings;
+
+        Test.startTest();
+
+        CPQ_System_Settings__c systemSettings = cpq_AdminContainerClass.getSystemSettings();
+
+        Test.stopTest();
+
+        System.assertEquals(existingSystemSettings.Id, systemSettings.Id);
+        System.assertEquals('View',systemSettings.Contract_Table_Actions__c);
+        System.assertEquals('ContractNumber',systemSettings.Contract_Table_Columns__c);
+        System.assertEquals('View',systemSettings.Quote_Table_Actions__c);
+        System.assertEquals('Name',systemSettings.Quote_Table_Columns__c);
+
+        List<CPQ_System_Settings__c> allSystemSettings = [
+            SELECT Id
+            FROM CPQ_System_Settings__c
+        ];
+
+        System.assertEquals(1, allSystemSettings.size());
     }
 
 }

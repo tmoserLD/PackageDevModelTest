@@ -3,7 +3,7 @@
     <fullName>Contract_Total__c</fullName>
     <description>Total contract currency value</description>
     <externalId>false</externalId>
-    <label>Contract Total</label>
+    <label>Total</label>
     <summarizedField>Contract_Entitlement__c.Total_Price__c</summarizedField>
     <summaryForeignKey>Contract_Entitlement__c.Contract__c</summaryForeignKey>
     <summaryOperation>sum</summaryOperation>

@@ -28,16 +28,18 @@
 
         <!-- Normal Mode -->
         <template if:false={viewMode}>
-            <li class="slds-m-right_x-small">
-                <lightning-button
-                    label="Preview Proposal"
-                    title="Preview Proposal"
-                    variant="base"
-                    onclick={previewProposal}
-                    disabled={disablePreviewButton}
-                >
-                </lightning-button>            
-            </li>
+            <template if:true={allowProposal}>
+                <li class="slds-m-right_x-small">
+                    <lightning-button
+                        label="Preview Proposal"
+                        title="Preview Proposal"
+                        variant="base"
+                        onclick={previewProposal}
+                        disabled={disablePreviewButton}
+                    >
+                    </lightning-button>            
+                </li>
+            </template>
             <li class="slds-m-right_x-small">
                 <lightning-button
                     label="Cancel"

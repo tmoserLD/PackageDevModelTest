@@ -1,0 +1,86 @@
+<template>
+
+    <!-- Boolean -->
+    <template if:true={isBoolean}>
+        <lightning-input
+            type="checkbox"
+            label=""
+            variant="label-hidden"
+            value={value}
+            checked={value}
+            readonly="true"
+            read-only="true"
+        >
+        </lightning-input>
+    </template>
+
+    <!-- Currency -->
+    <template if:true={isCurrency}>
+        <div
+            class="slds-p-top_x-small slds-p-horizontal_xx-small slds-p-vertical_x-small slds-truncate"
+            title={value}
+        >
+            <lightning-formatted-number
+                value={value}
+                format-style="currency"
+                currency-code={currency}
+            >
+            </lightning-formatted-number>    
+        </div>
+    </template>
+
+    <!-- Date -->
+    <template if:true={isDate}>
+        <div
+            class="slds-p-top_x-small slds-p-horizontal_xx-small slds-p-vertical_x-small slds-truncate"
+            title={value}
+        >
+            <lightning-formatted-date-time
+                value={value}
+            >
+            </lightning-formatted-date-time>   
+        </div>
+    </template>
+
+    <!-- Number -->
+    <template if:true={isNumber}>
+        <div
+            class="slds-p-top_x-small slds-p-horizontal_xx-small slds-p-vertical_x-small slds-truncate"
+            title={value}
+        >
+            <lightning-formatted-number
+                value={value}
+                maximum-fraction-digits="2"
+            >
+            </lightning-formatted-number>   
+        </div>
+    </template>
+
+    <!-- Percent -->
+    <template if:true={isPercent}>
+        <div
+            class="slds-p-top_x-small slds-p-horizontal_xx-small slds-p-vertical_x-small slds-truncate"
+            title={value}
+        >
+            <lightning-formatted-number
+                value={value}
+                format-style="percent"
+                maximum-fraction-digits="2"
+            >
+            </lightning-formatted-number>   
+        </div>
+    </template>
+
+    <!-- Text -->
+    <template if:true={isText}>
+        <div
+            class="slds-p-top_x-small slds-p-horizontal_xx-small slds-p-vertical_x-small slds-truncate"
+            title={value}
+        >
+            <lightning-formatted-text
+                value={value}
+            >
+            </lightning-formatted-text>  
+        </div>
+    </template>
+</template>

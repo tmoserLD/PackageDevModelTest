@@ -113,21 +113,22 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 // Match playbook from existing quote
                 if (this.existingQuoteData.CPQ_Playbook__c !== undefined) {
                     this.selectedPlaybookId = this.existingQuoteData.CPQ_Playbook__c;
-                    this.selectedPricebook = JSON.parse(JSON.stringify(
-                        this.pricebooks.find(pricebook => pricebook.Id === this.existingQuoteData.CPQ_Playbook__r.Pricebook__c)
-                    ));
-                    this.productColumns = playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).productColumns;
-                    this.entitlementColumns = playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).entitlementColumns;
+                }
+                // Default playbook
+                else if (this.oppInfo.SystemSettings.Default_Playbook__c !== undefined) {
+                    this.selectedPlaybookId = this.oppInfo.SystemSettings.Default_Playbook__c;
                 }
                 // Otherwise default to first playbook
                 else {
                     this.selectedPlaybookId = playbooks[0].playbookInfo.Id;
-                    this.selectedPricebook = JSON.parse(JSON.stringify(
-                        this.pricebooks.find(pricebook => pricebook.Id === playbooks[0].playbookInfo.Pricebook__c)
-                    ));
-                    this.productColumns = playbooks[0].productColumns;
-                    this.entitlementColumns = playbooks[0].entitlementColumns;
                 }
+
+                let selectedPlaybook = playbooks.find(p => p.playbookInfo.Id === this.selectedPlaybookId);
+                this.selectedPricebook = JSON.parse(JSON.stringify(
+                    this.pricebooks.find(pricebook => pricebook.Id === selectedPlaybook.playbookInfo.Pricebook__c)
+                ));
+                this.productColumns = selectedPlaybook.productColumns;
+                this.entitlementColumns = selectedPlaybook.entitlementColumns;
 
                 if (this.selectedPricebook !== undefined &&
                     this.selectedPricebook.PricebookEntries !== undefined    
@@ -347,7 +348,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
                                 // Get all qli attributes
                                 for (const [key, value] of Object.entries(qli)) {
-                                    productToAdd[key] = value;
+                                    if (key !== 'Id') {
+                                        productToAdd[key] = value;
+                                    }
                                   }
 
                                 // Product Name
@@ -1555,11 +1558,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
     // Playbook picklist change event
     playbookChange(event) {
         this.selectedPlaybookId = event.detail.value;
+        let selectedPlaybook = this.playbooks.find(p => p.playbookInfo.Id === this.selectedPlaybookId);
         this.selectedPricebook = JSON.parse(JSON.stringify(
-            this.pricebooks.find(pricebook => pricebook.Id === this.playbooks.find(playbook => playbook.playbookInfo.Id === event.detail.value).playbookInfo.Pricebook__c)
+            this.pricebooks.find(pricebook => pricebook.Id === selectedPlaybook.playbookInfo.Pricebook__c)
         ));
-        this.productColumns = this.playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).productColumns;
-        this.entitlementColumns = this.playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).entitlementColumns;
+        this.productColumns = selectedPlaybook.productColumns;
+        this.entitlementColumns = selectedPlaybook.entitlementColumns;
         if (this.selectedPricebook !== undefined &&
             this.selectedPricebook.PricebookEntries !== undefined    
         ) {

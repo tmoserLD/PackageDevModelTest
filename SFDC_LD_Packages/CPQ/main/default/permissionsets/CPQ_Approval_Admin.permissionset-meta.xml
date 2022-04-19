@@ -32,7 +32,7 @@
         <apexClass>cpq_ApprovalsHubClass</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <description>Gives admin access to all CPQ Approvals Hub. Gives edit access to CPQ Quote approval objects</description>
+    <description>Gives admin access to CPQ Approvals Hub. Gives edit access to CPQ Quote approval objects</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Quote_Approval__c.Notes_for_Approvers__c</field>

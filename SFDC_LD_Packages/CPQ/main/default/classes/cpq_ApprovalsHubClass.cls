@@ -1,6 +1,6 @@
 /**
 * @author Tristan Moser
-* @date 3/28/2022
+* @date 4/19/2022
 *
 * @description CPQ Approvals Hub controller class
 *
@@ -20,10 +20,12 @@ public with sharing class cpq_ApprovalsHubClass {
         ReturnData returnData = new ReturnData();
         returnData.opportunities = new List<OpportunityData>();
 
-        // Populate current user if null
+        // Populate current user if no user provided
         if (userId == null) {
             userId = System.UserInfo.getUserId();
         }
+
+        // Info for user provided
         returnData.userObj = [
             SELECT Id,
                 Name
@@ -31,6 +33,7 @@ public with sharing class cpq_ApprovalsHubClass {
             WHERE Id=:userId
         ];
 
+        // Info for current user
         returnData.currentUser = new CurrentUser();
         User curUser = [
             SELECT Id,
