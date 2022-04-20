@@ -139,7 +139,7 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     }
 
     get viewMode() {
-        return this.configType === 'View';
+        return (this.configType === 'View' || this.configType === 'Product View');
     }
 
     // Determine if any Products are currently on quote

@@ -10,7 +10,8 @@ import updateRecords from '@salesforce/apex/cpq_ContractsByAccountClass.updateRe
 
 export default class CPQ_AccountContracts extends NavigationMixin(LightningElement) {
 
-    @api acctId;
+    // Account Id
+    @api recordId;
 
     @track acct = {};
 
@@ -22,6 +23,10 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
     @track userForConfig;
 
     @track loading = false;
+
+    // Most Active Contract helpers
+    @track mostActiveContract;
+    @track showMostActiveContract;
 
     // Toggle to display CPQ Config
     @track showConfig = false;
@@ -38,7 +43,7 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
         try {
             acctQueried = await queryAccountWithContracts(
                 {
-                    acctId : this.acctId
+                    acctId : this.recordId
                 }
             );
             acctQueried.sourceType = 'Account';
@@ -63,7 +68,59 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
 
         this.acct = acctQueried;
 
+        // Determine most active contract
+        this.setMostActiveContract(acctQueried);
+
         this.loading = false;
+    }
+
+    setMostActiveContract(account) {
+        let mostActiveContract;
+        let mostFutureContract;
+        account.Contracts.forEach(function(contract) {
+            if (mostFutureContract === undefined) {
+                mostFutureContract = contract;
+            }
+            if (mostActiveContract === undefined &&
+                contract.Contract_Status__c === 'Active'    
+            ) {
+                mostFutureContract = contract;
+            }
+        }, this);
+
+        // Set Most Active Contract to Most Future Contract if necessary
+        if (mostActiveContract === undefined) {
+            mostActiveContract = mostFutureContract;
+        }
+
+        // Set Most Active Contract data if necessary
+        if (mostActiveContract !== undefined) {
+            // Contract
+            let mostActiveContractObj = JSON.parse(JSON.stringify(this.acct.Contracts.find(
+                contract => contract.Id === mostActiveContract.Id
+            )));
+
+            // Set 'Quote' data
+            mostActiveContractObj.Name = 'Contract #' + mostActiveContractObj.ContractNumber;
+            mostActiveContractObj.QuoteLineItems = mostActiveContractObj.Contract_Entitlements__r;
+            mostActiveContractObj.CPQ_Playbook_Answers__r = mostActiveContractObj.Contract_Playbook_Answers__r;
+
+            // Remove Id -- since not quote
+            mostActiveContractObj.contractId = mostActiveContractObj.Id;
+            mostActiveContractObj.Id = undefined;
+
+            mostActiveContract = mostActiveContractObj;
+            this.oppForConfig = {CurrencyIsoCode : mostActiveContractObj.CurrencyIsoCode};
+            this.userForConfig = {};
+        }
+
+        // Show Most Active Contract if necessary
+        this.mostActiveContract = mostActiveContract;
+        if (mostActiveContract !== undefined) {
+            this.showMostActiveContract = true;
+        } else {
+            this.showMostActiveContract = false;
+        }
     }
 
     navToAcct() {
@@ -71,7 +128,7 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: this.acctId,
+                recordId: this.recordId,
                 objectApiName: 'Account',
                 actionName: 'view',
             },

@@ -111,7 +111,7 @@ public with sharing class cpq_ContainerClass {
                         + objFieldsStrings.get('Contract_Entitlement__c')
                     + ' FROM Contract_Entitlements__r'
                 + ')';
-            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_End_Date__c DESC, Contract_Start_Date__c DESC, ContractNumber'; 
+            String contractsQuery = 'SELECT ' + objFieldsStrings.get('Contract') + contractsSubQueries + ' FROM Contract WHERE AccountId=\'' + opp.AccountId + '\' ORDER BY Contract_End_Date__c DESC, Contract_Start_Date__c DESC, ContractNumber DESC'; 
             contracts = Database.query(contractsQuery);
             cpqObj.contracts = contracts;
 

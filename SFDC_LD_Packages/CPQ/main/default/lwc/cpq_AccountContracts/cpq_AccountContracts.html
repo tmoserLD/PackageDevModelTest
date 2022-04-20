@@ -34,6 +34,7 @@
 
         <!-- User has access -->
         <!-- <template if:true={hasAcctAccess}> -->
+        <div class="slds-theme_default slds-p-around_xx-small">
 
             <!-- Account Info -->
             <div class="slds-p-horizontal_x-small slds-p-vertical_small">
@@ -82,8 +83,21 @@
                 </c-cpq_-config-quote>
             </template>
 
-            <!-- Contract List -->
+            <!-- Contracts -->
             <template if:false={showConfig}>
+
+                <!-- Most Active Contract -->
+                <template if:true={showMostActiveContract}>
+                    <c-cpq_-most-active-contract
+                        account={acct}
+                        contract={mostActiveContract}
+                        opp-for-config={oppForConfig}
+                        user-for-config={userForConfig}
+                    >
+                    </c-cpq_-most-active-contract>
+                </template>
+
+                <!-- Contract List -->
                 <c-cpq_-contract-list
                     source-info={acct}
                     onvoidcontract={voidContract}
@@ -91,6 +105,7 @@
                 >
                 </c-cpq_-contract-list>
             </template>
+        </div>
         <!-- </template> -->
     </template>
 </template>

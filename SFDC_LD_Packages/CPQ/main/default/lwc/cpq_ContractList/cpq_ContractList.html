@@ -29,7 +29,7 @@
         <div class="slds-theme_default slds-p-around_x-small">
 
             <!-- No Contracts -->
-            <template if:true={noQuotesToDisplay}>
+            <template if:true={noContractsToDisplay}>
                 <div class="slds-align_absolute-center">
                     No Contracts to show for this Account.
                 </div>
@@ -40,7 +40,7 @@
 
                 <div class="slds-col slds-grid">
                     <div
-                        class="slds-col slds-size_4-of-6 slds-medium-size_9-of-11 slds-large-size_10-of-12 slds-grid_vertical"
+                        class="slds-col slds-size_4-of-6 slds-medium-size_10-of-12 slds-large-size_10-of-12 slds-grid_vertical scroll-shadows"
                         style="overflow:scroll;"
                     >
                         <!-- Table Header -->
@@ -110,7 +110,7 @@
                         </div>
 
                         <!-- Contracts -->
-                        <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
+                        <div class="slds-col slds-grid_vertical slds-p-horizontal_x-small">
                             <template
                                 for:each={sortedContracts}
                                 for:item="contract"
@@ -129,7 +129,7 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="slds-col slds-size_2-of-6 slds-medium-size_2-of-11 slds-large-size_2-of-12 slds-grid_vertical">
+                    <div class="slds-col slds-size_2-of-6 slds-medium-size_2-of-12 slds-large-size_2-of-12 slds-grid_vertical">
                         <div
                             class="slds-col slds-theme_default slds-p-horizontal_x-small slds-p-top_x-small"
                             style="font-weight: bold;"

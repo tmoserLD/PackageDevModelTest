@@ -12,6 +12,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
     @api configType;
     // Default Currency
     @api defaultCurrency;
+    // Hide Header
+    @api hideHeader;
     // Opportunity Info
     @api oppInfo;
     // Quote Info for existing quote being edited (Empty obj if new Quote)
@@ -65,7 +67,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         try {
             configInfo = await getConfigInfo({
                 adjustingContract: this.existingQuoteData.Adjustment_of_Contract__c,
-                contractView: (this.configType === 'View' && this.existingQuoteData.contractId !== undefined)
+                contractView: ((this.configType === 'View' || this.configType === 'Product View') && this.existingQuoteData.contractId !== undefined)
             });
 
             let playbooks = configInfo.playbooks;
@@ -115,7 +117,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     this.selectedPlaybookId = this.existingQuoteData.CPQ_Playbook__c;
                 }
                 // Default playbook
-                else if (this.oppInfo.SystemSettings.Default_Playbook__c !== undefined) {
+                else if (this.oppInfo?.SystemSettings?.Default_Playbook__c !== undefined) {
                     this.selectedPlaybookId = this.oppInfo.SystemSettings.Default_Playbook__c;
                 }
                 // Otherwise default to first playbook
@@ -134,7 +136,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     this.selectedPricebook.PricebookEntries !== undefined    
                 ) {
                     this.selectedPricebook.PricebookEntries.forEach(function(pbe) {
-                        if (this.configType === 'View') {
+                        if (this.configType === 'View' || this.configType === 'Product View') {
                             pbe.Manually_Addible = false;
                         } else {
                             pbe.Manually_Addible = pbe.Manually_Addible__c;
@@ -190,7 +192,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                         }
 
                         // View Mode
-                        if (this.configType === 'View') {
+                        if (this.configType === 'View' || this.configType === 'Product View') {
 
                             // Mark read only
                             question.questionInfo.IsReadOnly__c = true;
@@ -442,7 +444,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
             return 'Configure New Quote';
         } else if (this.configType == 'Edit') {
             return 'Configure Quote';
-        } else if (this.configType == 'View') {
+        } else if (this.configType == 'View' || this.configType === 'Product View') {
             return 'View Only';
         }
     }
@@ -476,7 +478,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     }
 
     get viewMode() {
-        return this.configType === 'View';
+        return (this.configType === 'View' || this.configType === 'Product View');
     }
 
     // Playbook that is currently selected
@@ -530,7 +532,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     // Check and act on Approvals
     evaluateApprovals() {
         // Do not run in View mode
-        if (this.configType !== 'View') {
+        if (this.configType !== 'View' && this.configType !== 'Product View') {
             this.approvals.forEach(function(approval) {
                 // Approval of selected playbook
                 if (approval.approvalInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
@@ -1065,7 +1067,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     evaluateRules(playbooks) {
         let changedRuleEvaluation = false;
         // Do not run in View mode
-        if (this.configType !== 'View') {
+        if (this.configType !== 'View' && this.configType !== 'Product View') {
             this.rules.forEach(function(rule) {
                 // Ignore flagged rules
                 if (rule.ruleInfo.doNotEvaluate !== true) {

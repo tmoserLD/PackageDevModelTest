@@ -40,6 +40,10 @@ export default class CPQ_Playbook extends LightningElement {
         return this.quoteApprovals.length > 0;
     }
 
+    get productViewOnly() {
+        return this.configType === 'Product View';
+    }
+
     // Answer "Touched" Event
     answerTouch(event) {
 

@@ -5,30 +5,33 @@
     </c-error-modal>
 
     <!-- Header -->
-    <div
-        class="slds-grid slds-theme_shade slds-p-around_x-small"
-        style="border-radius: 10px;"
-    >
-        <div class="slds-text-heading_medium">
-            {configTitle}
+    <template if:false={hideHeader}>
+        <div
+            class="slds-grid slds-theme_shade slds-p-around_x-small"
+            style="border-radius: 10px;"
+        >
+            <div class="slds-text-heading_medium">
+                {configTitle}
+            </div>
+        
+            <div class="slds-col_bump-left">
+                <c-cpq_-config-quote-buttons
+                    config-type={configType}
+                    existing-quote-data={existingQuoteData}
+                    opp-info={oppInfo}
+                    playbooks={playbooks}
+                    quote-approvals={quoteApprovals}
+                    quote-name={quoteName}
+                    quote-products={quoteProducts}
+                    selected-playbook-id={selectedPlaybookId}
+                    selected-pricebook={selectedPricebook}
+                    oncancelevent={cancel}
+                    onsaveevent={save}
+                >
+                </c-cpq_-config-quote-buttons>
+            </div>
         </div>
-        <div class="slds-col_bump-left">
-            <c-cpq_-config-quote-buttons
-                config-type={configType}
-                existing-quote-data={existingQuoteData}
-                opp-info={oppInfo}
-                playbooks={playbooks}
-                quote-approvals={quoteApprovals}
-                quote-name={quoteName}
-                quote-products={quoteProducts}
-                selected-playbook-id={selectedPlaybookId}
-                selected-pricebook={selectedPricebook}
-                oncancelevent={cancel}
-                onsaveevent={save}
-            >
-            </c-cpq_-config-quote-buttons>
-        </div>
-    </div>
+    </template>
 
     <!-- Body -->
     <div class="slds-grid_vertical slds-theme_default">

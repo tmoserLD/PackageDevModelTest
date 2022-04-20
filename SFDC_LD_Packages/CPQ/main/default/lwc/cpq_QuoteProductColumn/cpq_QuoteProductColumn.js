@@ -34,7 +34,9 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
             isEditable = true;
         }
 
-        if (this.configType === 'View') {
+        if (this.configType === 'View' ||
+            this.configType === 'Product View'
+        ) {
             isEditable = false;
         }
 

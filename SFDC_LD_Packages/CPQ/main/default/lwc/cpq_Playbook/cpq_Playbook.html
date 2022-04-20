@@ -31,17 +31,19 @@
         </div>
 
         <!-- Question Groups -->
-        <template
-            for:each={playbook.questionGroups}
-            for:item="group"
-        >
-            <c-cpq_-playbook-question-group
-                key={group.groupInfo.Id}
-                group={group}
-                opp-currency={oppCurrency}
-                ontouch={answerTouch}
+        <template if:false={productViewOnly}>
+            <template
+                for:each={playbook.questionGroups}
+                for:item="group"
             >
-            </c-cpq_-playbook-question-group>
+                <c-cpq_-playbook-question-group
+                    key={group.groupInfo.Id}
+                    group={group}
+                    opp-currency={oppCurrency}
+                    ontouch={answerTouch}
+                >
+                </c-cpq_-playbook-question-group>
+            </template>
         </template>
 
         <!-- Product Summary -->
@@ -58,12 +60,14 @@
         </c-cpq_-quote-product-summary>
 
         <!-- Entitlement Summary -->
-        <c-cpq_-quote-entitlement-summary
-            entitlement-columns={entitlementColumns}
-            entitlements={entitlements}
-            opp-currency={oppCurrency}
-        >
-        </c-cpq_-quote-entitlement-summary>
+        <template if:false={productViewOnly}>
+            <c-cpq_-quote-entitlement-summary
+                entitlement-columns={entitlementColumns}
+                entitlements={entitlements}
+                opp-currency={oppCurrency}
+            >
+            </c-cpq_-quote-entitlement-summary>
+        </template>
 
         <!-- Approval Summary -->
         <template if:true={hasApprovals}>

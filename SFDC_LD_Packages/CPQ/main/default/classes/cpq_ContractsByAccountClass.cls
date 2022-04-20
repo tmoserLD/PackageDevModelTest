@@ -192,7 +192,7 @@ public with sharing class cpq_ContractsByAccountClass {
             + 'WHERE AccountId =:acctId '
             + 'ORDER BY Contract_End_Date__c DESC, '
                 + 'Contract_Start_Date__c DESC, '
-                + 'ContractNumber ';
+                + 'ContractNumber DESC';
         acctObj.Contracts = Database.query(contractQuery);
 
         if (multiCurrency == true) {
