@@ -37,21 +37,6 @@
                 <default>false</default>
                 <label>Is Contract Renewal</label>
             </value>
-            <value>
-                <fullName>Contract Is Active</fullName>
-                <default>false</default>
-                <label>Contract Is Active</label>
-            </value>
-            <value>
-                <fullName>Contract Is Upcoming</fullName>
-                <default>false</default>
-                <label>Contract Is Upcoming</label>
-            </value>
-            <value>
-                <fullName>Contract Is Past</fullName>
-                <default>false</default>
-                <label>Contract Is Past</label>
-            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

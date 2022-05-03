@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_PlaybookQuestionGroup extends LightningElement {
 
+    // Configuration Type
+    @api configType;
+
     // Group Info
     @api group;
 
@@ -57,6 +60,10 @@ export default class CPQ_PlaybookQuestionGroup extends LightningElement {
         return needsAttention;
     }
 
+    get visible() {
+        return (this.group.groupInfo.IsHidden__c !== true || this.configType === 'Admin View')
+    }
+
     // Toggle Collapse Value
     toggleCollapse() {
         this.collapsed = !this.collapsed;
@@ -70,7 +77,8 @@ export default class CPQ_PlaybookQuestionGroup extends LightningElement {
                 detail: {
                     groupId: this.group.groupInfo.Id,
                     questionId: event.detail.questionId,
-                    answer: event.detail.answer
+                    answer: event.detail.answer,
+                    selectedRecords: event.detail.selectedRecords
                 }
             });
         this.dispatchEvent(touchEvent);

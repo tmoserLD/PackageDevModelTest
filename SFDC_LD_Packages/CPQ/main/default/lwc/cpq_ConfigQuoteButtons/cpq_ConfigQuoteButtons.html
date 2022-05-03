@@ -61,9 +61,31 @@
             </li>
         </template>
 
-        <!-- Preview Mode -->
+        <!-- View Mode -->
         <template if:true={viewMode}>
-            <li class="slds-m-right_x-small">
+            <template if:true={isCPQAdmin}>
+                <template if:true={normalView}>
+                    <li class="slds-m-right_x-small">
+                        <lightning-button
+                            label="Admin View"
+                            title="Admin View"
+                            onclick={toggleAdminView}
+                        >
+                        </lightning-button>            
+                    </li>
+                </template>
+                <template if:false={normalView}>
+                    <li class="slds-m-right_x-small">
+                        <lightning-button
+                            label="Normal View"
+                            title="Normal View"
+                            onclick={toggleAdminView}
+                        >
+                        </lightning-button>            
+                    </li>
+                </template>
+            </template>
+            <li>
                 <lightning-button
                     label="Close"
                     title="Close"

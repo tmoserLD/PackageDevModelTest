@@ -134,6 +134,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contract_Playbook_Answer__c.Selected_Records_String__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contract_Playbook_Answer__c.Value_Boolean__c</field>
         <readable>true</readable>
     </fieldPermissions>

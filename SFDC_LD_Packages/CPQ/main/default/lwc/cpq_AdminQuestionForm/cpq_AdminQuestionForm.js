@@ -32,6 +32,9 @@ export default class CPQ_AdminQuestionForm extends LightningElement {
     // Picklist Values for picklist answer type
     @track picklistValues;
 
+    // Display Field API names for record lookup answer type
+    @track recordDisplayFields;
+
     // Delete Confirmation Modal toggle
     @track showConfirmDelete = false;
 
@@ -44,6 +47,7 @@ export default class CPQ_AdminQuestionForm extends LightningElement {
         if (this.question !== undefined) {
             this.answerType = this.question.questionInfo.Answer_Type__c;
             this.picklistValues = this.question.questionInfo.Picklist_Answers__c;
+            this.recordDisplayFields = this.question.questionInfo.Record_Display_Fields__c;
         }
     }
 
@@ -90,9 +94,14 @@ export default class CPQ_AdminQuestionForm extends LightningElement {
         return ['Picklist', 'Multi-Select Picklist'].includes(this.answerType);
     }
 
+    // Record Lookup input type
+    get isRecordLookup() {
+        return this.answerType === 'Record Lookup';
+    }
+
     // Text input type
     get isText() {
-        return ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.answerType);
+        return ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area', 'Record Lookup'].includes(this.answerType);
     }
 
     // Answer Type Changed
@@ -214,6 +223,20 @@ export default class CPQ_AdminQuestionForm extends LightningElement {
         }
 
         this.picklistValues = vals;
+    }
+
+    // Display Fields Change
+    recordDisplayFieldsChange(event) {
+        let fields = '';
+        if (event.detail.length > 0) {
+            let selectedFields = [];
+            event.detail.forEach(function(field) {
+                selectedFields.push(field);
+            });
+            fields = selectedFields.join(';');
+        }
+
+        this.recordDisplayFields = fields;
     }
 
     // Clone record

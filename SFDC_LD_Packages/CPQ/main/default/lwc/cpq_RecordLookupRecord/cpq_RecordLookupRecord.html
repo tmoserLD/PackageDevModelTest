@@ -1,0 +1,25 @@
+<template>
+
+    <div
+        class="slds-grid"
+        style="height: 50px;"
+    >
+        <template
+            for:each={columnsToDisplay}
+            for:item="col"
+        >
+            <div
+                class={colCSS}
+                style="border-bottom: 0.25px solid gray"
+                key={col.field}
+            >
+                <c-cpq_-record-lookup-record-column
+                    column={col}
+                    currency={currencyIsoCode}
+                    record={record}
+                >
+                </c-cpq_-record-lookup-record-column>
+            </div>
+        </template>
+    </div>
+</template>

@@ -151,6 +151,7 @@
                             <lightning-input-field
                                 field-name="CPQ_Playbook_Question__c"
                                 required="true"
+                                onchange={questionChange}
                             >
                             </lightning-input-field>
                         </template>
@@ -190,6 +191,7 @@
                                 <lightning-input-field
                                     field-name="Entitlement_Calculation_Field__c"
                                     required="true"
+                                    onchange={productFieldChange}
                                 >
                                 </lightning-input-field>
                             </template>
@@ -199,9 +201,18 @@
                                 <lightning-input-field
                                     field-name="Product_Calculation_Field__c"
                                     required="true"
+                                    onchange={productFieldChange}
                                 >
                                 </lightning-input-field>
                             </template>
+
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Product_Calculation_Field_Type__c"
+                                    value={productFieldType}
+                                >
+                                </lightning-input-field>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -274,6 +285,44 @@
 
                         <!-- Col 2 -->
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Row 7 -->
+                <template if:true={lookupSource}>
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Record Lookup Field -->
+                            <lightning-input-field
+                                field-name="Record_Lookup_Field__c"
+                                required="true"
+                                onchange={recordLookupFieldChange}
+                            >
+                            </lightning-input-field>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Record Lookup Behavior -->
+                            <lightning-input-field
+                                field-name="Record_Lookup_Behavior__c"
+                                required="true"
+                            >
+                            </lightning-input-field>
+
+                            <!-- Record Lookup Field Type -->
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Record_Lookup_Field_Type__c"
+                                    value={recordLookupType}
+                                >
+                                </lightning-input-field>
+                            </div>
                         </div>
                     </div>
                 </template>

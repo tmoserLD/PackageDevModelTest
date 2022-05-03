@@ -360,6 +360,8 @@
                             <template if:true={adjustProductFieldType}>
                                 <lightning-input-field
                                     field-name="Product_Adjustment_Field__c"
+                                    required="true"
+                                    onchange={productFieldChange}
                                 >
                                 </lightning-input-field>
                             </template>
@@ -373,14 +375,13 @@
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
 
                             <!-- Product Field Type -->
-                            <template if:true={adjustProductFieldType}>
+                            <div style="display:none">
                                 <lightning-input-field
                                     field-name="Product_Adjustment_Field_Type__c"
-                                    onchange={productFieldChange}
-                                    required="true"
+                                    value={productFieldType}
                                 >
                                 </lightning-input-field>
-                            </template>
+                            </div>
                         </div>
 
                         <!-- Col 2 -->

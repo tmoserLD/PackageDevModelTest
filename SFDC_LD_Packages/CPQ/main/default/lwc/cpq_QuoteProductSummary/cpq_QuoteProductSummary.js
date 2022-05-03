@@ -138,8 +138,40 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         return colCSS;
     }
 
+    get hasActions() {
+        let hasActions = false;
+        if (!this.configType.includes('View')) {
+            this.quoteProducts.forEach(function(product) {
+                if (product.Dates_Editable === true ||
+                    product.Removable === true
+                ) {
+                    hasActions = true;
+                }
+            }, this);
+        }
+        return hasActions;
+    }
+
+    get tableCSS() {
+        let tableCSS = 'slds-col slds-size_12-of-12 slds-grid_vertical scroll-shadows';
+        let hasActions = false;
+        if (!this.configType.includes('View')) {
+            this.quoteProducts.forEach(function(product) {
+                if (product.Dates_Editable === true ||
+                    product.Removable === true
+                ) {
+                    hasActions = true;
+                }
+            }, this);
+        }
+        if (hasActions === true) {
+            tableCSS = 'slds-col slds-size_5-of-6 slds-medium-size_11-of-12 slds-large-size_11-of-12 slds-grid_vertical scroll-shadows';
+        }
+        return tableCSS;
+    }
+
     get viewMode() {
-        return (this.configType === 'View' || this.configType === 'Product View');
+        return this.configType.includes('View');
     }
 
     // Determine if any Products are currently on quote

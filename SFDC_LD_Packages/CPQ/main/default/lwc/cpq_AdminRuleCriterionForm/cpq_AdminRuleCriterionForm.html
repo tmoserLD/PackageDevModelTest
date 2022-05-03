@@ -226,9 +226,41 @@
                             </template>
                         </div>
                     </div>
+
+                    <template if:true={isRecordLookup}>
+
+                        <!-- Row 5 -->
+                        <div class="slds-col slds-grid slds-wrap">
+
+                            <!-- Col 1 -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                                <!-- Record Lookup Field -->
+                                <lightning-input-field
+                                    field-name="Record_Lookup_Field__c"
+                                    required="true"
+                                    onchange={recordLookupFieldChange}
+                                >
+                                </lightning-input-field>
+                            </div>
+
+                            <!-- Col 2 -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                                <!-- Record Lookup Field Type -->
+                                <div style="display:none">
+                                    <lightning-input-field
+                                        field-name="Record_Lookup_Field_Type__c"
+                                        value={recordLookupType}
+                                    >
+                                    </lightning-input-field>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </template>
 
-                <!-- Row 5 -->
+                <!-- Row 6 -->
                 <template if:true={productSource}>
                     <div class="slds-col slds-grid slds-wrap">
 
@@ -256,7 +288,7 @@
                         </div>
                     </div>
 
-                    <!-- Row 6 -->
+                    <!-- Row 7 -->
                     <div class="slds-col slds-grid slds-wrap">
 
                         <!-- Col 1 -->
@@ -265,12 +297,21 @@
                             <!-- Product is Entitlement -->
                             <lightning-input-field
                                 field-name="Product_Is_Entitlement__c"
+                                onchange={entitlementChange}
                             >
                             </lightning-input-field>
                         </div>
 
                         <!-- Col 2 -->
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Product_Field_Type__c"
+                                    value={productFieldType}
+                                >
+                                </lightning-input-field>
+                            </div>
 
                             <!-- Product Comparison Values -->
                             <template if:true={isBoolean}>
@@ -318,7 +359,7 @@
                         </b>
                     </div>
 
-                    <!-- Row 7 -->
+                    <!-- Row 8 -->
                     <div class="slds-col slds-grid slds-wrap">
 
                         <!-- Col 1 -->
@@ -346,7 +387,7 @@
                     </div>
                 </template>
 
-                <!-- Row 8 -->
+                <!-- Row 9 -->
                 <template if:true={systemSource}>
                     <div class="slds-col slds-grid slds-wrap">
 

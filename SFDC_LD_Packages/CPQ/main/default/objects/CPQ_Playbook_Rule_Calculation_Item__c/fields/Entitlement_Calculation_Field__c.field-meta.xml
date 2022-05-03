@@ -3,7 +3,7 @@
     <fullName>Entitlement_Calculation_Field__c</fullName>
     <description>Field name from Entitlement housing calculation value</description>
     <externalId>false</externalId>
-    <inlineHelpText>Field name from Entitlement housing calculation value. &apos;Contract_Entitlement__c&apos; API fields names are valid. The only valid related object is: &apos;Product__r&apos;.</inlineHelpText>
+    <inlineHelpText>Field name from Entitlement housing calculation value. &apos;Contract_Entitlement__c&apos; API fields names are valid. The only valid related object is: &apos;Product__r&apos; (Please enter as object.field).</inlineHelpText>
     <label>Entitlement Calculation Field</label>
     <length>255</length>
     <required>false</required>

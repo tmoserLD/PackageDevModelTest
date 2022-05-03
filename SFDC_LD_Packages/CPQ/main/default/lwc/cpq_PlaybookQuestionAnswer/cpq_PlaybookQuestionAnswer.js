@@ -8,6 +8,9 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     // Opportunity Currency Iso Code
     @api oppCurrency;
 
+    // Toggle for Record Lookup modal
+    @track showRecordLookupModal = false;
+
     @api
     get actionSet() {
         return this.questionInfo.actionSet;
@@ -32,15 +35,30 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     // Answer Field Info
     get answerFieldInfo() {
         let info = '';
+        // Numeric inputs
         if (['Currency','Decimal','Integer'].includes(this.questionInfo.Answer_Type__c)) {
             if (this.questionInfo.Minimum_Value__c !== undefined) {
-                info += 'Min Value: ' + this.questionInfo.Minimum_Value__c + ' | ';
+                info += 'Min Value: ' + this.questionInfo.Minimum_Value__c;
             }
             if (this.questionInfo.Maximum_Value__c !== undefined) {
-                info += 'Max Value: ' + this.questionInfo.Maximum_Value__c + ' | ';
+                if (this.questionInfo.Minimum_Value__c !== undefined) {
+                    info += ' | ';
+                }
+                info += 'Max Value: ' + this.questionInfo.Maximum_Value__c;
             }
             if (this.questionInfo.Step_Value__c !== undefined) {
+                if (this.questionInfo.Minimum_Value__c !== undefined ||
+                    this.questionInfo.Maximum_Value__c !== undefined
+                ) {
+                    info += ' | ';
+                }
                 info += 'Step/Increment: ' + this.questionInfo.Step_Value__c;
+            }
+        }
+        // Record Lookup input
+        else if (this.questionInfo.Answer_Type__c === 'Record Lookup') {
+            if (this.questionInfo.Maximum_Record_Selections__c !== undefined) {
+                info += 'Max Selections: ' + this.questionInfo.Maximum_Record_Selections__c;
             }
         }
 
@@ -87,6 +105,11 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
         return ['Picklist', 'Multi-Select Picklist'].includes(this.questionInfo.Answer_Type__c);
     }
 
+    // Record Lookup input type
+    get isRecordLookup() {
+        return this.questionInfo.Answer_Type__c === 'Record Lookup';
+    }
+
     // Mulit-Select Picklist options
     get mulitPicklistOptions() {
         let mulitPicklistOptions = [];
@@ -123,6 +146,33 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
         return picklistOptions;
     }
 
+    // # of records selected for record lookup
+    get recordsSelected() {
+        if (this.questionInfo.Answer_Type__c === 'Record Lookup') {
+            if (this.questionInfo.answer !== undefined &&
+                this.questionInfo.answer !== null &&
+                this.questionInfo.answer !== ''
+            ) {
+                return this.questionInfo.answer.split(';').length;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    // If manual record selection/deselection is allowed for record lookup
+    get manualRecordSelection() {
+        if (this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (With Deselection)' ||
+            this.questionInfo.Record_Selection_Behavior__c === 'Manual Record Selection'
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Single Value Picklist input type
     get isSinglePicklist() {
         return this.questionInfo.Answer_Type__c === 'Picklist';
@@ -142,10 +192,15 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     answerChange(event) {
 
         let answer;
+        let selectedRecords;
 
         // Not on blur event
         if (event.detail) {
-            if (this.questionInfo.Answer_Type__c === 'Boolean') {
+            if (this.questionInfo.Answer_Type__c === 'Record Lookup') {
+                answer = event.detail.answer;
+                selectedRecords = event.detail.selectedRecords;
+            }
+            else if (this.questionInfo.Answer_Type__c === 'Boolean') {
                 answer = event.detail.checked;
             }
             else if (this.questionInfo.Answer_Type__c === 'Multi-Select Picklist') {
@@ -257,10 +312,13 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
         const touchEvent = new CustomEvent(
             'touch', {
                 detail: {
-                    answer: answer
+                    answer: answer,
+                    selectedRecords: selectedRecords
                 }
             });
         this.dispatchEvent(touchEvent);
+
+        this.showRecordLookupModal = false;
     }
 
     decrease() {
@@ -303,5 +361,13 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
                 value: newAnswer
             }
         });
+    }
+
+    showRecords() {
+        this.showRecordLookupModal = true;
+    }
+
+    hideRecords() {
+        this.showRecordLookupModal = false;
     }
 }

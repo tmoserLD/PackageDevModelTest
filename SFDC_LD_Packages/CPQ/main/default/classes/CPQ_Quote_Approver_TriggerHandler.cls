@@ -14,7 +14,10 @@ public with sharing class CPQ_Quote_Approver_TriggerHandler {
     * @param oldApproversMap (Map) Record Id => Old version of record before updates
     */
     public static void beforeUpdate(List<CPQ_Quote_Approver__c> approvers, Map<Id, CPQ_Quote_Approver__c> oldApproversMap) {
-        CPQ_Quote_Approver_UpdatesUtil.processBeforeUpdate(approvers, oldApproversMap);      
+        CPQ_Quote_Approver_UpdatesUtil.sameApproverBeforeUpdates(
+            approvers,
+            oldApproversMap
+        );
     }
     
     /**
@@ -22,8 +25,11 @@ public with sharing class CPQ_Quote_Approver_TriggerHandler {
     * @param approvers records in trigger execution
     * @param oldApproversMap (Map) Record Id => Old version of record before updates
     */
-    public static void afterUpdate(List<CPQ_Quote_Approver__c> approvers, Map<Id, CPQ_Quote_Approver__c> oldApproversMap) {
-        CPQ_Quote_Approver_UpdatesUtil.processAfterUpdate(approvers, oldApproversMap);      
+    public static void afterUpdate(List<CPQ_Quote_Approver__c> approvers, Map<Id, CPQ_Quote_Approver__c> oldApproversMap) { 
+        CPQ_Quote_Approver_UpdatesUtil.relatedObjectAfterUpdates(
+            approvers,
+            oldApproversMap
+        );   
     }
 
 }

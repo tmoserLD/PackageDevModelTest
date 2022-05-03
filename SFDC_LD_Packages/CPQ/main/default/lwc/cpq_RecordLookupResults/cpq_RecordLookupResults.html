@@ -1,0 +1,155 @@
+<template>
+
+    <!-- Error Modal -->
+    <c-error-modal>
+    </c-error-modal>
+
+    <!-- Loading Spinner -->
+    <template if:true={loading}>
+        <lightning-spinner
+            alternative-text="Loading"
+            size="medium"
+        >
+        </lightning-spinner>
+    </template>
+
+    <!-- No records -->
+    <template if:true={noRecordsToDisplay}>
+        <div class="slds-align_absolute-center">
+            <i>
+                No records to show
+            </i>
+        </div>
+    </template>
+
+    <!-- Records List -->
+    <template if:false={noRecordsToDisplay}>
+
+        <div class="slds-col slds-grid">
+
+            <!-- Record Selection -->
+            <template if:true={queriedMode}>
+                <div class="slds-col slds-grid_vertical scroll-shadows slds-size_1-of-6 slds-medium-size_1-of-12 slds-large-size_1-of-12">
+                    <div
+                        class="slds-col slds-grid slds-theme_default slds-p-horizontal_small slds-p-top_x-small slds-p-bottom_xx-small"
+                        style="font-weight: bold;border-bottom: 0.5px solid gray;"
+                    >
+                        Select
+                    </div>
+                    <template
+                        for:each={sortedRecords}
+                        for:item="record"
+                    >
+                        <div
+                            key={record.Id}
+                            class="slds-col slds-align_absolute-center"
+                            style="height: 50px;border-bottom: 0.25px solid gray;"
+                        >
+                            <lightning-input
+                                type="checkbox"
+                                label=""
+                                variant="label-hidden"
+                                value={record.selected}
+                                checked={record.selected}
+                                readonly="false"
+                                read-only="false"
+                                name={record.Id}
+                                onchange={recordSelectionUpdate}
+                            >
+                            </lightning-input>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Records Table -->
+            <div
+                class="slds-col slds-grid_vertical scroll-shadows"
+                style="overflow:scroll;"
+            >
+                <!-- Table Header -->
+                <div
+                    class="slds-col slds-grid slds-theme_default slds-p-horizontal_x-small slds-p-top_x-small"
+                    style="font-weight: bold;"
+                >
+                    <template
+                        for:each={columnsToDisplay}
+                        for:item="col"
+                    >
+                        <div
+                            class={colCSS}
+                            style="border-bottom: 0.5px solid gray;cursor:pointer;"
+                            key={col.field}
+                            title={col.label}
+                            id={col.field}
+                            onclick={sortColumn}
+                        >
+                            <ul
+                                class="slds-list_horizontal"
+                                id={col.field}
+                            >
+                                
+                                <template if:true={col.sortUp}>
+                                    <li
+                                        class="slds-m-right_xx-small"
+                                        id={col.field}
+                                    >
+                                        <lightning-icon
+                                            class="slds-m-right_xx-small"
+                                            icon-name="utility:arrowup"
+                                            alternative-text="Sorted Descending"
+                                            title="Sorted Descending"
+                                            size="x-small"
+                                            id={col.field}
+                                        >
+                                        </lightning-icon>
+                                    </li>
+                                </template>
+                                <template if:true={col.sortDown}>
+                                    <li
+                                        class="slds-m-right_xx-small"
+                                        id={col.field}
+                                    >
+                                        <lightning-icon
+                                            class="slds-m-right_xx-small"
+                                            icon-name="utility:arrowdown"
+                                            alternative-text="Sorted Ascending"
+                                            title="Sorted Ascending"
+                                            size="x-small"
+                                            id={col.field}
+                                        >
+                                        </lightning-icon>
+                                    </li>
+                                </template>
+                                <li
+                                    class="slds-truncate"
+                                    id={col.field}
+                                    title={col.label}
+                                >
+                                    {col.label}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Records -->
+                <div class="slds-col slds-grid_vertical slds-p-horizontal_x-small">
+                    <template
+                        for:each={sortedRecords}
+                        for:item="record"
+                    >
+                        <div key={record.Id}>
+                            <c-cpq_-record-lookup-record
+                                all-records={sortedRecords}
+                                columns-to-display={columnsToDisplay}
+                                record={record}
+                            >
+                            </c-cpq_-record-lookup-record>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

@@ -3,7 +3,7 @@
     <fullName>Default_Field_Value__c</fullName>
     <description>Field from CPQ data object to use for default value for answer</description>
     <externalId>false</externalId>
-    <inlineHelpText>Field from CPQ data objects to use for default value for answer. Valid objects include: &apos;Account&apos;, &apos;Opportunity&apos;, &apos;Quote&apos;, &apos;Profile&apos;, &apos;UserRole&apos;, and &apos;User&apos;</inlineHelpText>
+    <inlineHelpText>Field from CPQ data objects to use for default value for answer. Valid objects include: &apos;Account&apos;, &apos;Opportunity&apos;, &apos;Quote&apos;, &apos;Contract&apos;, &apos;Profile&apos;, &apos;UserRole&apos;, and &apos;User&apos;</inlineHelpText>
     <label>Default Field Value</label>
     <length>255</length>
     <required>false</required>

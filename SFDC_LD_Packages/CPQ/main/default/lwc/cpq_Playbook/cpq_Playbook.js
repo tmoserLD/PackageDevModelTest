@@ -5,6 +5,12 @@ export default class CPQ_Playbook extends LightningElement {
     // Configuration Type
     @api configType;
 
+    // Contract Currency
+    @api contractCurrency;
+
+    // Currency Conversion Map
+    @api currencyMap = {};
+
     // Opportunity Info
     @api oppInfo;
 
@@ -40,8 +46,16 @@ export default class CPQ_Playbook extends LightningElement {
         return this.quoteApprovals.length > 0;
     }
 
-    get productViewOnly() {
-        return this.configType === 'Product View';
+    get showQuestionGroups() {
+        return this.configType !== 'Most Active Contract View';
+    }
+
+    get showProductSummary() {
+        return true;
+    }
+
+    get showEntitlementSummary() {
+        return this.configType !== 'Most Active Contract View';
     }
 
     // Answer "Touched" Event
@@ -53,7 +67,8 @@ export default class CPQ_Playbook extends LightningElement {
                     playbookId: this.playbook.playbookInfo.Id,
                     groupId:  event.detail.groupId,
                     questionId: event.detail.questionId,
-                    answer: event.detail.answer
+                    answer: event.detail.answer,
+                    selectedRecords: event.detail.selectedRecords
                 }
             });
         this.dispatchEvent(touchEvent);

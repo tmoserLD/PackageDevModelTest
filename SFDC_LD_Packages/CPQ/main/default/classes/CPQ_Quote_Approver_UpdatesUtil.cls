@@ -12,42 +12,6 @@ public with sharing class CPQ_Quote_Approver_UpdatesUtil {
     public static Boolean runStepUpdates = true;
 
     /****************
-     * ENTRY METHODS
-    ****************/
-
-    /**
-    * @description Logic run before a CPQ_Quote_Approver__c Update
-    * Handles updates on CPQ_Quote_Approver__c itself
-    * @param updatedApprovers CPQ_Quote_Approver__c records with updated values in trigger context
-    * @param oldApproversMap Map - CPQ_Quote_Approver__c Id to Old version of CPQ_Quote_Approver__c
-    */ 
-    public static void processBeforeUpdate(
-        List<CPQ_Quote_Approver__c> updatedApprovers,
-        Map<Id, CPQ_Quote_Approver__c> oldApproversMap
-    ) {
-        sameApproverBeforeUpdates(
-            updatedApprovers,
-            oldApproversMap
-        );
-    }
-
-    /**
-    * @description Logic run after a CPQ_Quote_Approver__c Update
-    * Handles updates of related records
-    * @param updatedApprovers CPQ_Quote_Approver__c records with updated values in trigger context
-    * @param oldApproversMap Map - CPQ_Quote_Approver__c Id to Old version of CPQ_Quote_Approver__c
-    */ 
-    public static void processAfterUpdate(
-        List<CPQ_Quote_Approver__c> updatedApprovers,
-        Map<Id, CPQ_Quote_Approver__c> oldApproversMap
-    ) {
-        relatedObjectAfterUpdates(
-            updatedApprovers,
-            oldApproversMap
-        );
-    }
-
-    /****************
      * MAIN METHODS
     ****************/
 

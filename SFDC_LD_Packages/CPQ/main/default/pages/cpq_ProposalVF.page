@@ -293,8 +293,8 @@
                                 <br></br>
                             </apex:pageBlock>
 
-                            <!-- Product Table -->
-                            <apex:pageBlock rendered="{!OR(section.section.Section_Type__c == 'Product Table',section.section.Section_Type__c == 'Entitlement Table')}">
+                            <!-- Record Table -->
+                            <apex:pageBlock rendered="{!section.section.Section_Type__c == 'Record Table'}">
                                 <div style="width: 100%;">
                                     <p>
                                         <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>

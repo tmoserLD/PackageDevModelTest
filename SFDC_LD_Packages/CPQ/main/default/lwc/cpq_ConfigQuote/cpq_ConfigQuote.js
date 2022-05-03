@@ -1,13 +1,9 @@
 import { LightningElement, api, track } from 'lwc';
-
 // Initial Query Method
 import getConfigInfo from '@salesforce/apex/cpq_ConfigQuoteClass.getConfigInfo';
-
 // Contract Query Method
 import getContractInfo from '@salesforce/apex/cpq_ConfigQuoteClass.getContractInfo';
-
 export default class CPQ_ConfigQuote extends LightningElement {
-
     // Type of Quote configuration
     @api configType;
     // Default Currency
@@ -59,6 +55,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
     @track contractCurrency;
     // Opportunity Currency
     @track oppCurrency;
+    // CPQ Admin
+    @track isCPQAdmin;
 
     // On Mount
     async connectedCallback() {
@@ -67,26 +65,25 @@ export default class CPQ_ConfigQuote extends LightningElement {
         try {
             configInfo = await getConfigInfo({
                 adjustingContract: this.existingQuoteData.Adjustment_of_Contract__c,
-                contractView: ((this.configType === 'View' || this.configType === 'Product View') && this.existingQuoteData.contractId !== undefined)
+                contractView: (this.configType.includes('View') && this.existingQuoteData.contractId !== undefined)
             });
-
             let playbooks = configInfo.playbooks;
             this.rules = configInfo.rules;
             this.approvals = configInfo.approvals;
             this.pricebooks = configInfo.pricebooks;
             this.currencyMap = configInfo.currencyMap;
-
             this.oppCurrency = this.oppInfo.CurrencyIsoCode;
+            this.isCPQAdmin = configInfo.isCPQAdmin;
 
             // Set existing quote Name
             if (this.existingQuoteData.Name !== undefined) {
                 this.quoteName = this.existingQuoteData.Name;
             }
-
             // Get Contract info
             if (this.existingQuoteData.Adjustment_of_Contract__c !== undefined) {
                 this.contractInfo = await getContractInfo({
                     contractId: this.existingQuoteData.Adjustment_of_Contract__c,
+                    contractFields: configInfo.contractFields,
                     entitlementFields: configInfo.entitlementFields
                 });
                 // Currency for non-MultiCurrency orgs
@@ -101,17 +98,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 if (this.contractInfo.Contract_Entitlements__r === undefined) {
                     this.contractInfo.Contract_Entitlements__r = [];
                 }
-                this.contractInfo.Contract_Entitlements__r.forEach(function(ent) {
-                    ent.Unit_Price__c = this.convertCurrency(ent.Unit_Price__c, this.contractInfo.CurrencyIsoCode, this.oppCurrency);
-                    ent.List_Price__c = this.convertCurrency(ent.List_Price__c, this.contractInfo.CurrencyIsoCode, this.oppCurrency);
-                    ent.Total_Price__c = this.convertCurrency(ent.Total_Price__c, this.contractInfo.CurrencyIsoCode, this.oppCurrency);
-                    ent.SubTotal_Price__c = this.convertCurrency(ent.SubTotal_Price__c, this.contractInfo.CurrencyIsoCode, this.oppCurrency);
-                }, this);
             }
-
             // Set default selected playbook
             if (playbooks.length > 0) {
-
                 // Match playbook from existing quote
                 if (this.existingQuoteData.CPQ_Playbook__c !== undefined) {
                     this.selectedPlaybookId = this.existingQuoteData.CPQ_Playbook__c;
@@ -124,19 +113,17 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 else {
                     this.selectedPlaybookId = playbooks[0].playbookInfo.Id;
                 }
-
                 let selectedPlaybook = playbooks.find(p => p.playbookInfo.Id === this.selectedPlaybookId);
                 this.selectedPricebook = JSON.parse(JSON.stringify(
                     this.pricebooks.find(pricebook => pricebook.Id === selectedPlaybook.playbookInfo.Pricebook__c)
                 ));
                 this.productColumns = selectedPlaybook.productColumns;
                 this.entitlementColumns = selectedPlaybook.entitlementColumns;
-
                 if (this.selectedPricebook !== undefined &&
                     this.selectedPricebook.PricebookEntries !== undefined    
                 ) {
                     this.selectedPricebook.PricebookEntries.forEach(function(pbe) {
-                        if (this.configType === 'View' || this.configType === 'Product View') {
+                        if (this.configType.includes('View')) {
                             pbe.Manually_Addible = false;
                         } else {
                             pbe.Manually_Addible = pbe.Manually_Addible__c;
@@ -148,17 +135,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
             // Set default values on questions
             playbooks.forEach(function(playbook) {
                 playbook.questionGroups.forEach(function(group) {
-
                     // Previous values obj
                     group.groupInfo.prevValues = {};
-
                     group.questions.forEach(function(question) {
-
                         // Previous values obj
                         question.questionInfo.prevValues = {};
-
                         // Find value from existing quote answer
                         let existingValue;
+                        let existingSelectedRecords;
                         let existingTouch;
                         if (this.existingQuoteData.CPQ_Playbook_Answers__r !== undefined) {
                             this.existingQuoteData.CPQ_Playbook_Answers__r.filter(
@@ -168,7 +152,13 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     existingValue = answer.Value_Boolean__c;
                                 }
                                 else if (question.questionInfo.Answer_Type__c === 'Currency') {
-                                    existingValue = answer.Value_Currency__c;
+                                    if (this.existingQuoteData.contractId !== undefined && 
+                                        answer.Value_Currency__c !== undefined    
+                                    ) {
+                                        existingValue = this.convertCurrency(answer.Value_Currency__c, this.contractCurrency, this.oppCurrency);
+                                    } else {
+                                        existingValue = answer.Value_Currency__c;
+                                    }
                                 } 
                                 else if (question.questionInfo.Answer_Type__c === 'Date') {
                                     existingValue = answer.Value_Date__c;
@@ -182,23 +172,24 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 else if (question.questionInfo.Answer_Type__c === 'Picklist' ||
                                     question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
                                     question.questionInfo.Answer_Type__c === 'Text' ||
-                                    question.questionInfo.Answer_Type__c === 'Text Area'
+                                    question.questionInfo.Answer_Type__c === 'Text Area' ||
+                                    question.questionInfo.Answer_Type__c === 'Record Lookup'
                                 ) {
                                     existingValue = answer.Value_Text__c;
+                                    if (answer.Selected_Records_String__c !== undefined) {
+                                        existingSelectedRecords = JSON.parse(answer.Selected_Records_String__c);
+                                    }
                                 }
-
                                 existingTouch = answer.HasBeenTouched__c;
                             }, this);
                         }
-
                         // View Mode
-                        if (this.configType === 'View' || this.configType === 'Product View') {
-
+                        if (this.configType.includes('View')) {
                             // Mark read only
                             question.questionInfo.IsReadOnly__c = true;
-
                             // Set answers from source
                             question.questionInfo.answer = existingValue;
+                            question.questionInfo.selectedRecords = existingSelectedRecords;
                             question.questionInfo.touched = existingTouch;
                         }
                         // Normal Mode
@@ -210,7 +201,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 let field = question.questionInfo.Default_Field_Value__c.split('.')[1];
                                 let value;
                                 // Quote
-                                if (obj === 'Quote') {
+                                if (obj === 'Quote' &&
+                                    this.existingQuoteData.Id !== undefined
+                                ) {
                                     value = this.existingQuoteData[field];
                                 }
                                 // Opportunity
@@ -233,48 +226,19 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 else if (obj === 'UserRole') {
                                     value = this.userInfo.UserRole[field];
                                 }
-
-                                // Address unpacking
-                                if (value !== undefined) {
-                                    if (value.city !== undefined ||
-                                        value.country !== undefined ||
-                                        value.postalCode !== undefined ||
-                                        value.state !== undefined ||
-                                        value.street !== undefined
-                                    ) {
-                                        let addressObj = JSON.parse(JSON.stringify(value));
-                                        value = '';
-                                        if (addressObj.street !== undefined) {
-                                            value += addressObj.street + ', ';
-                                        }
-                                        if (addressObj.city !== undefined) {
-                                            value += addressObj.city + ', ';
-                                        }
-                                        if (addressObj.state !== undefined) {
-                                            value += addressObj.state + ', ';
-                                        }
-                                        if (addressObj.country !== undefined) {
-                                            value += addressObj.country + ', ';
-                                        }
-                                        if (addressObj.postalCode !== undefined) {
-                                            value += addressObj.postalCode;
-                                        }
-                                        if (value.length > 0) {
-                                            if (value.charAt(value.length-1) === ' ' &&
-                                                value.charAt(value.length-2) === ','
-                                            ) {
-                                                value = value.slice(0, -2);
-                                            }
-                                        }
-                                    }
+                                // Contract
+                                else if (obj === 'Contract' &&
+                                    this.contractInfo.Id !== undefined
+                                ) {
+                                    value = this.contractInfo[field];
                                 }
-
                                 question.questionInfo.answer = value;
                             }
 
                             // Value found from existing answer
                             else if (existingValue !== undefined) {
                                 question.questionInfo.answer = existingValue;
+                                question.questionInfo.selectedRecords = existingSelectedRecords;
                                 question.questionInfo.touched = existingTouch;
                             }
 
@@ -444,7 +408,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
             return 'Configure New Quote';
         } else if (this.configType == 'Edit') {
             return 'Configure Quote';
-        } else if (this.configType == 'View' || this.configType === 'Product View') {
+        } else if (this.configType.includes('View')) {
             return 'View Only';
         }
     }
@@ -478,7 +442,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     }
 
     get viewMode() {
-        return (this.configType === 'View' || this.configType === 'Product View');
+        return (this.configType.includes('View'));
     }
 
     // Playbook that is currently selected
@@ -505,6 +469,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             if (question.questionInfo.Id === event.detail.questionId) {
                                 question.questionInfo.touched = true;
                                 question.questionInfo.answer = event.detail.answer;
+                                question.questionInfo.selectedRecords = event.detail.selectedRecords;
                             }
                         });
                     }
@@ -532,7 +497,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     // Check and act on Approvals
     evaluateApprovals() {
         // Do not run in View mode
-        if (this.configType !== 'View' && this.configType !== 'Product View') {
+        if (!this.configType.includes('View')) {
             this.approvals.forEach(function(approval) {
                 // Approval of selected playbook
                 if (approval.approvalInfo.CPQ_Playbook__c === this.selectedPlaybookId) {
@@ -577,6 +542,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
             atMostN_needed: 1,
             atMostN_passed: 0,
         };
+
+        // Selected Record Contributors
+        obj.contributingRecordIDs = [];
 
         obj.criteriaGroups.forEach(function(criteriaGroup) {
             // Assume true
@@ -644,18 +612,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     else if (criterion.criterionInfo.System_Value_Source__c === 'Is Contract Renewal') {
                         criterionEvaluation = ((this.existingQuoteData.Adjustment_Type__c === 'Renewal') === criterion.criterionInfo.Comparison_Value_Boolean__c);
                     }
-                    // Contract Is Active
-                    else if (criterion.criterionInfo.System_Value_Source__c === 'Contract Is Active') {
-                        criterionEvaluation = ((this.contractInfo.Contract_Status__c === 'Active') === criterion.criterionInfo.Comparison_Value_Boolean__c);
-                    }
-                    // Contract Is Upcoming
-                    else if (criterion.criterionInfo.System_Value_Source__c === 'Contract Is Upcoming') {
-                        criterionEvaluation = ((this.contractInfo.Contract_Status__c === 'Upcoming') === criterion.criterionInfo.Comparison_Value_Boolean__c);
-                    }
-                    // Contract Is Past
-                    else if (criterion.criterionInfo.System_Value_Source__c === 'Contract Is Past') {
-                        criterionEvaluation = ((this.contractInfo.Contract_Status__c === 'Past') === criterion.criterionInfo.Comparison_Value_Boolean__c);
-                    }
                 }
                 // Find Question that Criterion references
                 else if (criterion.criterionInfo.Criterion_Source__c === 'Question' &&
@@ -672,25 +628,54 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                         if (question.questionInfo.Id === criterion.criterionInfo.CPQ_Playbook_Question__c) {
 
                                             // Current answer
-                                            let answer = question.questionInfo.answer;
+                                            let sourceValues = [];
+                                            if (question.questionInfo.Answer_Type__c === 'Record Lookup') {
+                                                question.questionInfo.selectedRecords?.forEach(function(record) {
+                                                    sourceValues.push(record[criterion.criterionInfo.Record_Lookup_Field__c]);
+                                                }, this);
+                                            } else {
+                                                sourceValues.push(question.questionInfo.answer);
+                                            }
 
                                             // Comparison value
                                             let comparisonValue;
-                                            if (question.questionInfo.Answer_Type__c === 'Boolean') {
+                                            if (question.questionInfo.Answer_Type__c === 'Boolean' ||
+                                                (
+                                                    question.questionInfo.Answer_Type__c === 'Record Lookup' &&
+                                                    criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Boolean'
+                                                )
+                                            ) {
                                                 comparisonValue = criterion.criterionInfo.Comparison_Value_Boolean__c;
                                             }
-                                            else if (question.questionInfo.Answer_Type__c === 'Currency') {
+                                            else if (question.questionInfo.Answer_Type__c === 'Currency' ||
+                                                (
+                                                    question.questionInfo.Answer_Type__c === 'Record Lookup' &&
+                                                    criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Currency'
+                                                )
+                                            ) {
                                                 comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
                                             }
-                                            else if (question.questionInfo.Answer_Type__c === 'Date') {
-                                                if (answer) {
-                                                    answer = new Date(answer);
-                                                }
+                                            else if (question.questionInfo.Answer_Type__c === 'Date' ||
+                                                (
+                                                    question.questionInfo.Answer_Type__c === 'Record Lookup' &&
+                                                    criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Date'
+                                                )
+                                            ) {
+                                                sourceValues.forEach(function(val) {
+                                                    if (val) {
+                                                        val = new Date(val);
+                                                    }
+                                                }, this);
                                                 if (comparisonValue) {
                                                     comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                                 }
                                             }
-                                            else if (question.questionInfo.Answer_Type__c === 'Decimal') {
+                                            else if (question.questionInfo.Answer_Type__c === 'Decimal' ||
+                                                (
+                                                    question.questionInfo.Answer_Type__c === 'Record Lookup' &&
+                                                    criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Decimal'
+                                                )
+                                            ) {
                                                 comparisonValue = criterion.criterionInfo.Comparison_Value_Decimal__c;
                                             }
                                             else if (question.questionInfo.Answer_Type__c === 'Integer') {
@@ -699,49 +684,67 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                             else if (question.questionInfo.Answer_Type__c === 'Picklist' ||
                                                 question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
                                                 question.questionInfo.Answer_Type__c === 'Text' ||
-                                                question.questionInfo.Answer_Type__c === 'Text Area'
+                                                question.questionInfo.Answer_Type__c === 'Text Area' ||
+                                                (
+                                                    question.questionInfo.Answer_Type__c === 'Record Lookup' &&
+                                                    criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Text'
+                                                )
                                             ) {
                                                 comparisonValue = criterion.criterionInfo.Comparison_Value_Text__c;
                                             }
 
                                             // Comparison
-                                            if (criterion.criterionInfo.Comparison_Operator__c === 'Equals') {
-                                                criterionEvaluation = (answer === comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Does not equal') {
-                                                criterionEvaluation = (answer !== comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Greater than') {
-                                                criterionEvaluation = (answer > comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Greater than or equal') {
-                                                criterionEvaluation = (answer >= comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Less than') {
-                                                criterionEvaluation = (answer < comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Less than or equal') {
-                                                criterionEvaluation = (answer <= comparisonValue);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Contains') {
-                                                if (answer !== undefined) {
-                                                    criterionEvaluation = (answer.includes(comparisonValue));
-                                                } else {
-                                                    criterionEvaluation = false;
+                                            let criterionValueEvaluations = [];
+                                            sourceValues.forEach(function(val) {
+                                                if (criterion.criterionInfo.Comparison_Operator__c === 'Equals') {
+                                                    criterionValueEvaluations.push(val === comparisonValue);
                                                 }
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Does not contain') {
-                                                if (answer !== undefined) {
-                                                    criterionEvaluation = (!answer.includes(comparisonValue));
-                                                } else {
-                                                    criterionEvaluation = true;
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Does not equal') {
+                                                    criterionValueEvaluations.push(val !== comparisonValue);
                                                 }
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Is empty') {
-                                                criterionEvaluation = (answer === '' || answer === undefined || answer === null);
-                                            }
-                                            else if (criterion.criterionInfo.Comparison_Operator__c === 'Is not empty') {
-                                                criterionEvaluation = !(answer === '' || answer === undefined || answer === null);
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Greater than') {
+                                                    criterionValueEvaluations.push(val > comparisonValue);
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Greater than or equal') {
+                                                    criterionValueEvaluations.push(val >= comparisonValue);
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Less than') {
+                                                    criterionValueEvaluations.push(val < comparisonValue);
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Less than or equal') {
+                                                    criterionValueEvaluations.push(val <= comparisonValue);
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Contains') {
+                                                    if (val !== undefined) {
+                                                        criterionValueEvaluations.push(val.includes(comparisonValue));
+                                                    } else {
+                                                        criterionValueEvaluations.push(false);
+                                                    }
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Does not contain') {
+                                                    if (val !== undefined) {
+                                                        criterionValueEvaluations.push(!val.includes(comparisonValue));
+                                                    } else {
+                                                        criterionValueEvaluations.push(true);
+                                                    }
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Is empty') {
+                                                    criterionValueEvaluations.push(val === '' || val === undefined || val === null);
+                                                }
+                                                else if (criterion.criterionInfo.Comparison_Operator__c === 'Is not empty') {
+                                                    criterionValueEvaluations.push(!(val === '' || val === undefined || val === null));
+                                                }
+                                            }, this);
+
+                                            criterionEvaluation = criterionValueEvaluations.includes(true);
+
+                                            // Update Contributing Record IDs
+                                            if (question.questionInfo.Answer_Type__c === 'Record Lookup') {
+                                                for (let index = 0; index < criterionValueEvaluations.length; index++) {
+                                                    if (criterionValueEvaluations[index] === true) {
+                                                        obj.contributingRecordIDs.push(question.questionInfo.selectedRecords[index].Id);
+                                                    }
+                                                }
                                             }
                                         }
                                     }, this);
@@ -775,55 +778,33 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 )
                             ) {
 
-                                let newProdField;
-                                if (criterion.criterionInfo.Product_Field__c === 'Quantity') {
-                                    newProdField = 'Quantity__c';    
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Discount') {
-                                    newProdField = 'Discount__c'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Unit Price') {
-                                    newProdField = 'Unit_Price__c'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'List Price') {
-                                    newProdField = 'List_Price__c'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Total Price') {
-                                    newProdField = 'Total_Price__c'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Start Date') {
-                                    newProdField = 'Start_Date__c'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'End Date') {
-                                    newProdField = 'End_Date__c'; 
-                                }
-
                                 // Current value
-                                let value = ent[newProdField];
+                                let value = ent[criterion.criterionInfo.Product_Field__c];
 
                                 // Comparison value
                                 let comparisonValue;
-                                if (newProdField === 'Start_Date__c' ||
-                                    newProdField === 'End_Date__c'
-                                ) {
-                                    if (value) {
-                                        value = new Date(value);
-                                    }
+                                if (criterion.criterionInfo.Product_Field_Type__c === 'Boolean') {
+                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Boolean__c;
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Currency') {
+                                    value = this.convertCurrency(value, this.contractCurrency, this.oppCurrency);
+                                    comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Date') {
+                                    sourceValues.forEach(function(val) {
+                                        if (val) {
+                                            val = new Date(val);
+                                        }
+                                    }, this);
                                     if (comparisonValue) {
                                         comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                     }
                                 }
-                                else if (newProdField === 'Unit_Price__c' ||
-                                    newProdField === 'List_Price__c' ||
-                                    newProdField === 'Total_Price__c'
-                                ) {
-                                    comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
-                                }
-                                else if (newProdField === 'Quantity__c') {
-                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Integer__c;
-                                }
-                                else if (newProdField === 'Discount__c') {
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Decimal') {
                                     comparisonValue = criterion.criterionInfo.Comparison_Value_Decimal__c;
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Text') {
+                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Text__c;
                                 }
 
                                 // Comparison
@@ -890,56 +871,32 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 )
                             ) {
 
-                                // Field
-                                let newProdField;
-                                if (criterion.criterionInfo.Product_Field__c === 'Quantity') {
-                                    newProdField = 'Quantity';    
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Discount') {
-                                    newProdField = 'Discount'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Unit Price') {
-                                    newProdField = 'Unit_Price'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'List Price') {
-                                    newProdField = 'List_Price'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Total Price') {
-                                    newProdField = 'Total_Price'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'Start Date') {
-                                    newProdField = 'Start_Date'; 
-                                }
-                                else if (criterion.criterionInfo.Product_Field__c === 'End Date') {
-                                    newProdField = 'End_Date'; 
-                                }
-
                                 // Current value
-                                let value = product[newProdField];
+                                let value = product[criterion.criterionInfo.Product_Field__c];
 
                                 // Comparison value
                                 let comparisonValue;
-                                if (newProdField === 'Start_Date' ||
-                                    newProdField === 'End_Date'
-                                ) {
-                                    if (value) {
-                                        value = new Date(value);
-                                    }
+                                if (criterion.criterionInfo.Product_Field_Type__c === 'Boolean') {
+                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Boolean__c;
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Currency') {
+                                    comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Date') {
+                                    sourceValues.forEach(function(val) {
+                                        if (val) {
+                                            val = new Date(val);
+                                        }
+                                    }, this);
                                     if (comparisonValue) {
                                         comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                     }
                                 }
-                                else if (newProdField === 'Unit_Price' ||
-                                    newProdField === 'List_Price' ||
-                                    newProdField === 'Total_Price'
-                                ) {
-                                    comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
-                                }
-                                else if (newProdField === 'Quantity') {
-                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Integer__c;
-                                }
-                                else if (newProdField === 'Discount') {
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Decimal') {
                                     comparisonValue = criterion.criterionInfo.Comparison_Value_Decimal__c;
+                                }
+                                else if (criterion.criterionInfo.Product_Field_Type__c === 'Text') {
+                                    comparisonValue = criterion.criterionInfo.Comparison_Value_Text__c;
                                 }
 
                                 // Comparison
@@ -1067,7 +1024,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     evaluateRules(playbooks) {
         let changedRuleEvaluation = false;
         // Do not run in View mode
-        if (this.configType !== 'View' && this.configType !== 'Product View') {
+        if (!this.configType.includes('View')) {
             this.rules.forEach(function(rule) {
                 // Ignore flagged rules
                 if (rule.ruleInfo.doNotEvaluate !== true) {
@@ -1156,7 +1113,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                     if (action.actionInfo.Question_Group_Adjustment_Field__c === 'IsHidden__c') {
                                                                         fieldType = 'Boolean';
                                                                     }
-                                                                    group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
+                                                                    group.groupInfo[action.actionInfo.Question_Group_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c, rule.contributingRecordIDs);
                                                                 }
                                                             } else {
                                                                 if (group.groupInfo.prevValues.hasOwnProperty(action.actionInfo.Question_Group_Adjustment_Field__c)) {
@@ -1212,6 +1169,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                                     ) ||
                                                                                     action.actionInfo.Question_Adjustment_Field__c === 'Minimum_Value__c' ||
                                                                                     action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Value__c' ||
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Maximum_Record_Selections__c' ||
                                                                                     action.actionInfo.Question_Adjustment_Field__c === 'Step_Value__c'
                                                                                 ) {
                                                                                     question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Decimal__c;
@@ -1232,7 +1190,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                                         )
                                                                                     ) ||
                                                                                     action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
-                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c' ||
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Query_String__c'
                                                                                 ) {
                                                                                     question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = action.actionInfo.Question_Field_Value_Text__c;
                                                                                 }
@@ -1289,11 +1248,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                                         )
                                                                                     ) ||
                                                                                     action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' ||
-                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c'
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Quote_Save_Field__c' ||
+                                                                                    action.actionInfo.Question_Adjustment_Field__c === 'Query_String__c'
                                                                                 ) {
                                                                                     fieldType = 'Text';
                                                                                 }
-                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c);
+                                                                                question.questionInfo[action.actionInfo.Question_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, fieldType, playbooks, action.actionInfo.Numeric_Math_Operator__c, rule.contributingRecordIDs);
                                                                             }
 
                                                                             // Only store previous value if different from 
@@ -1351,10 +1311,10 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                             }
                                                                         }
 
-                                                                        if (question.questionInfo.actionSet !== undefined) {
-                                                                            question.questionInfo.actionSet += 1;
-                                                                        } else {
-                                                                            question.questionInfo.actionSet = 1;
+                                                                        question.questionInfo.actionSet = question.questionInfo.actionSet === undefined ? 1 : (question.questionInfo.actionSet + 1);
+
+                                                                        if (action.actionInfo.Question_Adjustment_Field__c === 'Query_String__c') {
+                                                                            question.questionInfo.querySet = question.questionInfo.querySet === undefined ? 1 : (question.questionInfo.querySet + 1);
                                                                         }
                                                                     }
                                                                 }
@@ -1478,20 +1438,13 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                         else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Decimal') {
                                                                             product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Decimal__c;
                                                                         }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Integer') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Integer__c;
-                                                                        }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Picklist' ||
-                                                                            action.actionInfo.Product_Adjustment_Field_Type__c === 'Multi-Select Picklist' ||
-                                                                            action.actionInfo.Product_Adjustment_Field_Type__c === 'Text' ||
-                                                                            action.actionInfo.Product_Adjustment_Field_Type__c === 'Text Area'
-                                                                        ) {
+                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Text') {
                                                                             product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Text__c;
                                                                         }
                                                                     }
                                                                     // Dynamic Source
                                                                     else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
-                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c);
+                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c, rule.contributingRecordIDs);
                                                                     }
                                                                 } else {
                                                                     if (product.prevValues.hasOwnProperty(action.actionInfo.Product_Adjustment_Field__c)) {
@@ -1590,7 +1543,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
     }
 
     // Calculate calculation value
-    runCalculations(calculationItems, calcType, answerType, playbooks, mathOp) {
+    runCalculations(calculationItems, calcType, answerType, playbooks, mathOp, contributingRecordIDs) {
 
         let calcValue;
 
@@ -1622,7 +1575,21 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 group.questions.forEach(function(question) {
                                     // Matching Question
                                     if (question.questionInfo.Id === item.itemInfo.CPQ_Playbook_Question__c) { 
-                                        calcValue = this.getCalcValue(calcType, calcValue, question.questionInfo.answer, answerType, question.questionInfo.Answer_Type__c);
+                                        // Record Lookup
+                                        if (question.questionInfo.Answer_Type__c === 'Record Lookup') {
+                                            question.questionInfo.selectedRecords?.forEach(function(record) {
+                                                if (item.itemInfo.Record_Lookup_Behavior__c === 'All Records' ||
+                                                    (
+                                                        item.itemInfo.Record_Lookup_Behavior__c === 'Contributing Records Only' &&
+                                                        contributingRecordIDs.includes(record.Id)
+                                                    )
+                                                ) {
+                                                    calcValue = this.getCalcValue(calcType, calcValue, record[item.itemInfo.Record_Lookup_Field__c], answerType, item.itemInfo.Record_Lookup_Field_Type__c);
+                                                }
+                                            }, this);
+                                        } else {
+                                            calcValue = this.getCalcValue(calcType, calcValue, question.questionInfo.answer, answerType, question.questionInfo.Answer_Type__c);
+                                        }
                                     }
                                 }, this);
                             }
@@ -1643,7 +1610,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             product.addedByAction === item.itemInfo.Product_Calculation_Target_Rule_Action__c
                         )
                     ) {
-
                         let productValue;
                         // CPQ Product level
                         if (item.itemInfo.Product_Calculation_Field__c.split('.').length === 1) {
@@ -1663,14 +1629,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             }
                         }
 
-                        let itemType = 'Text';
-                        if (!isNaN(productValue)) {
-                            itemType = 'Decimal';
-                        } else if (new Date(productValue) instanceof Date) {
-                            itemType = 'Date';
-                        }
-
-                        calcValue = this.getCalcValue(calcType, calcValue, productValue, answerType, itemType);
+                        calcValue = this.getCalcValue(calcType, calcValue, productValue, answerType, item.itemInfo.Product_Calculation_Field_Type__c);
                     }
                 }, this);
             } else if (item.itemInfo.Calculation_Source__c === 'Product' &&
@@ -1686,13 +1645,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             ent.CPQ_Playbook_Rule_Action__c === item.itemInfo.Product_Calculation_Target_Rule_Action__c
                         )
                     ) {
-
                         let entValue;
                         // Entitlement level
                         if (item.itemInfo.Entitlement_Calculation_Field__c.split('.').length === 1) {
                             entValue = ent[item.itemInfo.Entitlement_Calculation_Field__c];
                         }
-                        // Product__C level
+                        // Product__c level
                         else if (item.itemInfo.Entitlement_Calculation_Field__c.split('.').length > 1) {
                             let obj = item.itemInfo.Entitlement_Calculation_Field__c.split('.')[0];
                             let field = item.itemInfo.Entitlement_Calculation_Field__c.split('.')[1];
@@ -1702,14 +1660,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             }
                         }
 
-                        let itemType = 'Text';
-                        if (!isNaN(entValue)) {
-                            itemType = 'Decimal';
-                        } else if (new Date(entValue) instanceof Date) {
-                            itemType = 'Date';
-                        }
-
-                        calcValue = this.getCalcValue(calcType, calcValue, entValue, answerType, itemType);
+                        calcValue = this.getCalcValue(calcType, calcValue, entValue, answerType, item.itemInfo.Product_Calculation_Field_Type__c);
                     }
                 }, this);
             }
@@ -2151,5 +2102,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
             this.currencyMap[toISO] / this.currencyMap[fromISO]
         }
         return value * rate;
+    }
+
+    configTypeUpdate(event) {
+        this.configType = event.detail;
     }
 }

@@ -265,12 +265,21 @@
                             <!-- Product is Entitlement -->
                             <lightning-input-field
                                 field-name="Product_Is_Entitlement__c"
+                                onchange={entitlementChange}
                             >
                             </lightning-input-field>
                         </div>
 
                         <!-- Col 2 -->
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Product_Field_Type__c"
+                                    value={productFieldType}
+                                >
+                                </lightning-input-field>
+                            </div>
 
                             <!-- Product Comparison Values -->
                             <template if:true={isBoolean}>

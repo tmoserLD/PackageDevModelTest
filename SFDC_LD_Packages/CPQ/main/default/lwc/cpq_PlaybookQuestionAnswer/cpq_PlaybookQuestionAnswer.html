@@ -1,4 +1,15 @@
 <template>
+
+    <!-- Record Lookup Modal -->
+    <template if:true={showRecordLookupModal}>
+        <c-cpq_-record-lookup-modal
+            question-info={questionInfo}
+            onclose={hideRecords}
+            onsave={answerChange}
+        >
+        </c-cpq_-record-lookup-modal>
+    </template>
+
     <!-- Read Only -->
     <template if:true={isReadOnly}>
 
@@ -18,10 +29,35 @@
                 </template>
 
                 <template if:false={isDate}>
-                    <lightning-formatted-text
-                        value={questionInfo.answer}
-                    >
-                    </lightning-formatted-text>
+
+                    <!-- Boolean -->
+                    <template if:true={isBoolean}>
+                        <lightning-input
+                            type="checkbox"
+                            label=""
+                            variant="label-hidden"
+                            value={questionInfo.answer}
+                            checked={questionInfo.answer}
+                            disabled="true"
+                            readonly="true"
+                            read-only="true"
+                        >
+                        </lightning-input>
+                    </template>
+
+                    <template if:false={isBoolean}>
+
+                        <template if:true={isRecordLookup}>
+                            {recordsSelected} record(s) selected
+                        </template>
+
+                        <template if:false={isRecordLookup}>
+                            <lightning-formatted-text
+                                value={questionInfo.answer}
+                            >
+                            </lightning-formatted-text>
+                        </template>
+                    </template>
                 </template>
             </template>
 
@@ -232,6 +268,28 @@
                     >
                     </c-multi-picklist>
                 </template>
+            </template>
+
+            <!-- Record Lookup -->
+            <template if:true={isRecordLookup}>
+                <ul class="slds-list_horizontal">
+                    <template if:true={manualRecordSelection}>
+                        <li class="slds-m-right_x-small">
+                            <lightning-icon
+                                icon-name="utility:record_lookup"
+                                alternative-text="Select records"
+                                title="Select records"
+                                size="small"
+                                style="cursor: pointer;"
+                                onclick={showRecords}
+                            >
+                            </lightning-icon>
+                        </li>
+                    </template>
+                    <li>
+                        {recordsSelected} record(s) selected
+                    </li>
+                </ul>
             </template>
 
             <!-- Text -->

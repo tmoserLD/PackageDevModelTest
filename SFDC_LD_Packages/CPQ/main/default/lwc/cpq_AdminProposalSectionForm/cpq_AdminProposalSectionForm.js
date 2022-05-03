@@ -33,8 +33,6 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     @track input1Columns;
     @track input2Columns;
     @track input3Columns;
-    @track qliColumns;
-    @track entColumns;
     @track ansColumns;
 
     // Color value trackers
@@ -55,8 +53,6 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
             this.input1Columns = this.section.sectionInfo.Inputs_Column_1__c;
             this.input2Columns = this.section.sectionInfo.Inputs_Column_2__c;
             this.input3Columns = this.section.sectionInfo.Inputs_Column_3__c;
-            this.qliColumns = this.section.sectionInfo.Product_Table_QLI_Fields__c;
-            this.entColumns = this.section.sectionInfo.Entitlement_Table_Fields__c;
             this.ansColumns = this.section.sectionInfo.Answer_Table_Questions__c;
             this.inputColor = this.section.sectionInfo.Inputs_Font_Color__c;
             this.headerColor = this.section.sectionInfo.Table_Headers_Font_Color__c;
@@ -111,7 +107,7 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     }
 
     get showTextBlock1() {
-        return ['Text - 1 column', 'Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Product Table', 'Entitlement Table', 'Answer Table - 1 column','Answer Table - 2 columns', 'User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 1 column', 'Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Record Table', 'Answer Table - 1 column','Answer Table - 2 columns', 'User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
     }
 
     get showTextBlock2() {
@@ -135,19 +131,11 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     }
 
     get showTable() {
-        return ['Entitlement Table','Product Table','Answer Table - 1 column','Answer Table - 2 columns'].includes(this.sectionType);
-    }
-
-    get showQLITable() {
-        return ['Product Table'].includes(this.sectionType);
-    }
-
-    get showEntTable() {
-        return ['Entitlement Table'].includes(this.sectionType);
+        return ['Record Table','Answer Table - 1 column','Answer Table - 2 columns'].includes(this.sectionType);
     }
 
     get showRecordTable() {
-        return ['Entitlement Table','Product Table'].includes(this.sectionType);
+        return ['Record Table'].includes(this.sectionType);
     }
 
     get showAnsTable() {

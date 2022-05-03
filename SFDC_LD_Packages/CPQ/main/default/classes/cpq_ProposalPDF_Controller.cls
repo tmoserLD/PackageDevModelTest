@@ -26,6 +26,12 @@ public with sharing class cpq_ProposalPDF_Controller {
 
         isDraft = ApexPages.currentPage().getParameters().get('isDraft') == 'true' ? true : false;
 
+
+        /****************
+         * RECORD PREP
+        ****************/
+
+
         // Quote Info
         Quote quoteInfo = [
             SELECT Id,
@@ -130,7 +136,6 @@ public with sharing class cpq_ProposalPDF_Controller {
                 Body_Text_Block_2__c,
                 Body_Text_Block_3__c,
                 CPQ_Playbook__c,
-                Entitlement_Table_Fields__c,
                 Force_Page_Break_After__c,
                 Force_Page_Break_Before__c,
                 Inputs_Column_1__c,
@@ -140,9 +145,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                 Inputs_Font_Size__c,
                 IsActive__c,
                 Name,
-                Product_Table_QLI_Fields__c,
-                Record_Table_Order_By_Clause__c,
-                Record_Table_Where_Clause__c,
+                Record_Table_Query__c,
                 Section_Type__c,
                 Table_Entries_Font_Color__c,
                 Table_Entries_Font_Size__c,
@@ -161,43 +164,6 @@ public with sharing class cpq_ProposalPDF_Controller {
             sectionIDs.add(section.Id);
             allSections.add(section);
             criteriaGroupsMap.put(section.Id, new List<CPQ_Playbook_Proposal_Criteria_Group__c>());
-
-            if (section.Product_Table_QLI_Fields__c != null) {
-                for (String field : section.Product_Table_QLI_Fields__c.split(';')) {
-                    productFields.add(field);
-                }
-            }
-            if (section.Entitlement_Table_Fields__c != null) {
-                for (String field : section.Entitlement_Table_Fields__c.split(';')) {
-                    entitlementFields.add(field);
-                }
-            }
-        }
-
-        // Query QLIs
-        SObjectType qliType = ((SObject)(Type.forName('Schema.QuoteLineItem').newInstance())).getSObjectType();
-        DescribeSObjectResult qliObject = qliType.getDescribe();
-        List<QuoteLineItem> qlis = new List<QuoteLineItem>();
-        String qliQueryFields = '';
-        for (String field : productFields) {
-            qliQueryFields += field + ',';
-        }
-        qliQueryFields = qliQueryFields.substring(0, qliQueryFields.length()-1);
-        String qliQueryString = 'SELECT ' + qliQueryFields + ' FROM QuoteLineItem WHERE QuoteId=\''+quoteRecordId+'\'';
-        qlis = Database.query(qliQueryString);
-
-        // Query Entitlements
-        SObjectType entType = ((SObject)(Type.forName('Schema.Contract_Entitlement__c').newInstance())).getSObjectType();
-        DescribeSObjectResult entObject = entType.getDescribe();
-        List<Contract_Entitlement__c> entitlements = new List<Contract_Entitlement__c>();
-        String entQueryFields = '';
-        for (String field : entitlementFields) {
-            entQueryFields += field + ',';
-        }
-        entQueryFields = entQueryFields.substring(0, entQueryFields.length()-1);
-        String entQueryString = 'SELECT ' + entQueryFields + ' FROM Contract_Entitlement__c WHERE Contract__c=\''+quoteInfo.Adjustment_of_Contract__c+'\'';
-        if (quoteInfo.Adjustment_of_Contract__c != null) {
-            entitlements = Database.query(entQueryString);
         }
 
         // Criteria Groups and Criteria for all possible sections
@@ -230,6 +196,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                         Product__c,
                         Product_Criterion_Target_Rule_Action__c,
                         Product_Field__c,
+                        Product_Field_Type__c,
                         Product_Is_Entitlement__c,
                         Target_Manual_Addition_Only__c
                     FROM CPQ_Playbook_Proposal_Criteria__r
@@ -240,7 +207,52 @@ public with sharing class cpq_ProposalPDF_Controller {
                 IsActive__c = true
         ]) {
             criteriaGroupsMap.get(criteriaGroup.CPQ_Playbook_Proposal_Section__c).add(criteriaGroup);
+
+            // Add QLI/Entitlement comparison fields to query
+            for (CPQ_Playbook_Proposal_Criterion__c criterion : criteriaGroup.CPQ_Playbook_Proposal_Criteria__r) {
+
+                if (criterion.Product__c != null &&
+                    criterion.Product_Field__c != null
+                ) {
+                    // QLI
+                    if (criterion.Product_Is_Entitlement__c == false) {
+                        productFields.add(criterion.Product_Field__c);
+                    }
+                    // Entitlement
+                    else {
+                        entitlementFields.add(criterion.Product_Field__c);
+                    }
+                }
+            }
         }
+
+        // Query QLIs
+        List<QuoteLineItem> qlis = new List<QuoteLineItem>();
+        String qliQueryFields = '';
+        for (String field : productFields) {
+            qliQueryFields += field + ',';
+        }
+        qliQueryFields = qliQueryFields.substring(0, qliQueryFields.length()-1);
+        String qliQueryString = 'SELECT ' + qliQueryFields + ' FROM QuoteLineItem WHERE QuoteId=\''+quoteRecordId+'\'';
+        qlis = Database.query(qliQueryString);
+
+        // Query Entitlements
+        List<Contract_Entitlement__c> entitlements = new List<Contract_Entitlement__c>();
+        String entQueryFields = '';
+        for (String field : entitlementFields) {
+            entQueryFields += field + ',';
+        }
+        entQueryFields = entQueryFields.substring(0, entQueryFields.length()-1);
+        String entQueryString = 'SELECT ' + entQueryFields + ' FROM Contract_Entitlement__c WHERE Contract__c=\''+quoteInfo.Adjustment_of_Contract__c+'\'';
+        if (quoteInfo.Adjustment_of_Contract__c != null) {
+            entitlements = Database.query(entQueryString);
+        }
+
+
+        /****************
+         * SECTION EVALUATION
+        ****************/
+
 
         // Evaluate each section to determine if it meets criteria
         for (CPQ_Playbook_Proposal_Section__c section : allSections) {
@@ -288,7 +300,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                 // Evaluate each criterion
                 for (CPQ_Playbook_Proposal_Criterion__c criterion : criteriaGroup.CPQ_Playbook_Proposal_Criteria__r) {
 
-                    // Assume false, if no question found it remains false
+                    // Assume false, if no value found it remains false
                     Boolean criterionEvaluation = false;
 
                     // Update needed Ns
@@ -361,198 +373,20 @@ public with sharing class cpq_ProposalPDF_Controller {
                                     )
                                 ) {
                                     // Comparison
-
-                                    // Equality
-                                    if (criterion.Comparison_Operator__c == 'Equals') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c == criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c == criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c == criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c == criterion.Comparison_Value_Date__c);
-                                        }
+                                    if (criterion.Product_Field_Type__c == 'Boolean') {
+                                        criterionEvaluation = compareBoolean((Boolean) qli.get(criterion.Product_Field__c), criterion.Comparison_Value_Boolean__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Equality Negation
-                                    else if (criterion.Comparison_Operator__c == 'Does not equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c != criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c != criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c != criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c != criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Currency') {
+                                        criterionEvaluation = compareDecimal((Decimal) qli.get(criterion.Product_Field__c), criterion.Comparison_Value_Currency__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Greater Than
-                                    else if (criterion.Comparison_Operator__c == 'Greater than') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c > criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c > criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c > criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c > criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Date') {
+                                        criterionEvaluation = compareDate((Date) qli.get(criterion.Product_Field__c), criterion.Comparison_Value_Date__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Greater than or equal
-                                    else if (criterion.Comparison_Operator__c == 'Greater than or equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c >= criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c >= criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c >= criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c >= criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Decimal') {
+                                        criterionEvaluation = compareDecimal((Decimal) qli.get(criterion.Product_Field__c), criterion.Comparison_Value_Decimal__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Less than
-                                    else if (criterion.Comparison_Operator__c == 'Less than') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c < criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c < criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c < criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c < criterion.Comparison_Value_Date__c);
-                                        }
-                                    }
-                                    // Less than or equal
-                                    else if (criterion.Comparison_Operator__c == 'Less than or equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c <= criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c <= criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c <= criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c <= criterion.Comparison_Value_Date__c);
-                                        }
-                                    }
-                                    // Empty
-                                    else if (criterion.Comparison_Operator__c == 'Is empty') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (qli.Quantity__c == null);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (qli.Discount__c == null); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (qli.Unit_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (qli.List_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (qli.Total_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (qli.Start_Date__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (qli.End_Date__c == null);
-                                        }
-                                    }
-                                    // Not empty
-                                    else if (criterion.Comparison_Operator__c == 'Is not empty') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = !(qli.Quantity__c == null);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = !(qli.Discount__c == null); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = !(qli.Unit_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = !(qli.List_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = !(qli.Total_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = !(qli.Start_Date__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = !(qli.End_Date__c == null);
-                                        }
+                                    else if (criterion.Product_Field_Type__c== 'Text') {
+                                        criterionEvaluation = compareText((String) qli.get(criterion.Product_Field__c), criterion.Comparison_Value_Text__c, criterion.Comparison_Operator__c);
                                     }
                                 }
                             }
@@ -577,204 +411,25 @@ public with sharing class cpq_ProposalPDF_Controller {
                                     )
                                 ) {
                                     // Comparison
-
-                                    // Equality
-                                    if (criterion.Comparison_Operator__c == 'Equals') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c == criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c == criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c == criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c == criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c == criterion.Comparison_Value_Date__c);
-                                        }
+                                    if (criterion.Product_Field_Type__c == 'Boolean') {
+                                        criterionEvaluation = compareBoolean((Boolean) ent.get(criterion.Product_Field__c), criterion.Comparison_Value_Boolean__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Equality Negation
-                                    else if (criterion.Comparison_Operator__c == 'Does not equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c != criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c != criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c != criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c != criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c != criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Currency') {
+                                        criterionEvaluation = compareDecimal((Decimal) ent.get(criterion.Product_Field__c), criterion.Comparison_Value_Currency__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Greater Than
-                                    else if (criterion.Comparison_Operator__c == 'Greater than') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c > criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c > criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c > criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c > criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c > criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Date') {
+                                        criterionEvaluation = compareDate((Date) ent.get(criterion.Product_Field__c), criterion.Comparison_Value_Date__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Greater than or equal
-                                    else if (criterion.Comparison_Operator__c == 'Greater than or equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c >= criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c >= criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c >= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c >= criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c >= criterion.Comparison_Value_Date__c);
-                                        }
+                                    else if (criterion.Product_Field_Type__c == 'Decimal') {
+                                        criterionEvaluation = compareDecimal((Decimal) ent.get(criterion.Product_Field__c), criterion.Comparison_Value_Decimal__c, criterion.Comparison_Operator__c);
                                     }
-                                    // Less than
-                                    else if (criterion.Comparison_Operator__c == 'Less than') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c < criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c < criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c < criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c < criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c < criterion.Comparison_Value_Date__c);
-                                        }
-                                    }
-                                    // Less than or equal
-                                    else if (criterion.Comparison_Operator__c == 'Less than or equal') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c <= criterion.Comparison_Value_Integer__c);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c <= criterion.Comparison_Value_Decimal__c); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c <= criterion.Comparison_Value_Currency__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c <= criterion.Comparison_Value_Date__c);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c <= criterion.Comparison_Value_Date__c);
-                                        }
-                                    }
-                                    // Empty
-                                    else if (criterion.Comparison_Operator__c == 'Is empty') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = (ent.Quantity__c == null);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = (ent.Discount__c == null); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = (ent.Unit_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = (ent.List_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = (ent.Total_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = (ent.Start_Date__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = (ent.End_Date__c == null);
-                                        }
-                                    }
-                                    // Not empty
-                                    else if (criterion.Comparison_Operator__c == 'Is not empty') {
-                                        if (criterion.Product_Field__c == 'Quantity') {
-                                            criterionEvaluation = !(ent.Quantity__c == null);    
-                                        }
-                                        else if (criterion.Product_Field__c == 'Discount') {
-                                            criterionEvaluation = !(ent.Discount__c == null); 
-                                        }
-                                        else if (criterion.Product_Field__c == 'Unit Price') {
-                                            criterionEvaluation = !(ent.Unit_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'List Price') {
-                                            criterionEvaluation = !(ent.List_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Total Price') {
-                                            criterionEvaluation = !(ent.Total_Price__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'Start Date') {
-                                            criterionEvaluation = !(ent.Start_Date__c == null);
-                                        }
-                                        else if (criterion.Product_Field__c == 'End Date') {
-                                            criterionEvaluation = !(ent.End_Date__c == null);
-                                        }
+                                    else if (criterion.Product_Field_Type__c== 'Text') {
+                                        criterionEvaluation = compareText((String) ent.get(criterion.Product_Field__c), criterion.Comparison_Value_Text__c, criterion.Comparison_Operator__c);
                                     }
                                 }
                             }
                         }
                     }
-
 
                     // Update needed Ns
                     if (criterionEvaluation == true) {
@@ -964,36 +619,35 @@ public with sharing class cpq_ProposalPDF_Controller {
                     sectionToAdd.imageID = section.AttachedContentDocuments[0].ContentDocument.LatestPublishedVersionId;
                 }
 
-                // Configure Product Table
-                if (section.Section_Type__c == 'Product Table') {
+                // Configure Record Table
+                if (section.Section_Type__c == 'Record Table') {
 
-                    // Get Headers from QLI fields
+                    // Get Object Name and Fields from Query String
+                    String objName = section.Record_Table_Query__c.toLowerCase().split('from')[1].split(' ')[1];
+                    List<String> objFields = section.Record_Table_Query__c.toLowerCase().split(' from')[0].split('select ')[1].split(',');
+
+                    // Describe Object
+                    SObjectType objType = ((SObject)(Type.forName('Schema.' + objName).newInstance())).getSObjectType();
+                    DescribeSObjectResult obj = objType.getDescribe();
+
+                    // Get Headers from Records fields
                     sectionToAdd.tableHeaders = new List<String>();
-                    if (section.Product_Table_QLI_Fields__c != null) {
-                        for (String field : section.Product_Table_QLI_Fields__c.split(';')) {
-                            sectionToAdd.tableHeaders.add(
-                                qliObject.fields
-                                    .getMap()
-                                    .get(field)
-                                    .getDescribe()
-                                    .getLabel()
-                            );
-                        }
+                    for (String field : objFields) {
+                        sectionToAdd.tableHeaders.add(
+                            obj.fields
+                                .getMap()
+                                .get(field)
+                                .getDescribe()
+                                .getLabel()
+                        );
                     }
 
-                    // Get String values of QLI values
+                    // Get String values of record values
                     sectionToAdd.tableRecords = new List<List<String>>();
-                    String tableQuery = qliQueryString;
-                    if (section.Record_Table_Where_Clause__c != null) {
-                        tableQuery += ' AND ' + section.Record_Table_Where_Clause__c;
-                    }
-                    if (section.Record_Table_Order_By_Clause__c != null) {
-                        tableQuery += ' ORDER BY ' + section.Record_Table_Order_By_Clause__c;
-                    }
-                    for (QuoteLineItem qli : Database.query(tableQuery)) {
+                    for (sObject rec : Database.query(section.Record_Table_Query__c)) {
                         List<String> record = new List<String>();
-                        for (String field : section.Product_Table_QLI_Fields__c.split(';')) {
-                            Schema.DisplayType fieldType = qliObject.fields
+                        for (String field : objFields) {
+                            Schema.DisplayType fieldType = obj.fields
                                 .getMap()
                                 .get(field)
                                 .getDescribe()
@@ -1004,91 +658,25 @@ public with sharing class cpq_ProposalPDF_Controller {
                                 String val;
                                 
                                 if (fieldType == Schema.DisplayType.Double) {
-                                    Double decVal = (Double)qli.get(field);
+                                    Double decVal = (Double)rec.get(field);
                                     val = String.valueOf(decVal.format());
                                 }
                                 else if (fieldType == Schema.DisplayType.Currency) {
-                                    Decimal decVal = (Decimal)qli.get(field);
+                                    Decimal decVal = (Decimal)rec.get(field);
                                     val = '$'+String.valueOf(decVal.format());
                                 }
                                 else if (fieldType == Schema.DisplayType.Integer) {
-                                    Integer intVal = (Integer)qli.get(field);
+                                    Integer intVal = (Integer)rec.get(field);
                                     val = String.valueOf(intVal.format());
                                 }
                                 else if (fieldType == Schema.DisplayType.Date) {
-                                    Date dateVal = (Date)qli.get(field);
+                                    Date dateVal = (Date)rec.get(field);
                                     val = String.valueOf(dateVal.format());
                                 }
 
                                 record.add(val);
                             } else {
-                                String val = String.valueOf(qli.get(field));
-                                record.add(val);
-                            }
-                        }
-                        sectionToAdd.tableRecords.add(record);
-                    }
-                }
-
-                // Configure Entitlement Table
-                if (section.Section_Type__c == 'Entitlement Table') {
-
-                    // Get Headers from Entitlement fields
-                    sectionToAdd.tableHeaders = new List<String>();
-                    if (section.Entitlement_Table_Fields__c != null) {
-                        for (String field : section.Entitlement_Table_Fields__c.split(';')) {
-                            sectionToAdd.tableHeaders.add(
-                                entObject.fields
-                                    .getMap()
-                                    .get(field)
-                                    .getDescribe()
-                                    .getLabel()
-                            );
-                        }
-                    }
-
-                    // Get String values of Entitlement values
-                    sectionToAdd.tableRecords = new List<List<String>>();
-                    String tableQuery = entQueryString;
-                    if (section.Record_Table_Where_Clause__c != null) {
-                        tableQuery += ' AND ' + section.Record_Table_Where_Clause__c;
-                    }
-                    if (section.Record_Table_Order_By_Clause__c != null) {
-                        tableQuery += ' ORDER BY ' + section.Record_Table_Order_By_Clause__c;
-                    }
-                    for (Contract_Entitlement__c ent : Database.query(tableQuery)) {
-                        List<String> record = new List<String>();
-                        for (String field : section.Entitlement_Table_Fields__c.split(';')) {
-                            Schema.DisplayType fieldType = entObject.fields
-                                .getMap()
-                                .get(field)
-                                .getDescribe()
-                                .getType();
-                            if (new List<Schema.DisplayType>{Schema.DisplayType.Currency,Schema.DisplayType.Double,Schema.DisplayType.Integer,Schema.DisplayType.Date}.contains(
-                                fieldType
-                            )) {
-                                String val;
-                                
-                                if (fieldType == Schema.DisplayType.Double) {
-                                    Double decVal = (Double)ent.get(field);
-                                    val = String.valueOf(decVal.format());
-                                }
-                                else if (fieldType == Schema.DisplayType.Currency) {
-                                    Decimal decVal = (Decimal)ent.get(field);
-                                    val = '$'+String.valueOf(decVal.format());
-                                }
-                                else if (fieldType == Schema.DisplayType.Integer) {
-                                    Integer intVal = (Integer)ent.get(field);
-                                    val = String.valueOf(intVal.format());
-                                }
-                                else if (fieldType == Schema.DisplayType.Date) {
-                                    Date dateVal = (Date)ent.get(field);
-                                    val = String.valueOf(dateVal.format());
-                                }
-
-                                record.add(val);
-                            } else {
-                                String val = String.valueOf(ent.get(field));
+                                String val = String.valueOf(rec.get(field));
                                 record.add(val);
                             }
                         }

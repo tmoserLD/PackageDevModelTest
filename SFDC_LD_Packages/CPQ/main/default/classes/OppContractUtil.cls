@@ -9,40 +9,6 @@
 public with sharing class OppContractUtil {
 
     /****************
-     * ENTRY METHODS
-    ****************/
-
-    /**
-    * @description Logic run after an Opportunity Insert
-    * Handles updates of related records
-    * @param insertedOpps Opportunity records with inserted values in trigger context
-    */ 
-    public static void processAfterInsert(
-        List<Opportunity> insertedOpps
-    ) {
-        relatedObjectAfterUpdates(
-            insertedOpps,
-            new Map<Id, Opportunity>()
-        );
-    }
-
-    /**
-    * @description Logic run after an Opportunity Update
-    * Handles updates of related records
-    * @param updatedOpps Opportunity records with updated values in trigger context
-    * @param oldOppsMap Map - Opportunity Id to Old version of Opportunity
-    */ 
-    public static void processAfterUpdate(
-        List<Opportunity> updatedOpps,
-        Map<Id, Opportunity> oldOppsMap
-    ) {
-        relatedObjectAfterUpdates(
-            updatedOpps,
-            oldOppsMap
-        );
-    }
-
-    /****************
      * MAIN METHODS
     ****************/
 
@@ -214,6 +180,7 @@ public with sharing class OppContractUtil {
                         Contract_Playbook_Answer__c ans = new Contract_Playbook_Answer__c();
                         ans.CPQ_Playbook_Question__c = answer.CPQ_Playbook_Question__c;
                         ans.Name = answer.Name;
+                        ans.Selected_Records_String__c = answer.Selected_Records_String__c;
                         ans.Value_Boolean__c = answer.Value_Boolean__c;
                         ans.Value_Currency__c = answer.Value_Currency__c;
                         ans.Value_Date__c = answer.Value_Date__c;
@@ -315,6 +282,7 @@ public with sharing class OppContractUtil {
                         SELECT Id,
                             CPQ_Playbook_Question__c,
                             Name,
+                            Selected_Records_String__c,
                             Value_Boolean__c,
                             Value_Currency__c,
                             Value_Date__c, 

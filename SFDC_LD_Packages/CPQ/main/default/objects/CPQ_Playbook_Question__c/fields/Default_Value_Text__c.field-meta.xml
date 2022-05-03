@@ -3,7 +3,7 @@
     <fullName>Default_Value_Text__c</fullName>
     <description>If related question answer type is &apos;Picklist&apos;, &apos;Multi-Select Picklist&apos;, &apos;Text&apos;, or &apos;Text Area&apos;, value to use for default value for answer. If Default Field Value is populated, that takes precedence over this value.</description>
     <externalId>false</externalId>
-    <inlineHelpText>Default value for question&apos;s answer. If Default Field Value is populated, that takes precedence over this value.</inlineHelpText>
+    <inlineHelpText>Default value for question&apos;s answer. If Default Field Value is populated, that takes precedence over this value. NOTE: if using for the 'Record Lookup' answer type, enter a semicolon delineated list of records IDs.</inlineHelpText>
     <label>Default Value (Text)</label>
     <length>32768</length>
     <trackTrending>false</trackTrending>

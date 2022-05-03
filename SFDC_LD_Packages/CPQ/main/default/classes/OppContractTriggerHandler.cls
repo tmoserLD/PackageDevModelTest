@@ -19,7 +19,10 @@ public with sharing class OppContractTriggerHandler {
     public static void afterInsert(List<Opportunity> opps) {
         if (firstRunAfterInsert) {
             firstRunAfterInsert = false;
-            OppContractUtil.processAfterInsert(opps);
+            OppContractUtil.relatedObjectAfterUpdates(
+                opps,
+                new Map<Id, Opportunity>()
+            );
         }        
     }
     
@@ -31,7 +34,10 @@ public with sharing class OppContractTriggerHandler {
     public static void afterUpdate(List<Opportunity> opps, Map<Id, Opportunity> oldOppsMap) {
         if (firstRunAfterUpdate) {
             firstRunAfterUpdate = false;
-            OppContractUtil.processAfterUpdate(opps, oldOppsMap);
+            OppContractUtil.relatedObjectAfterUpdates(
+                opps,
+                oldOppsMap
+            );
         }        
     }
 

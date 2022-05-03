@@ -81,7 +81,7 @@ public class cpq_AdminContainerClassTest {
             testPlaybooks.add(
                 new CPQ_Playbook__c(
                     Default_Term_in_Months__c = 12,
-                    Entitlement_Summary_Columns__c = 'Quantity;End_Date',
+                    Entitlement_Summary_Columns__c = 'Quantity__c;End_Date__c',
                     IsActive__c = true,
                     Label__c = 'Playbook ' + i,
                     Name = 'Playbook ' + i,
@@ -141,7 +141,8 @@ public class cpq_AdminContainerClassTest {
                     Proposal_Label__c = null,
                     Quote_Save_Field__c = null,
                     Step_Value__c = null,
-                    Variable_Name__c = 'Question ' + i
+                    Variable_Name__c = 'Question ' + i,
+                    Query_String__c = 'SELECT Id,Default_Value_Boolean__c,Default_Value_Decimal__c,Default_Value_Date__c,Default_Value_Currency__c,Default_Value_Text__c FROM CPQ_Playbook_Question__c'
                 )
             );
         }
@@ -387,7 +388,6 @@ public class cpq_AdminContainerClassTest {
                     Body_Text_Block_3__c = null,
                     CPQ_Playbook__c = testPlaybooks[i].Id,
                     Display_Order__c = i,
-                    Entitlement_Table_Fields__c = null,
                     Force_Page_Break_After__c = false,
                     Force_Page_Break_Before__c = false,
                     Inputs_Column_1__c = null,
@@ -397,9 +397,7 @@ public class cpq_AdminContainerClassTest {
                     Inputs_Font_Size__c = null,
                     IsActive__c = true,
                     Name = 'Section ' + i,
-                    Product_Table_QLI_Fields__c = null,
-                    Record_Table_Order_By_Clause__c = null,
-                    Record_Table_Where_Clause__c = null,
+                    Record_Table_Query__c = null,
                     Section_Type__c = 'Text - 1 column',
                     Table_Entries_Font_Color__c = null,
                     Table_Entries_Font_Size__c = null,
@@ -684,4 +682,98 @@ public class cpq_AdminContainerClassTest {
         System.assertEquals(1, allSystemSettings.size());
     }
 
+    /**
+     * @description Test to verify field type retrieval
+     **/
+    @isTest
+    public static void testGetFieldTypeText() {
+
+        CPQ_Playbook_Question__c question = [
+            SELECT Id
+            FROM CPQ_Playbook_Question__c
+            LIMIT 1
+        ];
+
+        Test.startTest();
+
+        System.assertEquals('Text', cpq_AdminContainerClass.getLookupFieldType('Default_Value_Text__c', question.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify field type retrieval
+     **/
+    @isTest
+    public static void testGetFieldTypeBoolean() {
+
+        CPQ_Playbook_Question__c question = [
+            SELECT Id
+            FROM CPQ_Playbook_Question__c
+            LIMIT 1
+        ];
+
+        Test.startTest();
+
+        System.assertEquals('Boolean', cpq_AdminContainerClass.getLookupFieldType('Default_Value_Boolean__c', question.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify field type retrieval
+     **/
+    @isTest
+    public static void testGetFieldTypeDate() {
+
+        CPQ_Playbook_Question__c question = [
+            SELECT Id
+            FROM CPQ_Playbook_Question__c
+            LIMIT 1
+        ];
+
+        Test.startTest();
+
+        System.assertEquals('Date', cpq_AdminContainerClass.getLookupFieldType('Default_Value_Date__c', question.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify field type retrieval
+     **/
+    @isTest
+    public static void testGetFieldTypeCurrency() {
+
+        CPQ_Playbook_Question__c question = [
+            SELECT Id
+            FROM CPQ_Playbook_Question__c
+            LIMIT 1
+        ];
+
+        Test.startTest();
+
+        System.assertEquals('Currency', cpq_AdminContainerClass.getLookupFieldType('Default_Value_Currency__c', question.Id));
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify field type retrieval
+     **/
+    @isTest
+    public static void testGetFieldTypeDecimal() {
+
+        CPQ_Playbook_Question__c question = [
+            SELECT Id
+            FROM CPQ_Playbook_Question__c
+            LIMIT 1
+        ];
+
+        Test.startTest();
+
+        System.assertEquals('Decimal', cpq_AdminContainerClass.getLookupFieldType('Default_Value_Decimal__c', question.Id));
+
+        Test.stopTest();
+    }
 }

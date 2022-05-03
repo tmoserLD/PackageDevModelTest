@@ -191,6 +191,7 @@ public with sharing class cpq_ApprovalsHubClass {
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
                         + 'HasBeenTouched__c,'
                         + 'Quote__c,'
+                        + 'Selected_Records_String__c,'
                         + 'Value_Boolean__c,'
                         + 'Value_Currency__c,'
                         + 'Value_Date__c,'

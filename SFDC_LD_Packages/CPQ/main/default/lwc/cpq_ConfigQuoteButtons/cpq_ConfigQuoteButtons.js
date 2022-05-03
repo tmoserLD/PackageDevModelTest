@@ -17,6 +17,7 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
     @api quoteProducts;
     @api selectedPlaybookId;
     @api selectedPricebook;
+    @api isCPQAdmin;
 
     @track loading;
     @track quoteToPreview;
@@ -84,6 +85,10 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
     }
 
     get viewMode() {
+        return this.configType.includes('View');
+    }
+
+    get normalView() {
         return this.configType === 'View';
     }
 
@@ -185,9 +190,11 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
                         else if (question.questionInfo.Answer_Type__c === 'Picklist' ||
                             question.questionInfo.Answer_Type__c === 'Multi-Select Picklist' ||
                             question.questionInfo.Answer_Type__c === 'Text' ||
-                            question.questionInfo.Answer_Type__c === 'Text Area'
+                            question.questionInfo.Answer_Type__c === 'Text Area' ||
+                            question.questionInfo.Answer_Type__c === 'Record Lookup'
                         ) {
                             playbookAnswer.Value_Text__c = question.questionInfo.answer;
+                            playbookAnswer.Selected_Records_String__c = JSON.stringify(question.questionInfo.selectedRecords);
                         }
 
                         // Answer "Touched"
@@ -361,5 +368,14 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
         }
 
         this.loading = false;
+    }
+
+    // Toggle Admin View
+    toggleAdminView() {
+        const configTypeUpdateEvent = new CustomEvent(
+            'configtypeupdate', {
+                detail: this.configType === 'View' ? 'Admin View' : 'View'
+            });
+        this.dispatchEvent(configTypeUpdateEvent);
     }
 }

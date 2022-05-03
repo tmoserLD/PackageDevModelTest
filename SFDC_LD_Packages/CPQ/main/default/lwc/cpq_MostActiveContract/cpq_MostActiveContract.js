@@ -24,7 +24,7 @@ export default class CPQ_MostActiveContract extends LightningElement {
         } else {
             header = 'Past';
         }
-        header += ' Contract Product Details';
+        header += ' Contract Snapshot';
         return header;
     }
 }

@@ -1,0 +1,48 @@
+<template>
+    <div class="slds-col slds-grid slds-gutters slds-wrap slds-m-top_x-small">
+
+        <!-- Configuration Mode -->
+        <template if:false={viewMode}>
+            <!-- Start Date -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                <lightning-input
+                    type="date"
+                    label="Start Date"
+                    readonly="true"
+                    value={quoteStartDate}
+                >
+                </lightning-input>
+            </div>
+            <!-- End Date -->
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                <lightning-input
+                    type="date"
+                    label="End Date"
+                    readonly="true"
+                    value={quoteEndDate}
+                >
+                </lightning-input>
+            </div>
+        </template>
+        <!-- View Mode -->
+        <template if:true={viewMode}>
+            <div class="slds-col slds-size_1-of-1">
+                <lightning-record-view-form
+                    object-api-name={displayObj}
+                    record-id={recordId}
+                >
+                    <div class="slds-grid slds-wrap">
+                        <template for:each={displayFields} for:item="field">
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2" key={field}>
+                                <lightning-output-field
+                                    field-name={field}
+                                >
+                                </lightning-output-field>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-record-view-form>
+            </div>
+        </template>
+    </div>
+</template>

@@ -5,6 +5,9 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
     // All Questions in group
     @api allQuestions = [];
 
+    // Configuration Type
+    @api configType;
+
     // Question Info
     @api question;
 
@@ -32,9 +35,14 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
         return this.question.questionInfo.Help_Text__c !== undefined
     }
 
+    // Record Lookup input type
+    get isRecordLookup() {
+        return this.question.questionInfo.Answer_Type__c === 'Record Lookup';
+    }
+
     // Main CSS for component
     get mainCSS() {
-        let mainCSS = 'slds-grid ';
+        let mainCSS = 'slds-grid_vertical ';
         if (this.allQuestions.filter(
                 question => question.questionInfo.IsHidden__c !== true
             ).indexOf(this.question) % 2 === 1
@@ -62,6 +70,10 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
         }
     }
 
+    get visible() {
+        return (this.question.questionInfo.IsHidden__c !== true || this.configType === 'Admin View')
+    }
+
     // Answer "Touched" Event
     answerTouch(event) {
 
@@ -69,7 +81,8 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
             'touch', {
                 detail: {
                     questionId: this.question.questionInfo.Id,
-                    answer: event.detail.answer
+                    answer: event.detail.answer,
+                    selectedRecords: event.detail.selectedRecords
                 }
             });
         this.dispatchEvent(touchEvent);

@@ -27,6 +27,18 @@ public with sharing class cpq_ConfigQuoteClass {
         configObj.pricebooks = new List<Pricebook2>();
         configObj.currencyMap = getCurrencyMap(System.UserInfo.isMultiCurrencyOrganization());
 
+        // Check if User is CPQ Admin
+        configObj.isCPQAdmin = false;
+        for (PermissionSetAssignment permSetAssignment : [
+            SELECT
+                Id
+            FROM PermissionSetAssignment
+            WHERE PermissionSet.Name = 'CPQ_Admin' AND
+                AssigneeId=:System.UserInfo.getUserId()
+        ]) {
+            configObj.isCPQAdmin = true;
+        }
+
         // Custom QLI Fields being stamped and shown as columns
         Boolean hasCustomField = false;
         Set<String> standardFields = new Set<String>{
@@ -79,19 +91,38 @@ public with sharing class cpq_ConfigQuoteClass {
             'Contract__r.ContractNumber'
         };
 
+        // Contract Base Fields
+        Set<String> contractFields = new Set<String>{
+            'Id',
+            'Contract_End_Date__c',
+            'Contract_Start_Date__c',
+            'Contract_Status__c',
+            'Contract_Total__c',
+            'CPQ_Playbook__c',
+            'CPQ_Playbook__r.Pricebook__c',
+            'Opportunity__c',
+            'Opportunity__r.Name',
+            'Quote__c'
+        };
+        if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+            contractFields.add('CurrencyIsoCode');
+        }
+
         // PLAYBOOKS
 
         // Active Playbooks
         List<CPQ_Playbook__c> playbooks = new List<CPQ_Playbook__c>();
         playbooks = [
             SELECT Id,
+                Contract_View_Display_Fields__c,
                 Default_Term_in_Months__c,
                 Entitlement_Summary_Columns__c,
                 IsActive__c,
                 Label__c,
                 Name,
                 Pricebook__c,
-                Product_Summary_Columns__c
+                Product_Summary_Columns__c,
+                Quote_View_Display_Fields__c
             FROM CPQ_Playbook__c
             WHERE IsActive__c = TRUE AND
                 Pricebook__r.IsActive = TRUE
@@ -139,8 +170,8 @@ public with sharing class cpq_ConfigQuoteClass {
                 }
             }
 
-            playbookInfoSet.productColumns = new List<ProductColumn>();
-            playbookInfoSet.entitlementColumns = new List<ProductColumn>();
+            playbookInfoSet.productColumns = new List<RecordColumn>();
+            playbookInfoSet.entitlementColumns = new List<RecordColumn>();
 
             // Get Label Info on custom QLI fields
             if (hasCustomField) {
@@ -156,7 +187,7 @@ public with sharing class cpq_ConfigQuoteClass {
                         .containsKey(customField) &&
                         !standardFields.contains(customField)
                     ) {
-                        ProductColumn newCol = new ProductColumn();
+                        RecordColumn newCol = new RecordColumn();
                         newCol.label = qliObject.fields
                             .getMap()
                             .get(customField)
@@ -197,14 +228,14 @@ public with sharing class cpq_ConfigQuoteClass {
                     }
                     // Standard CPQ
                     else {
-                        ProductColumn newCol = new ProductColumn();
+                        RecordColumn newCol = new RecordColumn();
                         newCol.field = customField;
                         playbookInfoSet.productColumns.add(newCol);
                     }
                 }
             } else {
                 for (String customField : customQLIFields) {
-                    ProductColumn newCol = new ProductColumn();
+                    RecordColumn newCol = new RecordColumn();
                     newCol.field = customField;
                     playbookInfoSet.productColumns.add(newCol);
                 }
@@ -225,7 +256,7 @@ public with sharing class cpq_ConfigQuoteClass {
                         .getMap()
                         .containsKey(field)
                     ) {
-                        ProductColumn newCol = new ProductColumn();
+                        RecordColumn newCol = new RecordColumn();
                         newCol.label = entObject.fields
                             .getMap()
                             .get(field)
@@ -327,11 +358,15 @@ public with sharing class cpq_ConfigQuoteClass {
                 IsReadOnly__c,
                 IsRequired__c,
                 Label__c,
+                Maximum_Record_Selections__c,
                 Maximum_Value__c,
                 Minimum_Value__c,
                 Name,
                 Picklist_Answers__c,
+                Query_String__c,
                 Quote_Save_Field__c,
+                Record_Display_Fields__c,
+                Record_Selection_Behavior__c,
                 Step_Value__c,
                 Variable_Name__c
             FROM CPQ_Playbook_Question__c
@@ -354,6 +389,14 @@ public with sharing class cpq_ConfigQuoteClass {
                     questionGroup.questions.add(questionInfoSet);
                     break;
                 }
+            }
+
+            // Update Contract fields if applicable
+            if (question.Default_Field_Value__c != null &&
+                question.Default_Field_Value__c.split('\\.')[0] == 'Contract' &&
+                question.Default_Field_Value__c.split('\\.').size() == 2
+            ) {
+                contractFields.add(question.Default_Field_Value__c.split('\\.')[1]);
             }
         }
 
@@ -450,7 +493,10 @@ public with sharing class cpq_ConfigQuoteClass {
                 Product__c,
                 Product_Criterion_Target_Rule_Action__c,
                 Product_Field__c,
+                Product_Field_Type__c,
                 Product_Is_Entitlement__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 System_Value_Source__c,
                 Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Rule_Criterion__c
@@ -545,8 +591,12 @@ public with sharing class cpq_ConfigQuoteClass {
                 IsActive__c,
                 Product__c,
                 Product_Calculation_Field__c,
+                Product_Calculation_Field_Type__c,
                 Product_Calculation_Target_Rule_Action__c,
                 Product_Is_Entitlement__c,
+                Record_Lookup_Behavior__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 Static_Value_Boolean__c,
                 Static_Value_Currency__c,
                 Static_Value_Date__c,
@@ -583,7 +633,7 @@ public with sharing class cpq_ConfigQuoteClass {
                 item.Product_Is_Entitlement__c != true
             ) {
                 // Ensure valid obj.field structure
-                if (item.Product_Calculation_Field__c.split('\\.').size() > 1) {
+                if (item.Product_Calculation_Field__c.split('\\.').size() == 2) {
                     // Ensure valid obj
                     if (item.Product_Calculation_Field__c.split('\\.')[0] == 'Product2') {
                         pricebookEntryFields.add(item.Product_Calculation_Field__c);
@@ -600,7 +650,7 @@ public with sharing class cpq_ConfigQuoteClass {
                 item.Product_Is_Entitlement__c == true
             ) {
                 // Ensure valid obj.field structure
-                if (item.Entitlement_Calculation_Field__c.split('\\.').size() > 1) {
+                if (item.Entitlement_Calculation_Field__c.split('\\.').size() == 2) {
                     // Ensure valid obj
                     if (item.Entitlement_Calculation_Field__c.split('\\.')[0] == 'Product__r') {
                         entitlementFields.add(item.Entitlement_Calculation_Field__c);
@@ -703,7 +753,10 @@ public with sharing class cpq_ConfigQuoteClass {
                 Product__c,
                 Product_Criterion_Target_Rule_Action__c,
                 Product_Field__c,
+                Product_Field_Type__c,
                 Product_Is_Entitlement__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 System_Value_Source__c,
                 Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Approval_Criterion__c
@@ -833,6 +886,13 @@ public with sharing class cpq_ConfigQuoteClass {
         }
         configObj.entitlementFields = configObj.entitlementFields.removeEnd(',');
 
+        // Configure Contracts query string for contract query if necessary
+        configObj.contractFields = '';
+        for (String field : contractFields) {
+            configObj.contractFields += field + ',';
+        }
+        configObj.contractFields = configObj.contractFields.removeEnd(',');
+
         return configObj;
     }
 
@@ -841,15 +901,17 @@ public with sharing class cpq_ConfigQuoteClass {
         @AuraEnabled public List<RuleInfo> rules;
         @AuraEnabled public List<ApprovalInfo> approvals;
         @AuraEnabled public List<Pricebook2> pricebooks;
+        @AuraEnabled public String contractFields;
         @AuraEnabled public String entitlementFields; 
         @AuraEnabled public Map<String, Double> currencyMap;
+        @AuraEnabled public Boolean isCPQAdmin;
     }
 
     public class PlaybookInfo {
         @AuraEnabled public CPQ_Playbook__c playbookInfo;
         @AuraEnabled public List<QuestionGroupInfo> questionGroups;
-        @AuraEnabled public List<ProductColumn> productColumns; 
-        @AuraEnabled public List<ProductColumn> entitlementColumns;
+        @AuraEnabled public List<RecordColumn> productColumns; 
+        @AuraEnabled public List<RecordColumn> entitlementColumns;
     }
 
     public class QuestionGroupInfo {
@@ -909,7 +971,7 @@ public with sharing class cpq_ConfigQuoteClass {
         @AuraEnabled public CPQ_Playbook_Approver__c approverInfo;
     }
 
-    public class ProductColumn {
+    public class RecordColumn {
         @AuraEnabled public String label;
         @AuraEnabled public String field;
         @AuraEnabled public String type;
@@ -939,31 +1001,23 @@ public with sharing class cpq_ConfigQuoteClass {
     /**
     * @description Query contract info
     * @param contractId Id of Contract record info is needed for
+    * @param contractFields Comma delineated list of Contract field API names that should be included in the base query
     * @param entitlementFields Comma delineated list of Contract_Entitlement__c field API names that should be included in the sub-query
     * @return Contract record with child answers and entitlements
     */
     @AuraEnabled
-    public static Contract getContractInfo(Id contractId, String entitlementFields) {
+    public static Contract getContractInfo(Id contractId, String contractFields, String entitlementFields) {
 
         Contract cont = new Contract();
         String contractQuery = 'SELECT '
-                + 'Id,'
-                + 'Contract_End_Date__c,'
-                + 'Contract_Start_Date__c,'
-                + 'Contract_Status__c,'
-                + 'Contract_Total__c,'
-                + 'CPQ_Playbook__c,'
-                + 'CPQ_Playbook__r.Pricebook__c,'
-                + 'Opportunity__c,'
-                + 'Opportunity__r.Name,'
-                + 'Quote__c,'
-                + (System.UserInfo.isMultiCurrencyOrganization() == true ? 'CurrencyIsoCode,' : '')
-                + '('
+                + contractFields
+                + ',('
                     + 'SELECT '
                         + 'Id,'
                         + 'CPQ_Playbook_Question__c,'
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,'
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
+                        + 'Selected_Records_String__c,'
                         + 'Value_Boolean__c,'
                         + 'Value_Currency__c,'
                         + 'Value_Date__c,'
@@ -1117,6 +1171,89 @@ public with sharing class cpq_ConfigQuoteClass {
         insert approvers;
 
         return quoteToSave.Id;
+    }
+
+    /**
+    * @description Query records from query string
+    * @param question CPQ_Playbook_Question__c record
+    * @return sObject records and column info
+    */
+    @AuraEnabled
+    public static QueryInfo queryLookupQuestion(CPQ_Playbook_Question__c question) {
+
+        QueryInfo returnQueryInfo = new QueryInfo();
+        returnQueryInfo.records = new List<sObject>();
+
+        // Query records
+        String queryString = question.Query_String__c;
+        returnQueryInfo.records = Database.query(queryString);
+
+        // Get columns (if necessary)
+        String recordColumns = question.Record_Display_Fields__c;
+        returnQueryInfo.columns = new List<RecordColumn>();
+
+        // Extract Object name from query string
+        String objectName = queryString.toLowerCase().split('from')[1].split(' ')[1];
+
+        // Describe objects
+        SObjectType objType = ((SObject)(Type.forName('Schema.' + objectName).newInstance())).getSObjectType();
+        DescribeSObjectResult obj = objType.getDescribe();
+
+        // Evaluate Record Columns
+        for (String field : recordColumns.split(';')) {
+            
+            // Valid Quote field
+            if (obj.fields
+                .getMap()
+                .containsKey(field)
+            ) {
+                RecordColumn newCol = new RecordColumn();
+                newCol.label = obj.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getLabel();
+                newCol.field = field;
+                Schema.DisplayType fieldType = obj.fields
+                    .getMap()
+                    .get(field)
+                    .getDescribe()
+                    .getType();
+
+                if (fieldType == Schema.DisplayType.Boolean) {
+                    newCol.type = 'Boolean';
+                }
+                else if (fieldType == Schema.DisplayType.Currency) {
+                    newCol.type = 'Currency';
+                }
+                else if (fieldType == Schema.DisplayType.Date ||
+                    fieldType == Schema.DisplayType.DateTime
+                ) {
+                    newCol.type = 'Date';
+                }
+                else if (fieldType == Schema.DisplayType.Double ||
+                    fieldType == Schema.DisplayType.Integer ||
+                    fieldType == Schema.DisplayType.Long
+                ) {
+                    newCol.type = 'Number';
+                }
+                else if (fieldType == Schema.DisplayType.Percent) {
+                    newCol.type = 'Percent';
+                }
+                else {
+                    newCol.type = 'Text';
+                }
+
+                returnQueryInfo.columns.add(newCol);
+            }
+        }
+
+        return returnQueryInfo;
+    }
+
+    public class QueryInfo {
+        @AuraEnabled public List<sObject> records;
+        @AuraEnabled public List<RecordColumn> columns;
     }
 }
     

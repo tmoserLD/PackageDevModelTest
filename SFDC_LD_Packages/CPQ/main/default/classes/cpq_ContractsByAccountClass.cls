@@ -180,6 +180,7 @@ public with sharing class cpq_ContractsByAccountClass {
                         + 'CPQ_Playbook_Question__c, '
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c, '
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c, '
+                        + 'Selected_Records_String__c,'
                         + 'Value_Boolean__c, '
                         + 'Value_Currency__c, '
                         + 'Value_Date__c, '

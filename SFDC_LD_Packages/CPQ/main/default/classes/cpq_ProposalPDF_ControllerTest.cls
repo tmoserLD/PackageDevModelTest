@@ -340,7 +340,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 1,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -350,9 +349,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = null,
                 IsActive__c = true,
                 Name = 'Section 1',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = null,
-                Record_Table_Where_Clause__c = null,
+                Record_Table_Query__c = null,
                 Section_Type__c = 'Text - 3 columns',
                 Table_Entries_Font_Color__c = null,
                 Table_Entries_Font_Size__c = null,
@@ -370,7 +367,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 2,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -380,9 +376,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = null,
                 IsActive__c = true,
                 Name = 'Section 2',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = null,
-                Record_Table_Where_Clause__c = null,
+                Record_Table_Query__c = null,
                 Section_Type__c = 'Image and Text - 2 columns (1:3)',
                 Table_Entries_Font_Color__c = null,
                 Table_Entries_Font_Size__c = null,
@@ -400,7 +394,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 3,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -410,10 +403,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = null,
                 IsActive__c = true,
                 Name = 'Section 3',
-                Product_Table_QLI_Fields__c = 'Quantity__c;End_Date__c;Discount__c;List_Price__c;Product_Name__c',
-                Record_Table_Order_By_Clause__c = 'Product_Name__c',
-                Record_Table_Where_Clause__c = 'Quantity__c > 0',
-                Section_Type__c = 'Product Table',
+                Record_Table_Query__c = 'SELECT Id,Quantity__c,End_Date__c,Discount__c,List_Price__c,Product_Name__c FROM QuoteLineItem WHERE QuoteId=:quoteRecordId AND Quantity__c > 0',
+                Section_Type__c = 'Record Table',
                 Table_Entries_Font_Color__c = 'blue',
                 Table_Entries_Font_Size__c = '12px',
                 Table_Headers_Font_Color__c = 'green',
@@ -430,7 +421,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 4,
-                Entitlement_Table_Fields__c = 'Quantity__c;End_Date__c;Discount__c;List_Price__c;Product_Name__c',
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -440,10 +430,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = null,
                 IsActive__c = true,
                 Name = 'Section 4',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = 'Product_Name__c',
-                Record_Table_Where_Clause__c = 'Quantity__c > 0',
-                Section_Type__c = 'Entitlement Table',
+                Record_Table_Query__c = 'SELECT Id,Quantity__c,End_Date__c,Discount__c,List_Price__c,Product_Name__c FROM Contract_Entitlement__c WHERE Contract__r.Quote__c=:quoteRecordId AND Quantity__c > 0',
+                Section_Type__c = 'Record Table',
                 Table_Entries_Font_Color__c = 'blue',
                 Table_Entries_Font_Size__c = '12px',
                 Table_Headers_Font_Color__c = 'green',
@@ -460,7 +448,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 5,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -470,9 +457,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = null,
                 IsActive__c = true,
                 Name = 'Section 5',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = null,
-                Record_Table_Where_Clause__c = null,
+                Record_Table_Query__c = null,
                 Section_Type__c = 'Answer Table - 2 columns',
                 Table_Entries_Font_Color__c = 'blue',
                 Table_Entries_Font_Size__c = '12px',
@@ -490,7 +475,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 6,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = 'Name;Signature',
@@ -500,9 +484,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = '12px',
                 IsActive__c = true,
                 Name = 'Section 6',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = null,
-                Record_Table_Where_Clause__c = null,
+                Record_Table_Query__c = null,
                 Section_Type__c = 'User Input - 3 columns',
                 Table_Entries_Font_Color__c = null,
                 Table_Entries_Font_Size__c = null,
@@ -520,7 +502,6 @@ public class cpq_ProposalPDF_ControllerTest {
                 Body_Text_Block_3__c = 'Block 3 Text',
                 CPQ_Playbook__c = testPlaybooks[0].Id,
                 Display_Order__c = 7,
-                Entitlement_Table_Fields__c = null,
                 Force_Page_Break_After__c = false,
                 Force_Page_Break_Before__c = false,
                 Inputs_Column_1__c = null,
@@ -530,9 +511,7 @@ public class cpq_ProposalPDF_ControllerTest {
                 Inputs_Font_Size__c = '12px',
                 IsActive__c = true,
                 Name = 'Section 7',
-                Product_Table_QLI_Fields__c = null,
-                Record_Table_Order_By_Clause__c = null,
-                Record_Table_Where_Clause__c = null,
+                Record_Table_Query__c = null,
                 Section_Type__c = 'User Input - 3 columns',
                 Table_Entries_Font_Color__c = null,
                 Table_Entries_Font_Size__c = null,
@@ -805,7 +784,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 2',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Quantity',
+                Product_Field__c = 'Quantity__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -829,7 +809,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 3',
                 Product__c = testProducts[1].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Discount',
+                Product_Field__c = 'Discount__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -852,7 +833,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[2].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Unit Price',
+                Product_Field__c = 'Unit_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -875,7 +857,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[3].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'List Price',
+                Product_Field__c = 'List_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -898,7 +881,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Total Price',
+                Product_Field__c = 'Total_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -921,7 +905,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Start Date',
+                Product_Field__c = 'Start_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -944,7 +929,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'End Date',
+                Product_Field__c = 'End_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -955,8 +941,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Comparison_Value_Boolean__c = true,
                 Comparison_Value_Currency__c = null,
                 Comparison_Value_Date__c = null,
-                Comparison_Value_Decimal__c = null,
-                Comparison_Value_Integer__c = 45,
+                Comparison_Value_Decimal__c = 45,
+                Comparison_Value_Integer__c = null,
                 Comparison_Value_Text__c = null,
                 CPQ_Playbook_Question__c = null,
                 CPQ_Playbook_Proposal_Criteria_Group__c = testProposalCriteriaGroups[9].Id,
@@ -967,7 +953,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 1',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Quantity',
+                Product_Field__c = 'Quantity__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -989,7 +976,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 2',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Discount',
+                Product_Field__c = 'Discount__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1011,7 +999,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 3',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Unit Price',
+                Product_Field__c = 'Unit_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1033,7 +1022,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 4',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'List Price',
+                Product_Field__c = 'List_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1055,7 +1045,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 5',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Total Price',
+                Product_Field__c = 'Total_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1077,7 +1068,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 6',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Start Date',
+                Product_Field__c = 'Start_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1099,7 +1091,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Name = 'Criterion 7',
                 Product__c = testProducts[0].Id,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'End Date',
+                Product_Field__c = 'End_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1109,8 +1102,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Comparison_Value_Boolean__c = true,
                 Comparison_Value_Currency__c = null,
                 Comparison_Value_Date__c = null,
-                Comparison_Value_Decimal__c = null,
-                Comparison_Value_Integer__c = 45,
+                Comparison_Value_Decimal__c = 45,
+                Comparison_Value_Integer__c = null,
                 Comparison_Value_Text__c = null,
                 CPQ_Playbook_Question__c = null,
                 CPQ_Playbook_Proposal_Criteria_Group__c = testProposalCriteriaGroups[9].Id,
@@ -1122,7 +1115,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Quantity',
+                Product_Field__c = 'Quantity__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1145,7 +1139,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Discount',
+                Product_Field__c = 'Discount__c',
+                Product_Field_Type__c = 'Decimal',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1168,7 +1163,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Unit Price',
+                Product_Field__c = 'Unit_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1191,7 +1187,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'List Price',
+                Product_Field__c = 'List_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1214,7 +1211,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Total Price',
+                Product_Field__c = 'Total_Price__c',
+                Product_Field_Type__c = 'Currency',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1237,7 +1235,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'Start Date',
+                Product_Field__c = 'Start_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1260,7 +1259,8 @@ public class cpq_ProposalPDF_ControllerTest {
                 Product__c = testProducts[0].Id,
                 Product_Is_Entitlement__c = true,
                 Product_Criterion_Target_Rule_Action__c = null,
-                Product_Field__c = 'End Date',
+                Product_Field__c = 'End_Date__c',
+                Product_Field_Type__c = 'Date',
                 Target_Manual_Addition_Only__c = true
             )
         );
@@ -1740,7 +1740,8 @@ public class cpq_ProposalPDF_ControllerTest {
         CPQ_Playbook_Proposal_Section__c testSection = [
             SELECT Id
             FROM CPQ_Playbook_Proposal_Section__c
-            WHERE Section_Type__c = 'Product Table'
+            WHERE Section_Type__c = 'Record Table' AND
+                Name = 'Section 3'
         ];
 
         List<QuoteLineItem> testQLIs = [
@@ -1790,7 +1791,8 @@ public class cpq_ProposalPDF_ControllerTest {
         CPQ_Playbook_Proposal_Section__c testSection = [
             SELECT Id
             FROM CPQ_Playbook_Proposal_Section__c
-            WHERE Section_Type__c = 'Product Table'
+            WHERE Section_Type__c = 'Record Table' AND
+                Name = 'Section 3'
         ];
 
         List<QuoteLineItem> testQLIs = [
@@ -1842,7 +1844,8 @@ public class cpq_ProposalPDF_ControllerTest {
         CPQ_Playbook_Proposal_Section__c testSection = [
             SELECT Id
             FROM CPQ_Playbook_Proposal_Section__c
-            WHERE Section_Type__c = 'Entitlement Table'
+            WHERE Section_Type__c = 'Record Table' AND
+                Name = 'Section 4'
         ];
 
         List<QuoteLineItem> testQLIs = [
@@ -1892,7 +1895,8 @@ public class cpq_ProposalPDF_ControllerTest {
         CPQ_Playbook_Proposal_Section__c testSection = [
             SELECT Id
             FROM CPQ_Playbook_Proposal_Section__c
-            WHERE Section_Type__c = 'Entitlement Table'
+            WHERE Section_Type__c = 'Record Table' AND
+                Name = 'Section 4'
         ];
 
         List<QuoteLineItem> testQLIs = [

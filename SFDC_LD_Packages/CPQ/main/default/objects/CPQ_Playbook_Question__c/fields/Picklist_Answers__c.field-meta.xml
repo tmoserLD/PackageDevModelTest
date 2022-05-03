@@ -3,7 +3,7 @@
     <fullName>Picklist_Answers__c</fullName>
     <description>Semi-colon delineated list of answer choices when Answer Type is Picklist or Multi-Select Picklist</description>
     <externalId>false</externalId>
-    <inlineHelpText>Semi-colon delineated list of answer choices</inlineHelpText>
+    <inlineHelpText>List of answer choices</inlineHelpText>
     <label>Picklist Answers</label>
     <length>1000</length>
     <trackTrending>false</trackTrending>

@@ -74,7 +74,7 @@ public class OppContractTest {
         testPlaybooks.add(
             new CPQ_Playbook__c(
                 Default_Term_in_Months__c = 12,
-                Entitlement_Summary_Columns__c = 'Quantity;End_Date',
+                Entitlement_Summary_Columns__c = 'Quantity__c;End_Date__c',
                 IsActive__c = true,
                 Label__c = 'Playbook 1',
                 Name = 'Playbook 1',

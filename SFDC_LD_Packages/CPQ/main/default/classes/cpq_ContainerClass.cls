@@ -98,6 +98,7 @@ public with sharing class cpq_ContainerClass {
                         + 'CPQ_Playbook_Question__c,'
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,'
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
+                        + 'Selected_Records_String__c,'
                         + 'Value_Boolean__c,'
                         + 'Value_Currency__c,'
                         + 'Value_Date__c,'
@@ -124,6 +125,7 @@ public with sharing class cpq_ContainerClass {
                         + 'CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__r.CPQ_Playbook__c,'
                         + 'HasBeenTouched__c,'
                         + 'Quote__c,'
+                        + 'Selected_Records_String__c,'
                         + 'Value_Boolean__c,'
                         + 'Value_Currency__c,'
                         + 'Value_Date__c,'
@@ -338,7 +340,7 @@ public with sharing class cpq_ContainerClass {
                 Default_Field_Value__c != null
         ]) {
             // Valid field values are formatted as obj.field
-            if (question.Default_Field_Value__c.split('\\.').size() > 0) {
+            if (question.Default_Field_Value__c.split('\\.').size() == 2) {
 
                 String obj = question.Default_Field_Value__c.split('\\.')[0];
                 String field = question.Default_Field_Value__c.split('\\.')[1];
@@ -349,6 +351,7 @@ public with sharing class cpq_ContainerClass {
                     // Base level queries: Quote, Opportunity, User
                     if (obj == 'Quote' ||
                         obj == 'Opportunity' ||
+                        obj == 'Contract' ||
                         obj == 'User'
                     ) {
                         objFieldSets.get(obj).add(field);
@@ -782,6 +785,7 @@ public with sharing class cpq_ContainerClass {
                 CPQ_Playbook_Question__c,
                 HasBeenTouched__c,
                 Quote__c,
+                Selected_Records_String__c,
                 Value_Boolean__c,
                 Value_Currency__c,
                 Value_Date__c,

@@ -522,48 +522,13 @@
                     <!-- Col 1 -->
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
 
-                        <!-- Table QLI Fields -->
-                        <template if:true={showQLITable}>
-                            <c-list-generator
-                                label="Product Table (QLI) Fields"
-                                order-label-title="Adjust Product QLI Fields Order"
-                                placeholder="Enter desired QLI Field API name"
-                                help-text="List of QLI API names to display in product table section"
-                                initial-options={qliColumns}
-                                initial-options-source="Semicolon delineated"
-                                onupdate={qliColumnsChange}
+                        <!-- Record Table Query -->
+                        <template if:true={showRecordTable}>
+                            <lightning-input-field
+                                field-name="Record_Table_Query__c"
+                                required="true"
                             >
-                            </c-list-generator>
-                            <div style="display:none">
-                                <lightning-input-field
-                                    field-name="Product_Table_QLI_Fields__c"
-                                    value={qliColumns}
-                                    required="true"
-                                >
-                                </lightning-input-field>
-                            </div>
-                        </template>
-
-                        <!-- Table Ent Fields -->
-                        <template if:true={showEntTable}>
-                            <c-list-generator
-                                label="Entitlement Table Fields"
-                                order-label-title="Adjust Entitlement Fields Order"
-                                placeholder="Enter desired Entitlement Field API name"
-                                help-text="List of Contract_Entitlement__c API names to display in entitlement table section"
-                                initial-options={entColumns}
-                                initial-options-source="Semicolon delineated"
-                                onupdate={entColumnsChange}
-                            >
-                            </c-list-generator>
-                            <div style="display:none">
-                                <lightning-input-field
-                                    field-name="Entitlement_Table_Fields__c"
-                                    value={entColumns}
-                                    required="true"
-                                >
-                                </lightning-input-field>
-                            </div>
+                            </lightning-input-field>
                         </template>
 
                         <!-- Answer Table Questions -->
@@ -586,34 +551,6 @@
                                 >
                                 </lightning-input-field>
                             </div>
-                        </template>
-                    </div>
-
-                    <!-- Col 2 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                        <!-- Record WHERE clause -->
-                        <template if:true={showRecordTable}>
-                            <lightning-input-field
-                                field-name="Record_Table_Where_Clause__c"
-                            >
-                            </lightning-input-field>
-                        </template>
-                    </div>
-                </div>
-
-                <!-- Row 12 -->
-                <div class="slds-col slds-grid slds-wrap">
-
-                    <!-- Col 1 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                        <!-- Record ORDER BY clause -->
-                        <template if:true={showRecordTable}>
-                            <lightning-input-field
-                                field-name="Record_Table_Order_By_Clause__c"
-                            >
-                            </lightning-input-field>
                         </template>
                     </div>
 

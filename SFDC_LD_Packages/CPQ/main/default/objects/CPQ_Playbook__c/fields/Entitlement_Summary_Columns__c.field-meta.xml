@@ -3,7 +3,7 @@
     <fullName>Entitlement_Summary_Columns__c</fullName>
     <description>Semicolon delineated list of field API names on the Contract_Entitlement__c object to be shown in the Entitlement Summary view in CPQ. Any Contract_Entitlement__c Custom Field API names are supported.</description>
     <externalId>false</externalId>
-    <inlineHelpText>Semicolon delineated list of field API names on the Contract_Entitlement__c object to be shown in the Entitlement Summary view in CPQ. Any Contract_Entitlement__c Custom Field API names are supported.</inlineHelpText>
+    <inlineHelpText>List of field API names on the Contract_Entitlement__c object to be shown in the Entitlement Summary view in CPQ. Any Contract_Entitlement__c Custom Field API names are supported.</inlineHelpText>
     <label>Entitlement Summary Columns</label>
     <length>255</length>
     <required>false</required>

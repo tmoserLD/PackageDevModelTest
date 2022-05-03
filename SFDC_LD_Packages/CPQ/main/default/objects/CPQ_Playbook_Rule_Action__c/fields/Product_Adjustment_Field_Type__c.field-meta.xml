@@ -23,39 +23,19 @@
                 <label>Currency</label>
             </value>
             <value>
+                <fullName>Date</fullName>
+                <default>false</default>
+                <label>Date</label>
+            </value>
+            <value>
                 <fullName>Decimal</fullName>
                 <default>false</default>
                 <label>Decimal</label>
             </value>
             <value>
-                <fullName>Integer</fullName>
-                <default>false</default>
-                <label>Integer</label>
-            </value>
-            <value>
-                <fullName>Multi-Select Picklist</fullName>
-                <default>false</default>
-                <label>Multi-Select Picklist</label>
-            </value>
-            <value>
-                <fullName>Picklist</fullName>
-                <default>false</default>
-                <label>Picklist</label>
-            </value>
-            <value>
                 <fullName>Text</fullName>
                 <default>false</default>
                 <label>Text</label>
-            </value>
-            <value>
-                <fullName>Text Area</fullName>
-                <default>false</default>
-                <label>Text Area</label>
-            </value>
-            <value>
-                <fullName>Date</fullName>
-                <default>false</default>
-                <label>Date</label>
             </value>
         </valueSetDefinition>
     </valueSet>

@@ -8,6 +8,9 @@ import deleteRecords from '@salesforce/apex/cpq_AdminContainerClass.deleteRecord
 
 // Get Question Type Method
 import getQuestionType from '@salesforce/apex/cpq_AdminContainerClass.getQuestionType';
+
+// Get Product Field Type Method
+import getFieldType from '@salesforce/apex/cpq_AdminContainerClass.getFieldType';
 export default class Cpq_AdminProposalCriterionForm extends LightningElement {
 
     // Button Label
@@ -28,6 +31,9 @@ export default class Cpq_AdminProposalCriterionForm extends LightningElement {
     // Spinner
     @track loading = false;
 
+    // Question Id
+    @track questionId;
+
     // Question Type
     @track questionType;
 
@@ -35,7 +41,13 @@ export default class Cpq_AdminProposalCriterionForm extends LightningElement {
     @track source;
 
     // Product Field
-    @track prodField;
+    @track productField;
+
+    // Product Field Type
+    @track productFieldType;
+
+    // Product is Entitlement value
+    @track entitlementValue;
 
     // Manual target
     @track manualTarget = false;
@@ -53,10 +65,13 @@ export default class Cpq_AdminProposalCriterionForm extends LightningElement {
         if (this.criterion !== undefined) {
             this.evalLogic = this.criterion.criterionInfo.Evaluation_Logic__c;
             this.source = this.criterion.criterionInfo.Criterion_Source__c;
+            this.questionId = this.criterion.criterionInfo.CPQ_Playbook_Question__c;
             if (this.criterion.criterionInfo.CPQ_Playbook_Question__c !== undefined) {
                 this.questionType = this.criterion.criterionInfo.CPQ_Playbook_Question__r.Answer_Type__c;
             }
-            this.prodField = this.criterion.criterionInfo.Product_Field__c;
+            this.productField = this.criterion.criterionInfo.Product_Field__c;
+            this.productFieldType = this.criterion.criterionInfo.Product_Field_Type__c;
+            this.entitlementValue = this.criterion.criterionInfo.Product_Is_Entitlement__c;
             this.manualTarget = this.criterion.criterionInfo.Target_Manual_Addition_Only__c;
         }
     }
@@ -90,32 +105,32 @@ export default class Cpq_AdminProposalCriterionForm extends LightningElement {
     // Question Types
     // Boolean input type
     get isBoolean() {
-        return this.questionType === 'Boolean';
+        return (this.questionType === 'Boolean' || this.productFieldType === 'Boolean');
     }
 
     // Currency input type
     get isCurrency() {
-        return (this.questionType === 'Currency' || ['List Price', 'Unit Price', 'Total Price'].includes(this.prodField));
+        return (this.questionType === 'Currency' || this.productFieldType === 'Currency');
     }
 
     // Date input type
     get isDate() {
-        return (this.questionType === 'Date' || ['Start Date', 'End Date'].includes(this.prodField));
+        return (this.questionType === 'Date' || this.productFieldType === 'Date');
     }
 
     // Decimal input type
     get isDecimal() {
-        return (this.questionType === 'Decimal' || ['Discount'].includes(this.prodField));
+        return (this.questionType === 'Decimal' || this.productFieldType === 'Decimal');
     }
 
     // Integer input type
     get isInteger() {
-        return (this.questionType === 'Integer' || ['Quantity'].includes(this.prodField));
+        return (this.questionType === 'Integer' || this.productFieldType === 'Integer');
     }
 
     // Text input type
     get isText() {
-        return ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.questionType);
+        return (['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.questionType) || this.productFieldType === 'Text');
     }
 
     // Evaluation Logic Change
@@ -290,23 +305,72 @@ export default class Cpq_AdminProposalCriterionForm extends LightningElement {
     }
 
     // Product Field changed
-    prodFieldChange(event) {
-        this.prodField = event.target.value;
+    async prodFieldChange(event) {
+        this.productField = event.target.value;
+
+        if (event.target.value !== undefined &&
+            event.target.value !== null &&
+            event.target.value !== ''    
+        ) {
+            this.loading = true;
+            try {
+                this.productFieldType = await getFieldType({
+                    field: this.productField,
+                    objectName: this.entitlementValue === true ? 'Contract_Entitlement__c' : 'QuoteLineItem'
+                });
+            } catch (e) {
+                this.template.querySelector('c-error-modal').showError(
+                    {
+                        title: 'An error occurred while trying to retrieve the new product field type',
+                        body: JSON.stringify(e),
+                        forceRefresh: false
+                    }
+                );
+            }
+            this.loading = false;
+        } else {
+            this.productFieldType = undefined;
+        }
+    }
+
+    // Entitlement change
+    entitlementChange(event) {
+        this.entitlementValue = event.target.value;
+
+        this.prodFieldChange(
+            {
+                target: {
+                    value: this.productField
+                }
+            }
+        );
     }
 
     // Source Changed
     sourceChange(event) {
         this.source = event.target.value;
         if (this.source !== 'Question') {
+            this.questionId = undefined;
             this.questionType = undefined;
+        } else {
+            if (this.criterion !== undefined) {
+                this.questionId = this.criterion.criterionInfo.CPQ_Playbook_Question__c;
+                this.questionType = this.criterion.criterionInfo.CPQ_Playbook_Question__r?.Answer_Type__c;
+            }
         }
         if (this.source !== 'Product') {
-            this.prodField = undefined;
+            this.productFieldType = undefined;
+        } else {
+            if (this.criterion !== undefined) {
+                this.productFieldType = this.criterion.criterionInfo.Product_Field_Type__c;
+            }
         }
     }
 
     // Question Changed
     async questionChange(event) {
+        this.questionId = event.target.value;
+
         if (event.target.value !== undefined &&
             event.target.value !== null &&
             event.target.value !== ''    

@@ -60,6 +60,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook_Answer__c.Selected_Records_String__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook_Answer__c.Value_Boolean__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -160,6 +165,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook_Approval_Criterion__c.Product_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook_Approval_Criterion__c.Product_Is_Entitlement__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -176,6 +186,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook_Approval_Criterion__c.Target_Manual_Addition_Only__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Approval_Criterion__c.Record_Lookup_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Approval_Criterion__c.Record_Lookup_Field__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -280,6 +300,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook_Proposal_Criterion__c.Product_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook_Proposal_Criterion__c.Product_Is_Entitlement__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -316,11 +341,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook_Proposal_Section__c.Body_Text_Block_3__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>CPQ_Playbook_Proposal_Section__c.Entitlement_Table_Fields__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -365,17 +385,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CPQ_Playbook_Proposal_Section__c.Product_Table_QLI_Fields__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>CPQ_Playbook_Proposal_Section__c.Record_Table_Order_By_Clause__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>CPQ_Playbook_Proposal_Section__c.Record_Table_Where_Clause__c</field>
+        <field>CPQ_Playbook_Proposal_Section__c.Record_Table_Query__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -506,6 +516,26 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook_Question__c.Step_Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Question__c.Maximum_Record_Selections__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Question__c.Query_String__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Question__c.Record_Display_Fields__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Question__c.Record_Selection_Behavior__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -665,6 +695,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Calculation_Item__c.Product_Calculation_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook_Rule_Calculation_Item__c.Product_Calculation_Target_Rule_Action__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -711,6 +746,21 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook_Rule_Calculation_Item__c.Static_Value_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Calculation_Item__c.Record_Lookup_Behavior__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Calculation_Item__c.Record_Lookup_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Calculation_Item__c.Record_Lookup_Field_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -785,6 +835,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Criterion__c.Product_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook_Rule_Criterion__c.Product_Is_Entitlement__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -801,6 +856,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook_Rule_Criterion__c.Target_Manual_Addition_Only__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Criterion__c.Record_Lookup_Field_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook_Rule_Criterion__c.Record_Lookup_Field__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -851,6 +916,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook__c.Proposal_Header__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook__c.Quote_View_Display_Fields__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook__c.Contract_View_Display_Fields__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1061,6 +1136,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contract_Entitlement__c.Unit_Price__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contract_Playbook_Answer__c.Selected_Records_String__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -2,6 +2,12 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteEntitlementSummary extends LightningElement {
 
+    // Contract Currency
+    @api contractCurrency;
+
+    // Currency Conversion Map
+    @api currencyMap = {};
+
     // Entitlements from contract being adjusted
     @api entitlements = [];
 
@@ -108,8 +114,8 @@ export default class CPQ_QuoteEntitlementSummary extends LightningElement {
     get totalPrice() {
         let totalPrice = 0;
         this.entitlements.forEach(function(ent) {
-            totalPrice += (ent.Unit_Price__c * ent.Quantity__c);
-        });
+            totalPrice += this.convertCurrency((ent.Unit_Price__c * ent.Quantity__c), this.contractCurrency, this.oppCurrency);
+        }, this);
         return totalPrice;
     }
 
@@ -142,5 +148,16 @@ export default class CPQ_QuoteEntitlementSummary extends LightningElement {
                 sort: 'Up'
             };
         }
+    }
+
+    // Currency Conversion
+    convertCurrency(value, fromISO, toISO) {
+        let rate = 1;
+        if (this.currencyMap[toISO] !== undefined &&
+            this.currencyMap[fromISO] !== undefined
+        ) {
+            this.currencyMap[toISO] / this.currencyMap[fromISO]
+        }
+        return value * rate;
     }
 }

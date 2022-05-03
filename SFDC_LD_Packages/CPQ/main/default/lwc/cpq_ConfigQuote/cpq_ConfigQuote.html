@@ -18,6 +18,7 @@
                 <c-cpq_-config-quote-buttons
                     config-type={configType}
                     existing-quote-data={existingQuoteData}
+                    is-c-p-q-admin={isCPQAdmin}
                     opp-info={oppInfo}
                     playbooks={playbooks}
                     quote-approvals={quoteApprovals}
@@ -27,6 +28,7 @@
                     selected-pricebook={selectedPricebook}
                     oncancelevent={cancel}
                     onsaveevent={save}
+                    onconfigtypeupdate={configTypeUpdate}
                 >
                 </c-cpq_-config-quote-buttons>
             </div>
@@ -81,38 +83,22 @@
 
             </div>
 
-            <div class="slds-col slds-grid slds-gutters slds-m-top_x-small">
-
-                <!-- Start Date -->
-                <div class="slds-col slds-size_1-of-2">
-                    <lightning-input
-                        type="date"
-                        label="StartDate"
-                        readonly="true"
-                        value={quoteStartDate}
-                        onchange={startDateChange}
-                    >
-                    </lightning-input>
-                </div>
-
-                <!-- End Date -->
-                <div class="slds-col slds-size_1-of-2">
-                    <lightning-input
-                        type="date"
-                        label="EndDate"
-                        readonly="true"
-                        value={quoteEndDate}
-                        onchange={endDateChange}
-                    >
-                    </lightning-input>
-                </div>
-
-            </div>
+            <c-cpq_-playbook-view-fields
+                config-type={configType}
+                contract-id={existingQuoteData.contractId}
+                playbook={selectedPlaybookObj}
+                quote-end-date={quoteEndDate}
+                quote-start-date={quoteStartDate}
+                quote-id={existingQuoteData.Id}
+            >
+            </c-cpq_-playbook-view-fields>
 
             <template if:true={playbookSelected}>
                 <c-cpq_-playbook
                     playbook={selectedPlaybookObj}
                     config-type={configType}
+                    contract-currency={contractCurrency}
+                    currency-map={currencyMap}
                     pricebook={selectedPricebook}
                     product-columns={productColumns}
                     entitlement-columns={entitlementColumns}

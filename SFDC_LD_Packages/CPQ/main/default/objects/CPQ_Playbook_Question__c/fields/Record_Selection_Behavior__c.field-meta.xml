@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Record_Selection_Behavior__c</fullName>
+    <description>Record selection behavior utilized for this record lookup question.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Record selection behavior utilized for this record lookup question. &apos;Automatic Record Selection&apos;: All records returned (up to maximum if applicable) are automatically selected upon load and whenever the query string is dynamically adjusted.</inlineHelpText>
+    <label>Record Selection Behavor</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Automatic Record Selection (No Deselection)</fullName>
+                <default>false</default>
+                <label>Automatic Record Selection (No Deselection)</label>
+            </value>
+            <value>
+                <fullName>Automatic Record Selection (With Deselection)</fullName>
+                <default>false</default>
+                <label>Automatic Record Selection (With Deselection)</label>
+            </value>
+            <value>
+                <fullName>Manual Record Selection</fullName>
+                <default>false</default>
+                <label>Manual Record Selection</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

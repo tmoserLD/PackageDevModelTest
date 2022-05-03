@@ -56,7 +56,7 @@
 
                 <div class="slds-col slds-grid">
                     <div
-                        class="slds-col slds-size_5-of-6 slds-medium-size_11-of-12 slds-large-size_11-of-12 slds-grid_vertical scroll-shadows"
+                        class="slds-col slds-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_12-of-12 slds-grid_vertical scroll-shadows"
                         style="overflow:scroll;"
                     >
                         <!-- Table Header -->
@@ -133,6 +133,8 @@
                                 <div key={ent.Id}>
                                     <c-cpq_-quote-entitlement
                                         columns-to-display={columnsToDisplay}
+                                        contract-currency={contractCurrency}
+                                        currency-map={currencyMap}
                                         entitlement={ent}
                                         opp-currency={oppCurrency}
                                         sorted-entitlements={sortedEntitlements}

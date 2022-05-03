@@ -120,7 +120,7 @@ public class cpq_ConfigQuoteClassTest {
                 new CPQ_Playbook_Question__c(
                     Answer_Type__c = 'Text',
                     CPQ_Playbook_Question_Group__c = testQuestionGroups[i].Id,
-                    Default_Field_Value__c = 'Account.Name',
+                    Default_Field_Value__c = i < 1 ? 'Account.Name' : 'Contract.ContractNumber',
                     Default_Value_Boolean__c = false,
                     Default_Value_Currency__c = 0,
                     Default_Value_Date__c = Date.today(),
@@ -387,7 +387,6 @@ public class cpq_ConfigQuoteClassTest {
                     Body_Text_Block_3__c = null,
                     CPQ_Playbook__c = testPlaybooks[i].Id,
                     Display_Order__c = i,
-                    Entitlement_Table_Fields__c = null,
                     Force_Page_Break_After__c = false,
                     Force_Page_Break_Before__c = false,
                     Inputs_Column_1__c = null,
@@ -397,9 +396,7 @@ public class cpq_ConfigQuoteClassTest {
                     Inputs_Font_Size__c = null,
                     IsActive__c = true,
                     Name = 'Section ' + i,
-                    Product_Table_QLI_Fields__c = null,
-                    Record_Table_Order_By_Clause__c = null,
-                    Record_Table_Where_Clause__c = null,
+                    Record_Table_Query__c = null,
                     Section_Type__c = 'Text - 1 column',
                     Table_Entries_Font_Color__c = null,
                     Table_Entries_Font_Size__c = null,
@@ -497,7 +494,7 @@ public class cpq_ConfigQuoteClassTest {
         Test.startTest();
 
         configData = cpq_ConfigQuoteClass.getConfigInfo(testContract.Id, false);
-        List<cpq_ConfigQuoteClass.ProductColumn> emptyProductColumnList = new List<cpq_ConfigQuoteClass.ProductColumn>();
+        List<cpq_ConfigQuoteClass.RecordColumn> emptyProductColumnList = new List<cpq_ConfigQuoteClass.RecordColumn>();
         for (cpq_ConfigQuoteClass.PlaybookInfo playbook : configData.playbooks) {
             System.assert(playbook.entitlementColumns.size() > 0);
         }
@@ -535,7 +532,25 @@ public class cpq_ConfigQuoteClassTest {
 
         Test.startTest();
 
-        contractData = cpq_ConfigQuoteClass.getContractInfo(testContract.Id, 'Quantity__c,Start_Date__c,End_Date__c,Discount__c,List_Price__c,Product_Name__c');
+        contractData = cpq_ConfigQuoteClass.getContractInfo(testContract.Id, 'Id, Contract_Start_Date__c', 'Quantity__c,Start_Date__c,End_Date__c,Discount__c,List_Price__c,Product_Name__c');
+
+        Test.stopTest();
+    }
+
+    /**
+     * @description Test to verify Record Lookup Question queries successfully
+     **/
+    @isTest
+    public static void testQueryQuestion() {
+
+        CPQ_Playbook_Question__c question = new CPQ_Playbook_Question__c(
+            Query_String__c = 'SELECT Id,Default_Value_Boolean__c,Default_Value_Decimal__c,Default_Value_Date__c,Default_Value_Currency__c,Default_Value_Text__c FROM CPQ_Playbook_Question__c',
+            Record_Display_Fields__c = 'Default_Value_Boolean__c;Default_Value_Decimal__c;Default_Value_Date__c;Default_Value_Currency__c;Default_Value_Text__c'
+        );
+
+        Test.startTest();
+
+        cpq_ConfigQuoteClass.QueryInfo queryData = cpq_ConfigQuoteClass.queryLookupQuestion(question);
 
         Test.stopTest();
     }

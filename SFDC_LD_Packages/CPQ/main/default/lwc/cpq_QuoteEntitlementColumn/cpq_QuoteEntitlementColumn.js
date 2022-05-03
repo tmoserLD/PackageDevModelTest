@@ -2,53 +2,76 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteEntitlementColumn extends LightningElement {
 
-   // Column
-   @api column;
+    // Column
+    @api column;
 
-   // Entitlement
-   @api entitlement;
+    // Contract Currency
+    @api contractCurrency;
 
-   // Opportunity Currency Iso Code
-   @api oppCurrency;
+    // Currency Conversion Map
+    @api currencyMap = {};
 
-   // Quantity
-   get isQuantity() {
-       return this.column.field === 'Quantity';
-   }
+    // Entitlement
+    @api entitlement;
 
-   // Value
-   get value() {
-       return this.entitlement[this.column.field];
-   }
+    // Opportunity Currency Iso Code
+    @api oppCurrency;
 
-   // Boolean type
-   get isBoolean() {
-       return this.column.type === 'Boolean';
-   }
+    // Quantity
+    get isQuantity() {
+        return this.column.field === 'Quantity';
+    }
 
-   // Currency type
-   get isCurrency() {
-       return this.column.type === 'Currency';
-   }
+    // Value
+    get value() {
+        let val = this.entitlement[this.column.field];
+        if (val !== undefined &&
+            val !== null &&
+            this.column.type === 'Currency'    
+        ) {
+            val = this.convertCurrency(val, this.contractCurrency, this.oppCurrency);
+        }
+        return val;
+    }
 
-   // Date type
-   get isDate() {
-       return this.column.type === 'Date';
-   }
+    // Boolean type
+    get isBoolean() {
+        return this.column.type === 'Boolean';
+    }
 
-   // Number type
-   get isNumber() {
-       return this.column.type === 'Number';
-   }
+    // Currency type
+    get isCurrency() {
+        return this.column.type === 'Currency';
+    }
 
-   // Percent type
-   get isPercent() {
-       return this.column.type === 'Percent';
-   }
+    // Date type
+    get isDate() {
+        return this.column.type === 'Date';
+    }
 
-   // Text type
-   get isText() {
-       return this.column.type === 'Text';
-   }
+    // Number type
+    get isNumber() {
+        return this.column.type === 'Number';
+    }
 
+    // Percent type
+    get isPercent() {
+        return this.column.type === 'Percent';
+    }
+
+    // Text type
+    get isText() {
+        return this.column.type === 'Text';
+    }
+
+    // Currency Conversion
+    convertCurrency(value, fromISO, toISO) {
+        let rate = 1;
+        if (this.currencyMap[toISO] !== undefined &&
+            this.currencyMap[fromISO] !== undefined
+        ) {
+            this.currencyMap[toISO] / this.currencyMap[fromISO]
+        }
+        return value * rate;
+    }
 }

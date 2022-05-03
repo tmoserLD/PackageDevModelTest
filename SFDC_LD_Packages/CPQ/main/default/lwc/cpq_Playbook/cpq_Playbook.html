@@ -31,13 +31,14 @@
         </div>
 
         <!-- Question Groups -->
-        <template if:false={productViewOnly}>
+        <template if:true={showQuestionGroups}>
             <template
                 for:each={playbook.questionGroups}
                 for:item="group"
             >
                 <c-cpq_-playbook-question-group
                     key={group.groupInfo.Id}
+                    config-type={configType}
                     group={group}
                     opp-currency={oppCurrency}
                     ontouch={answerTouch}
@@ -47,21 +48,25 @@
         </template>
 
         <!-- Product Summary -->
-        <c-cpq_-quote-product-summary
-            config-type={configType}
-            opp-currency={oppCurrency}
-            pricebook={pricebook}
-            product-columns={productColumns}
-            quote-products={quoteProducts}
-            onaddproducts={addProducts}
-            onremove={removeProduct}
-            onupdate={updateProduct}
-        >
-        </c-cpq_-quote-product-summary>
+        <template if:true={showProductSummary}>
+            <c-cpq_-quote-product-summary
+                config-type={configType}
+                opp-currency={oppCurrency}
+                pricebook={pricebook}
+                product-columns={productColumns}
+                quote-products={quoteProducts}
+                onaddproducts={addProducts}
+                onremove={removeProduct}
+                onupdate={updateProduct}
+            >
+            </c-cpq_-quote-product-summary>
+        </template>
 
         <!-- Entitlement Summary -->
-        <template if:false={productViewOnly}>
+        <template if:true={showEntitlementSummary}>
             <c-cpq_-quote-entitlement-summary
+                contract-currency={contractCurrency}
+                currency-map={currencyMap}
                 entitlement-columns={entitlementColumns}
                 entitlements={entitlements}
                 opp-currency={oppCurrency}

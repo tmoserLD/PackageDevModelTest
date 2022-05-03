@@ -29,6 +29,10 @@ export default class CPQ_AdminPlaybookForm extends LightningElement {
     // Entitlement Summary Columns
     @track entSummaryColumns = 'Product_Name__c;Start_Date__c;End_Date__c;Quantity__c;Unit_Price__c;List_Price__c;Total_Price__c';
 
+    // View Display Fields
+    @track quoteViewDisplayFields = '';
+    @track contractViewDisplayFields = '';
+
     // Default Term
     @track defaultTerm = 12;
 
@@ -47,6 +51,8 @@ export default class CPQ_AdminPlaybookForm extends LightningElement {
             this.headerType = this.playbook.playbookInfo.Proposal_Header_Type__c;
             this.prodSummaryColumns = this.playbook.playbookInfo.Product_Summary_Columns__c;
             this.entSummaryColumns = this.playbook.playbookInfo.Entitlement_Summary_Columns__c;
+            this.quoteViewDisplayFields = this.playbook.playbookInfo.Quote_View_Display_Fields__c;
+            this.contractViewDisplayFields = this.playbook.playbookInfo.Contract_View_Display_Fields__c;
             this.defaultTerm = this.playbook.playbookInfo.Default_Term_in_Months__c;
         }
     }
@@ -191,6 +197,34 @@ export default class CPQ_AdminPlaybookForm extends LightningElement {
         }
 
         this.entSummaryColumns = cols;
+    }
+
+    // Quote View Display Fields change
+    quoteViewDisplayFieldsChange(event) {
+        let fields = '';
+        if (event.detail.length > 0) {
+            let selectedOptions = [];
+            event.detail.forEach(function(option) {
+                selectedOptions.push(option);
+            });
+            fields = selectedOptions.join(';');
+        }
+
+        this.quoteViewDisplayFields = fields;
+    }
+
+    // Contract View Display Fields change
+    contractViewDisplayFieldsChange(event) {
+        let fields = '';
+        if (event.detail.length > 0) {
+            let selectedOptions = [];
+            event.detail.forEach(function(option) {
+                selectedOptions.push(option);
+            });
+            fields = selectedOptions.join(';');
+        }
+
+        this.contractViewDisplayFields = fields;
     }
 
     // Saved Playbook

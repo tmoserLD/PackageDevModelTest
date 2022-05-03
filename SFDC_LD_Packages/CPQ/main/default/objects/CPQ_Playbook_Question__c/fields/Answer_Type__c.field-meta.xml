@@ -23,6 +23,11 @@
                 <label>Currency</label>
             </value>
             <value>
+                <fullName>Date</fullName>
+                <default>false</default>
+                <label>Date</label>
+            </value>
+            <value>
                 <fullName>Decimal</fullName>
                 <default>false</default>
                 <label>Decimal</label>
@@ -43,6 +48,11 @@
                 <label>Picklist</label>
             </value>
             <value>
+                <fullName>Record Lookup</fullName>
+                <default>false</default>
+                <label>Record Lookup</label>
+            </value>
+            <value>
                 <fullName>Text</fullName>
                 <default>false</default>
                 <label>Text</label>
@@ -51,11 +61,6 @@
                 <fullName>Text Area</fullName>
                 <default>false</default>
                 <label>Text Area</label>
-            </value>
-            <value>
-                <fullName>Date</fullName>
-                <default>false</default>
-                <label>Date</label>
             </value>
         </valueSetDefinition>
     </valueSet>

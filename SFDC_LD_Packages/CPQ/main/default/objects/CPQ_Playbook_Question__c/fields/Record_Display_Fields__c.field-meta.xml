@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Record_Display_Fields__c</fullName>
+    <description>Semi-colon delineated list of Field API names when Answer Type is Record Lookup</description>
+    <externalId>false</externalId>
+    <inlineHelpText>List of Field API names to display for each queried record. Ensure that all fields listed here are also included in the Query String.</inlineHelpText>
+    <label>Record Display Fields</label>
+    <length>1000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>2</visibleLines>
+</CustomField>

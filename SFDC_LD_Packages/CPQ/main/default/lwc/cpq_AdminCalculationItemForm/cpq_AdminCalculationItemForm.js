@@ -6,6 +6,15 @@ import cloneRecord from '@salesforce/apex/cpq_AdminContainerClass.cloneRecord';
 // Delete Method
 import deleteRecords from '@salesforce/apex/cpq_AdminContainerClass.deleteRecords';
 
+// Get Question Type Method
+import getQuestionType from '@salesforce/apex/cpq_AdminContainerClass.getQuestionType';
+
+// Get Product Field Type Method
+import getFieldType from '@salesforce/apex/cpq_AdminContainerClass.getFieldType';
+
+// Get Lookup Field Type Method
+import getLookupFieldType from '@salesforce/apex/cpq_AdminContainerClass.getLookupFieldType';
+
 export default class CPQ_AdminCalculationItemForm extends LightningElement {
 
     // Button Label
@@ -26,11 +35,32 @@ export default class CPQ_AdminCalculationItemForm extends LightningElement {
     // Source Type
     @track source;
 
+    // Entitlement Field
+    @track entitlementField;
+
+    // Product Field
+    @track productField;
+
+    // Product Field Type
+    @track productFieldType;
+
     // Entitlement Type
     @track entitlement = false;
 
+    // Record Lookup Field
+    @track recordLookupField;
+
+    // Record Lookup Field Type
+    @track recordLookupType;
+
     // Spinner
     @track loading = false;
+
+    // Question Id
+    @track questionId;
+
+    // Question Type
+    @track questionType;
 
     // Static Type
     @track staticType;
@@ -46,7 +76,16 @@ export default class CPQ_AdminCalculationItemForm extends LightningElement {
         if (this.item !== undefined) {
             this.source = this.item.itemInfo.Calculation_Source__c;
             this.entitlement = this.item.itemInfo.Product_Is_Entitlement__c;
+            this.productFieldType = this.item.itemInfo.Product_Calculation_Field_Type__c;
+            this.productField = this.item.itemInfo.Product_Calculation_Field__c;
+            this.entitlementField = this.item.itemInfo.Entitlement_Calculation_Field__c;
             this.staticType = this.item.itemInfo.Static_Value_Type__c;
+            this.questionId = this.item.itemInfo.CPQ_Playbook_Question__c;
+            if (this.item.itemInfo.CPQ_Playbook_Question__c !== undefined) {
+                this.questionType = this.item.itemInfo.CPQ_Playbook_Question__r.Answer_Type__c;
+            }
+            this.recordLookupType = this.item.itemInfo.Record_Lookup_Field_Type__c;
+            this.recordLookupField = this.item.itemInfo.Record_Lookup_Field__c;
         }
     }
 
@@ -59,6 +98,10 @@ export default class CPQ_AdminCalculationItemForm extends LightningElement {
     }
 
     // Source Types
+    get lookupSource() {
+        return this.source === 'Question' && this.questionType === 'Record Lookup';
+    }
+
     get productSource() {
         return this.source === 'Product';
     }
@@ -99,7 +142,7 @@ export default class CPQ_AdminCalculationItemForm extends LightningElement {
 
     // Text input type
     get isText() {
-        return ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.staticType);
+        return this.staticType === 'Text';
     }
 
     // Entitlement Type
@@ -107,9 +150,161 @@ export default class CPQ_AdminCalculationItemForm extends LightningElement {
         return this.entitlement;
     }
 
-    // Product Change
-    productChange(event) {
-        this.hasProduct = (event.target.value !== undefined && event.target.value !== '' && event.target.value !== null);
+
+    // Product Field changed
+    async productFieldChange(event) {
+        if (this.entitlement === true) {
+            this.entitlementField = event.target.value;
+        } else {
+            this.productField = event.target.value;
+        }
+
+        let cpqFields = {
+            'Product_Name' : 'Text',
+            'Start_Date' : 'Date',
+            'End_Date' : 'Date',
+            'Quantity' : 'Decimal',
+            'Discount' : 'Decimal',
+            'Unit_Price' : 'Currency',
+            'List_Price' : 'Currency',
+            'Sub_Total_Price' : 'Currency',
+            'Total_Price' : 'Currency'
+        };
+        if (cpqFields[this.productField] !== undefined &&
+            this.entitlement !== true    
+        ) {
+            this.productFieldType = cpqFields[this.productField];
+        } else {
+
+            if (event.target.value !== undefined &&
+                event.target.value !== null &&
+                event.target.value !== ''    
+            ) {
+                this.loading = true;
+
+                let valid = true;
+                let obj;
+                let field;
+                if (this.entitlement === true) {
+                    obj = 'Contract_Entitlement__c';
+                    if (event.target.value.split('.').length > 1) {
+                        obj = 'Product2';
+                        field = event.target.value.split('.')[1];
+
+                        if (!['Product__r'].includes(event.target.value.split('.')[0]) ||
+                            event.target.value.split('.').length > 2
+                        ) {
+                            valid = false;
+                        }
+                    }
+                } else {
+                    obj = 'QuoteLineItem';
+                    if (event.target.value.split('.').length > 1) {
+                        obj = event.target.value.split('.')[0];
+                        field = event.target.value.split('.')[1];
+
+                        if (!['Product2', 'PricebookEntry'].includes(event.target.value.split('.')[0]) ||
+                            event.target.value.split('.').length > 2
+                        ) {
+                            valid = false;
+                        }
+                    }
+                }
+                if (obj === undefined ||
+                    obj === null ||
+                    obj === ''
+                ) {
+                    valid = false;
+                }
+                if (valid) {
+                    try {
+                        this.productFieldType = await getFieldType({
+                            field: field,
+                            objectName: obj
+                        });
+                    } catch (e) {
+                        this.template.querySelector('c-error-modal').showError(
+                            {
+                                title: 'An error occurred while trying to retrieve the new product field type',
+                                body: JSON.stringify(e),
+                                forceRefresh: false
+                            }
+                        );
+                    }
+                } else {
+                    this.productFieldType = undefined;
+                }
+                this.loading = false;
+            } else {
+                this.productFieldType = undefined;
+            }
+        }
+    }
+
+    // Entitlement change
+    entitlementChange(event) {
+        this.entitlement = event.target.value;
+
+        this.entitlementField = undefined;
+        this.productField = undefined;
+        this.productFieldType = undefined;
+    }
+
+    // Record Lookup Field Type changed
+    async recordLookupFieldChange(event) {
+        this.recordLookupField = event.target.value;
+
+        if (event.target.value !== undefined &&
+            event.target.value !== null &&
+            event.target.value !== ''    
+        ) {
+            this.loading = true;
+            try {
+                this.recordLookupType = await getLookupFieldType({
+                    field: this.recordLookupField,
+                    questionId: this.questionId
+                });
+            } catch (e) {
+                this.template.querySelector('c-error-modal').showError(
+                    {
+                        title: 'An error occurred while trying to retrieve the new record lookup field type',
+                        body: JSON.stringify(e),
+                        forceRefresh: false
+                    }
+                );
+            }
+            this.loading = false;
+        } else {
+            this.recordLookupType = undefined;
+        }
+    }
+
+    // Question Changed
+    async questionChange(event) {
+        this.questionId = event.target.value;
+
+        if (event.target.value !== undefined &&
+            event.target.value !== null &&
+            event.target.value !== ''    
+        ) {
+            this.loading = true;
+            try {
+                this.questionType = await getQuestionType({
+                    questionId: event.target.value
+                });
+            } catch (e) {
+                this.template.querySelector('c-error-modal').showError(
+                    {
+                        title: 'An error occurred while trying to retrieve the new question answer type',
+                        body: JSON.stringify(e),
+                        forceRefresh: false
+                    }
+                );
+            }
+            this.loading = false;
+        } else {
+            this.questionType = undefined;
+        }
     }
 
     // Cancel delete

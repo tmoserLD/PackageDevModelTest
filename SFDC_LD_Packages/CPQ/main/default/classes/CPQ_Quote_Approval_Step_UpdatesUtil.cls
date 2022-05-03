@@ -9,26 +9,6 @@
 public with sharing class CPQ_Quote_Approval_Step_UpdatesUtil {
 
     /****************
-     * ENTRY METHODS
-    ****************/
-
-    /**
-    * @description Logic run after a CPQ_Quote_Approval_Step__c Update
-    * Handles updates of related records
-    * @param updatedSteps CPQ_Quote_Approval_Step__c records with updated values in trigger context
-    * @param oldStepsMap Map - CPQ_Quote_Approval_Step__c Id to Old version of CPQ_Quote_Approval_Step__c
-    */ 
-    public static void processAfterUpdate(
-        List<CPQ_Quote_Approval_Step__c> updatedSteps,
-        Map<Id, CPQ_Quote_Approval_Step__c> oldStepsMap
-    ) {
-        relatedObjectAfterUpdates(
-            updatedSteps,
-            oldStepsMap
-        );
-    }
-
-    /****************
      * MAIN METHODS
     ****************/
 

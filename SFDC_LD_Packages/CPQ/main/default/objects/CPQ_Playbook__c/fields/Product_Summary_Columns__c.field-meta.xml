@@ -3,7 +3,7 @@
     <fullName>Product_Summary_Columns__c</fullName>
     <description>Semicolon delineated list of attribute names on the Product level to be shown in the Product Summary view in CPQ. The following CPQ attributes are valid: &apos;Product_Name&apos;, &apos;Start_Date&apos;, &apos;End_Date&apos;, &apos;Quantity&apos;, &apos;Discount&apos;, &apos;Unit_Price&apos;, &apos;List_Price&apos;, &apos;Sub_Total_Price&apos;, and &apos;Total_Price&apos;. Any QuoteLineItem Field API names are also supported in the event that CPQ is custom stamping said fields.</description>
     <externalId>false</externalId>
-    <inlineHelpText>Semicolon delineated list of attribute names on the Product level to be shown in the Product Summary view in CPQ. The following CPQ attributes are valid: &apos;Product_Name&apos;, &apos;Start_Date&apos;, &apos;End_Date&apos;, &apos;Quantity&apos;, &apos;Discount&apos;, &apos;Unit_Price&apos;, &apos;List_Price&apos;, &apos;Sub_Total_Price&apos;, and &apos;Total_Price&apos;. Any QuoteLineItem Field API names are also supported in the event that CPQ is custom stamping said fields.</inlineHelpText>
+    <inlineHelpText>List of attribute names on the Product level to be shown in the Product Summary view in CPQ. The following CPQ attributes are valid: &apos;Product_Name&apos;, &apos;Start_Date&apos;, &apos;End_Date&apos;, &apos;Quantity&apos;, &apos;Discount&apos;, &apos;Unit_Price&apos;, &apos;List_Price&apos;, &apos;Sub_Total_Price&apos;, and &apos;Total_Price&apos;. Any QuoteLineItem Field API names are also supported in the event that CPQ is custom stamping said fields.</inlineHelpText>
     <label>Product Summary Columns</label>
     <length>255</length>
     <required>false</required>

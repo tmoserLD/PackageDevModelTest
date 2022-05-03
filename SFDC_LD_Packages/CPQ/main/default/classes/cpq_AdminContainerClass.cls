@@ -61,6 +61,7 @@ public with sharing class cpq_AdminContainerClass {
         List<CPQ_Playbook__c> playbooks = new List<CPQ_Playbook__c>();
         playbooks = [
             SELECT Id,
+                Contract_View_Display_Fields__c,
                 Default_Term_in_Months__c,
                 Entitlement_Summary_Columns__c,
                 IsActive__c,
@@ -72,6 +73,7 @@ public with sharing class cpq_AdminContainerClass {
                 Proposal_Header__c,
                 Proposal_Header_Type__c,
                 Proposal_Footer__c,
+                Quote_View_Display_Fields__c,
                 (
                     SELECT Id,
                         ContentDocument.LatestPublishedVersionId
@@ -172,12 +174,16 @@ public with sharing class cpq_AdminContainerClass {
                 IsReadOnly__c,
                 IsRequired__c,
                 Label__c,
+                Maximum_Record_Selections__c,
                 Maximum_Value__c,
                 Minimum_Value__c,
                 Name,
                 Picklist_Answers__c,
                 Proposal_Label__c,
+                Query_String__c,
                 Quote_Save_Field__c,
+                Record_Display_Fields__c,
+                Record_Selection_Behavior__c,
                 Step_Value__c,
                 Variable_Name__c,
                 (
@@ -361,7 +367,10 @@ public with sharing class cpq_AdminContainerClass {
                 Product__c,
                 Product_Criterion_Target_Rule_Action__c,
                 Product_Field__c,
+                Product_Field_Type__c,
                 Product_Is_Entitlement__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 System_Value_Source__c,
                 Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Rule_Criterion__c
@@ -470,6 +479,7 @@ public with sharing class cpq_AdminContainerClass {
             SELECT Id,
                 Calculation_Source__c,
                 CPQ_Playbook_Question__c,
+                CPQ_Playbook_Question__r.Answer_Type__c,
                 CPQ_Playbook_Question__r.CPQ_Playbook_Question_Group__c,
                 CPQ_Playbook_Rule_Action__c,
                 CPQ_Playbook_Rule_Action__r.CPQ_Playbook_Rule__c,
@@ -479,8 +489,12 @@ public with sharing class cpq_AdminContainerClass {
                 Name,
                 Product__c,
                 Product_Calculation_Field__c,
+                Product_Calculation_Field_Type__c,
                 Product_Calculation_Target_Rule_Action__c,
                 Product_Is_Entitlement__c,
+                Record_Lookup_Behavior__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 Static_Value_Boolean__c,
                 Static_Value_Currency__c,
                 Static_Value_Date__c,
@@ -610,6 +624,9 @@ public with sharing class cpq_AdminContainerClass {
                 Product__c,
                 Product_Criterion_Target_Rule_Action__c,
                 Product_Field__c,
+                Product_Field_Type__c,
+                Record_Lookup_Field__c,
+                Record_Lookup_Field_Type__c,
                 System_Value_Source__c,
                 Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Approval_Criterion__c
@@ -722,7 +739,6 @@ public with sharing class cpq_AdminContainerClass {
                 Body_Text_Block_3__c,
                 CPQ_Playbook__c,
                 Display_Order__c,
-                Entitlement_Table_Fields__c,
                 Force_Page_Break_After__c,
                 Force_Page_Break_Before__c,
                 Inputs_Column_1__c,
@@ -732,9 +748,7 @@ public with sharing class cpq_AdminContainerClass {
                 Inputs_Font_Size__c,
                 IsActive__c,
                 Name,
-                Product_Table_QLI_Fields__c,
-                Record_Table_Order_By_Clause__c,
-                Record_Table_Where_Clause__c,
+                Record_Table_Query__c,
                 Section_Type__c,
                 Table_Entries_Font_Color__c,
                 Table_Entries_Font_Size__c,
@@ -824,6 +838,7 @@ public with sharing class cpq_AdminContainerClass {
                 Product__c,
                 Product_Criterion_Target_Rule_Action__c,
                 Product_Field__c,
+                Product_Field_Type__c,
                 Target_Manual_Addition_Only__c
             FROM CPQ_Playbook_Proposal_Criterion__c
             WHERE CPQ_Playbook_Proposal_Criteria_Group__c IN:sectionCriteriaGroupIDs
@@ -1082,6 +1097,84 @@ public with sharing class cpq_AdminContainerClass {
             FROM CPQ_Playbook_Question__c
             WHERE Id=:questionId
         ].Answer_Type__c;
+    }
+
+    /**
+    * @description Get Field Type for given field, obj
+    * @param field Field API name
+    * @param obj Object API Name
+    * @return Field type value
+    */
+    @AuraEnabled
+    public static String getFieldType(String field, String objectName) {
+
+        // Describe object
+        SObjectType objType = ((SObject)(Type.forName('Schema.' + objectName).newInstance())).getSObjectType();
+        DescribeSObjectResult obj = objType.getDescribe();
+
+        String fieldType;
+            
+        // Valid field
+        if (obj.fields
+            .getMap()
+            .containsKey(field)
+        ) {
+            Schema.DisplayType fieldDisplayType = obj.fields
+                .getMap()
+                .get(field)
+                .getDescribe()
+                .getType();
+
+            if (fieldDisplayType == Schema.DisplayType.Boolean) {
+                fieldType = 'Boolean';
+            }
+            else if (fieldDisplayType == Schema.DisplayType.Currency) {
+                fieldType = 'Currency';
+            }
+            else if (fieldDisplayType == Schema.DisplayType.Date ||
+                fieldDisplayType == Schema.DisplayType.DateTime
+            ) {
+                fieldType = 'Date';
+            }
+            else if (fieldDisplayType == Schema.DisplayType.Double ||
+                fieldDisplayType == Schema.DisplayType.Integer ||
+                fieldDisplayType == Schema.DisplayType.Long ||
+                fieldDisplayType == Schema.DisplayType.Percent
+            ) {
+                fieldType = 'Decimal';
+            }
+            else {
+                fieldType = 'Text';
+            }
+        }
+
+        return fieldType;
+    }
+
+    /**
+    * @description Get Field Type for given lookup field, question
+    * @param field Field API name
+    * @param questionId Related Question record Id
+    * @return Field type value
+    */
+    @AuraEnabled
+    public static String getLookupFieldType(String field, Id questionId) {
+
+        // Find Question
+        CPQ_Playbook_Question__c question = [
+            SELECT Id,
+                Query_String__c
+            FROM CPQ_Playbook_Question__c
+            WHERE Id=:questionId
+        ];
+
+        // Get Object
+        String objectName = question.Query_String__c.toLowerCase().split('from')[1].split(' ')[1];
+
+        // Get Field Type
+        String fieldType = getFieldType(field, objectName);
+
+        return fieldType;
     }
 
 

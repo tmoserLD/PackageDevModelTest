@@ -77,8 +77,15 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
     setMostActiveContract(account) {
         let mostActiveContract;
         let mostFutureContract;
+        let firstContract;
         account.Contracts.forEach(function(contract) {
-            if (mostFutureContract === undefined) {
+            if (firstContract === undefined) {
+                firstContract = contract;
+            }
+            if (mostFutureContract === undefined &&
+                contract.Contract_Start_Date__c !== undefined &&
+                contract.Contract_End_Date__c !== undefined
+            ) {
                 mostFutureContract = contract;
             }
             if (mostActiveContract === undefined &&
@@ -91,6 +98,11 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
         // Set Most Active Contract to Most Future Contract if necessary
         if (mostActiveContract === undefined) {
             mostActiveContract = mostFutureContract;
+        }
+
+        // Set Most Active Contract to First Contract if necessary
+        if (mostActiveContract === undefined) {
+            mostActiveContract = firstContract;
         }
 
         // Set Most Active Contract data if necessary

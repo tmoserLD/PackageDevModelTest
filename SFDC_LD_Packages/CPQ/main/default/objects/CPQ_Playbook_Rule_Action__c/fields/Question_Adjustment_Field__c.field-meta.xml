@@ -15,47 +15,57 @@
             <value>
                 <fullName>answer</fullName>
                 <default>false</default>
-                <label>answer</label>
+                <label>Answer</label>
             </value>
             <value>
                 <fullName>IsHidden__c</fullName>
                 <default>false</default>
-                <label>IsHidden__c</label>
+                <label>Is Hidden</label>
             </value>
             <value>
                 <fullName>IsRequired__c</fullName>
                 <default>false</default>
-                <label>IsRequired__c</label>
+                <label>Is Required</label>
             </value>
             <value>
                 <fullName>IsReadOnly__c</fullName>
                 <default>false</default>
-                <label>IsReadOnly__c</label>
+                <label>Is Read Only</label>
             </value>
             <value>
                 <fullName>Picklist_Answers__c</fullName>
                 <default>false</default>
-                <label>Picklist_Answers__c</label>
+                <label>Picklist Answers</label>
             </value>
             <value>
                 <fullName>Minimum_Value__c</fullName>
                 <default>false</default>
-                <label>Minimum_Value__c</label>
+                <label>Minimum Value</label>
             </value>
             <value>
                 <fullName>Maximum_Value__c</fullName>
                 <default>false</default>
-                <label>Maximum_Value__c</label>
+                <label>Maximum Value</label>
+            </value>
+            <value>
+                <fullName>Maximum_Record_Selections__c</fullName>
+                <default>false</default>
+                <label>Maximum Record Selctions</label>
             </value>
             <value>
                 <fullName>Step_Value__c</fullName>
                 <default>false</default>
-                <label>Step_Value__c</label>
+                <label>Step Value</label>
+            </value>
+            <value>
+                <fullName>Query_String__c</fullName>
+                <default>false</default>
+                <label>Query String</label>
             </value>
             <value>
                 <fullName>Quote_Save_Field__c</fullName>
                 <default>false</default>
-                <label>Quote_Save_Field__c</label>
+                <label>Quote Save Field</label>
             </value>
         </valueSetDefinition>
     </valueSet>

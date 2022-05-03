@@ -3,6 +3,9 @@ import { LightningElement, api, track } from 'lwc';
 // Get Question Type Method
 import getQuestionType from '@salesforce/apex/cpq_AdminContainerClass.getQuestionType';
 
+// Get Product Field Type Method
+import getFieldType from '@salesforce/apex/cpq_AdminContainerClass.getFieldType';
+
 // Clone Method
 import cloneRecord from '@salesforce/apex/cpq_AdminContainerClass.cloneRecord';
 
@@ -47,8 +50,11 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
     // Source Type
     @track source;
 
-    // Product Adjustment Field Type
-    @track prodFieldType;
+    // Product Field
+    @track productField;
+
+    // Product Field Type
+    @track productFieldType;
 
     // Manual Target
     @track manualTarget = false;
@@ -67,7 +73,8 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
             if (this.action.actionInfo.CPQ_Playbook_Question__c !== undefined) {
                 this.questionType = this.action.actionInfo.CPQ_Playbook_Question__r.Answer_Type__c;
             }
-            this.prodFieldType = this.action.actionInfo.Product_Adjustment_Field_Type__c;
+            this.productField = this.action.actionInfo.Product_Adjustment_Field__c;
+            this.productFieldType = this.action.actionInfo.Product_Adjustment_Field_Type__c;
             this.questionAdjustmentField = this.action.actionInfo.Question_Adjustment_Field__c;
             this.questionGroupAdjustmentField = this.action.actionInfo.Question_Group_Adjustment_Field__c;
             this.manualTarget = this.action.actionInfo.Target_Manual_Addition_Only__c;
@@ -122,26 +129,38 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
     get isBoolean() {
         return (
                 (
-                    this.questionType === 'Boolean' &&
-                    this.questionAdjustmentField === 'answer'
+                    this.actionType === 'Adjust question field' &&
+                    (
+                        (
+                            this.questionType === 'Boolean' &&
+                            this.questionAdjustmentField === 'answer'
+                        ) ||
+                        this.questionAdjustmentField === 'IsHidden__c' ||
+                        this.questionAdjustmentField === 'IsRequired__c' ||
+                        this.questionAdjustmentField === 'IsReadOnly__c'
+                    )
                 ) ||
-                this.questionAdjustmentField === 'IsHidden__c' ||
-                this.questionAdjustmentField === 'IsRequired__c' ||
-                this.questionAdjustmentField === 'IsReadOnly__c' ||
-                this.questionGroupAdjustmentField === 'IsHidden__c'
+                (
+                    this.actionType === 'Adjust question group field' &&
+                    this.questionGroupAdjustmentField === 'IsHidden__c'
+                )
         );
     }
 
     // Currency input type
     get isCurrency() {
-        return (this.questionType === 'Currency' &&
+        return (
+            this.actionType === 'Adjust question field' &&
+            this.questionType === 'Currency' &&
             this.questionAdjustmentField === 'answer'
         );
     }
 
     // Date input type
     get isDate() {
-        return (this.questionType === 'Date' &&
+        return (
+            this.actionType === 'Adjust question field' &&
+            this.questionType === 'Date' &&
             this.questionAdjustmentField === 'answer'
         );
     }
@@ -149,79 +168,7 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
     // Decimal input type
     get isDecimal() {
         return (
-            (
-                this.questionType === 'Decimal' &&
-                this.questionAdjustmentField === 'answer'
-            ) ||
-            this.questionAdjustmentField === 'Minimum_Value__c' ||
-            this.questionAdjustmentField === 'Maximum_Value__c' ||
-            this.questionAdjustmentField === 'Step_Value__c'   
-        );
-    }
-
-    // Integer input type
-    get isInteger() {
-        return (this.questionType === 'Integer' &&
-            this.questionAdjustmentField === 'answer'
-        );
-    }
-
-    // Text input type
-    get isText() {
-        return (
-            (
-                ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.questionType) &&
-                this.questionAdjustmentField === 'answer'
-            ) ||
-            this.questionAdjustmentField === 'Quote_Save_Field__c'
-        );
-    }
-
-    // Picklist Answers
-    get isPicklistAnswer() {
-        return this.questionAdjustmentField === 'Picklist_Answers__c';
-    }
-
-    // Product Field Types
-    // Boolean input type
-    get isBooleanProd() {
-        return this.prodFieldType === 'Boolean';
-    }
-
-    // Currency input type
-    get isCurrencyProd() {
-        return this.prodFieldType === 'Currency';
-    }
-
-    // Date input type
-    get isDateProd() {
-        return this.prodFieldType === 'Date';
-    }
-
-    // Decimal input type
-    get isDecimalProd() {
-        return this.prodFieldType === 'Decimal';
-    }
-
-    // Integer input type
-    get isIntegerProd() {
-        return this.prodFieldType === 'Integer';
-    }
-
-    // Text input type
-    get isTextProd() {
-        return ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.prodFieldType);
-    }
-
-    // Number type for prod and question
-    get isNumber() {
-        return (
-            this.prodFieldType === 'Currency' ||
-            this.prodFieldType === 'Decimal' ||
-            this.prodFieldType === 'Integer' ||
-            (this.questionType === 'Integer' &&
-                this.questionAdjustmentField === 'answer'
-            ) ||
+            this.actionType === 'Adjust question field' &&
             (
                 (
                     this.questionType === 'Decimal' &&
@@ -229,10 +176,121 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
                 ) ||
                 this.questionAdjustmentField === 'Minimum_Value__c' ||
                 this.questionAdjustmentField === 'Maximum_Value__c' ||
-                this.questionAdjustmentField === 'Step_Value__c'   
+                this.questionAdjustmentField === 'Maximum_Record_Selections__c' ||
+                this.questionAdjustmentField === 'Step_Value__c'
+            ) 
+        );
+    }
+
+    // Integer input type
+    get isInteger() {
+        return (
+            this.actionType === 'Adjust question field' &&
+            this.questionType === 'Integer' &&
+            this.questionAdjustmentField === 'answer'
+        );
+    }
+
+    // Text input type
+    get isText() {
+        return (
+            this.actionType === 'Adjust question field' &&
+            (
+                (
+                    ['Picklist', 'Multi-Select Picklist', 'Text', 'Text Area'].includes(this.questionType) &&
+                    this.questionAdjustmentField === 'answer'
+                ) ||
+                this.questionAdjustmentField === 'Quote_Save_Field__c' ||
+                this.questionAdjustmentField === 'Query_String__c'
+            )
+        );
+    }
+
+    // Picklist Answers
+    get isPicklistAnswer() {
+        return (
+            this.actionType === 'Adjust question field' &&
+            this.questionAdjustmentField === 'Picklist_Answers__c'
+        );
+    }
+
+    // Product Field Types
+    // Boolean input type
+    get isBooleanProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Boolean'
+        );
+    }
+
+    // Currency input type
+    get isCurrencyProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Currency'
+        );
+    }
+
+    // Date input type
+    get isDateProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Date'
+        );
+    }
+
+    // Decimal input type
+    get isDecimalProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Decimal'
+        );
+    }
+
+    // Integer input type
+    get isIntegerProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Integer'
+        );
+    }
+
+    // Text input type
+    get isTextProd() {
+        return (
+            this.actionType === 'Adjust product field' &&
+            this.productFieldType === 'Text'
+        );
+    }
+
+    // Number type for prod and question
+    get isNumber() {
+        return (
+            (
+                this.actionType === 'Adjust product field' &&
+                (
+                    this.productFieldType === 'Currency' ||
+                    this.productFieldType === 'Decimal' ||
+                    this.productFieldType === 'Integer'
+                 )
             ) ||
-            (this.questionType === 'Currency' &&
-                this.questionAdjustmentField === 'answer'
+            (
+                this.actionType === 'Adjust question field' &&
+                (this.questionType === 'Integer' &&
+                    this.questionAdjustmentField === 'answer'
+                ) ||
+                (
+                    (
+                        this.questionType === 'Decimal' &&
+                        this.questionAdjustmentField === 'answer'
+                    ) ||
+                    this.questionAdjustmentField === 'Minimum_Value__c' ||
+                    this.questionAdjustmentField === 'Maximum_Value__c' ||
+                    this.questionAdjustmentField === 'Step_Value__c'   
+                ) ||
+                (this.questionType === 'Currency' &&
+                    this.questionAdjustmentField === 'answer'
+                )
             )
         );
     }
@@ -402,14 +460,57 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
         this.dispatchEvent(cancelEvent);
     }
 
-    // Source Change
+    // Source Changed
     sourceChange(event) {
         this.source = event.target.value;
     }
 
-    // Product Field Source changed
-    productFieldChange(event) {
-        this.prodFieldType = event.target.value;
+    // Product Field changed
+    async productFieldChange(event) {
+        this.productField = event.target.value;
+
+        let cpqFields = {
+            'Start_Date' : 'Date',
+            'End_Date' : 'Date',
+            'Quantity' : 'Decimal',
+            'Discount' : 'Decimal',
+            'Unit_Price' : 'Currency',
+            'List_Price' : 'Currency',
+            'Quantity_Editable' : 'Boolean',
+            'Dates_Editable' : 'Boolean',
+            'Discountable' : 'Boolean',
+            'List_Price_Editable' : 'Boolean',
+            'Manually_Addible' : 'Boolean',
+            'Removable' : 'Boolean'
+        };
+        if (cpqFields[this.productField] !== undefined) {
+            this.productFieldType = cpqFields[this.productField];
+        } else {
+
+            if (event.target.value !== undefined &&
+                event.target.value !== null &&
+                event.target.value !== ''    
+            ) {
+                this.loading = true;
+                try {
+                    this.productFieldType = await getFieldType({
+                        field: this.productField,
+                        objectName: 'QuoteLineItem'
+                    });
+                } catch (e) {
+                    this.template.querySelector('c-error-modal').showError(
+                        {
+                            title: 'An error occurred while trying to retrieve the new product field type',
+                            body: JSON.stringify(e),
+                            forceRefresh: false
+                        }
+                    );
+                }
+                this.loading = false;
+            } else {
+                this.productFieldType = undefined;
+            }
+        }
     }
 
     // Question Field change

@@ -308,7 +308,7 @@
                     </div>
                 </div>
 
-                <!-- Row 8 -->
+                
                 <template if:true={isNumber}>
 
                     <div class="slds-col slds-p-vertical_small">
@@ -317,6 +317,7 @@
                         </b>
                     </div>
 
+                    <!-- Row 8 -->
                     <div class="slds-col slds-grid slds-wrap">
 
                         <!-- Col 1 -->
@@ -347,6 +348,78 @@
                     </div>
                 </template>
 
+                <template if:true={isRecordLookup}>
+                    <div class="slds-col slds-p-vertical_small">
+                        <b>
+                            Record Query Configuration
+                        </b>
+                    </div>
+
+                    <!-- Row 9 -->
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Query String -->
+                            <lightning-input-field
+                                field-name="Query_String__c"
+                                required="true"
+                            >
+                            </lightning-input-field>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Record Display Fields -->
+                            <c-list-generator
+                                label="Record Display Fields"
+                                order-label-title="Adjust Display Fields Order"
+                                placeholder="Enter desired field"
+                                help-text="List of Field API names to display for each queried record. Ensure that all fields listed here are also included in the Query String"
+                                initial-options={recordDisplayFields}
+                                initial-options-source="Semicolon delineated"
+                                onupdate={recordDisplayFieldsChange}
+                            >
+                            </c-list-generator>
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Record_Display_Fields__c"
+                                    value={recordDisplayFields}
+                                    required="true"
+                                >
+                                </lightning-input-field>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Row 10 -->
+                    <div class="slds-col slds-grid slds-wrap">
+
+                        <!-- Col 1 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Query String -->
+                            <lightning-input-field
+                                field-name="Record_Selection_Behavior__c"
+                                required="true"
+                            >
+                            </lightning-input-field>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                            <!-- Record Display Fields -->
+                            <lightning-input-field
+                                field-name="Maximum_Record_Selections__c"
+                            >
+                            </lightning-input-field>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="slds-col slds-p-vertical_small">
                     <b>
@@ -354,7 +427,7 @@
                     </b>
                 </div>
 
-                <!-- Row 9 -->
+                <!-- Row 1 -->
                 <div class="slds-col slds-grid slds-wrap">
 
                     <!-- Col 1 -->

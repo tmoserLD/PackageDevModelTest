@@ -233,6 +233,62 @@
 
                 <div class="slds-col slds-p-vertical_small">
                     <b>
+                        View Only Display Configuration
+                    </b>
+                </div>
+
+                <!-- Row 4 -->
+                <div class="slds-col slds-grid slds-wrap">
+
+                    <!-- Col 1 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+
+                        <!-- Quote View Display Fields -->
+                        <c-list-generator
+                            label="Quote View Display Fields"
+                            order-label-title="Adjust Quote View Display Field Order"
+                            placeholder="Enter desired Quote field API name"
+                            help-text="Quote Field API names to be shown in CPQ when viewing a Quote record's configuration"
+                            initial-options={quoteViewDisplayFields}
+                            initial-options-source="Semicolon delineated"
+                            onupdate={quoteViewDisplayFieldsChange}
+                        >
+                        </c-list-generator>
+                        <div style="display:none">
+                            <lightning-input-field
+                                field-name="Quote_View_Display_Fields__c"
+                                value={quoteViewDisplayFields}
+                            >
+                            </lightning-input-field>
+                        </div>
+                    </div>
+
+                    <!-- Col 2 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+
+                        <!-- Contract View Display Fields -->
+                        <c-list-generator
+                            label="Contract View Display Fields"
+                            order-label-title="Adjust Contract View Display Field Order"
+                            placeholder="Enter desired Contract field API name"
+                            help-text="Contract Field API names to be shown in CPQ when viewing a Contract record's configuration"
+                            initial-options={contractViewDisplayFields}
+                            initial-options-source="Semicolon delineated"
+                            onupdate={contractViewDisplayFieldsChange}
+                        >
+                        </c-list-generator>
+                        <div style="display:none">
+                            <lightning-input-field
+                                field-name="Contract_View_Display_Fields__c"
+                                value={contractViewDisplayFields}
+                            >
+                            </lightning-input-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-p-vertical_small">
+                    <b>
                         Proposal Configuration
                     </b>
                 </div>

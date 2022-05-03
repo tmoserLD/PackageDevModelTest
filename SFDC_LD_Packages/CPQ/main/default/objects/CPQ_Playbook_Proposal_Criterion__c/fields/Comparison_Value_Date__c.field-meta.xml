@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Comparison_Value_Date__c</fullName>
-    <description>If related question answer type is &apos;Date&apos;, comparison value stored here</description>
+    <description>If related source type is &apos;Date&apos;, comparison value stored here</description>
     <externalId>false</externalId>
-    <inlineHelpText>If related question answer type is &apos;Date&apos;, comparison value stored here</inlineHelpText>
+    <inlineHelpText>If related source type is &apos;Date&apos;, comparison value stored here</inlineHelpText>
     <label>Comparison Value (Date)</label>
     <required>false</required>
     <trackTrending>false</trackTrending>

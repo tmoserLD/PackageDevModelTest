@@ -2,6 +2,12 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteEntitlement extends LightningElement {
 
+    // Contract Currency
+    @api contractCurrency;
+
+    // Currency Conversion Map
+    @api currencyMap = {};
+
     // Entitlement
     @api entitlement;
 
