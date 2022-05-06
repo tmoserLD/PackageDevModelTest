@@ -145,6 +145,7 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
             qli.CPQ_Playbook_Rule_Action__c = product.addedByAction;
             qli.End_Date__c = new Date(product.End_Date);
             qli.Discount__c = product.Discount;
+            qli.Discount = 0;
             qli.List_Price__c = Number(product.List_Price);
             qli.PricebookEntryId = product.Id;
             qli.Product2Id = product.Product2Id;

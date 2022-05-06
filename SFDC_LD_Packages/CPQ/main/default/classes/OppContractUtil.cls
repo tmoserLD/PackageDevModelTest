@@ -378,8 +378,12 @@ public with sharing class OppContractUtil {
 
             // Get Entitlement fields needed
             String entFieldsString = '';
+            Set<String> entFieldsSet = new Set<String>();
             for (Entitlement_Field_Mapping__mdt fm : fieldMappings) {
-                entFieldsString += fm.Entitlement_Field__c + ',';
+                if (!entFieldsSet.contains(fm.Entitlement_Field__c)) {
+                    entFieldsSet.add(fm.Entitlement_Field__c);
+                    entFieldsString += fm.Entitlement_Field__c + ',';
+                }
             }
             entFieldsString = entFieldsString.removeEnd(',');
             if (entFieldsString == '') {
