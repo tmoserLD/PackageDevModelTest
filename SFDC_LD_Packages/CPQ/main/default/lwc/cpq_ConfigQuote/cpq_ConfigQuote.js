@@ -347,11 +347,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 productToAdd.End_Date = qli.End_Date__c;
 
                                 // Permissions
-                                productToAdd.Quantity_Editable = entry.Quantity_Editable__c;
+                                productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
                                 productToAdd.Removable = entry.Removable__c;
-                                productToAdd.Discountable = entry.Discountable__c;
-                                productToAdd.Dates_Editable = entry.Dates_Editable__c;
-                                productToAdd.List_Price_Editable = entry.List_Price_Editable__c;
 
                                 // Previous values obj
                                 productToAdd.prevValues = {};
@@ -1330,7 +1327,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 else if (
                                     (
                                         action.actionInfo.Action_Type__c === 'Add product' ||
-                                        action.actionInfo.Action_Type__c === 'Adjust product field'
+                                        action.actionInfo.Action_Type__c === 'Adjust product field' ||
+                                        action.actionInfo.Action_Type__c === 'Adjust product field editability'
                                     ) &&
                                     action.actionInfo.Product__c !== undefined
                                 ) {
@@ -1372,7 +1370,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                         this.quoteProducts = updatedProducts;
                                                     }
                                                 }
-                                                else if (action.actionInfo.Action_Type__c === 'Adjust product field') {
+                                                else if (action.actionInfo.Action_Type__c === 'Adjust product field' ||
+                                                    action.actionInfo.Action_Type__c === 'Adjust product field editability'
+                                                ) {
 
                                                     // Manually Addible (pricebook entry level)
                                                     if (action.actionInfo.Product_Adjustment_Field__c === 'Manually_Addible') {
@@ -1417,60 +1417,82 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                     )
                                                                 )
                                                             ) {
-                                                                if (ruleEvaluation === true) {
+                                                                if (action.actionInfo.Action_Type__c === 'Adjust product field') {
+                                                                    if (ruleEvaluation === true) {
 
-                                                                    product.prevValues[action.actionInfo.Product_Adjustment_Field__c] = product[action.actionInfo.Product_Adjustment_Field__c];
-                                                                    product.qliFields.push(action.actionInfo.Product_Adjustment_Field__c);
+                                                                        product.prevValues[action.actionInfo.Product_Adjustment_Field__c] = product[action.actionInfo.Product_Adjustment_Field__c];
+                                                                        product.qliFields.push(action.actionInfo.Product_Adjustment_Field__c);
 
-                                                                    // Static Source
-                                                                    if (action.actionInfo.Value_Source_Type__c === 'Static') {
-                                                                        
-                                                                        // Set new static value
-                                                                        if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Boolean') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Boolean__c;
+                                                                        // Static Source
+                                                                        if (action.actionInfo.Value_Source_Type__c === 'Static') {
+                                                                            
+                                                                            // Set new static value
+                                                                            if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Boolean') {
+                                                                                product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Boolean__c;
+                                                                            }
+                                                                            else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Currency') {
+                                                                                product[action.actionInfo.Product_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Product_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                                                            }
+                                                                            else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Date') {
+                                                                                product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Date__c;
+                                                                            }
+                                                                            else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Decimal') {
+                                                                                product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Decimal__c;
+                                                                            }
+                                                                            else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Text') {
+                                                                                product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Text__c;
+                                                                            }
                                                                         }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Currency') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = this.convertCurrency(action.actionInfo.Product_Field_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
+                                                                        // Dynamic Source
+                                                                        else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
+                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c, rule.contributingRecordIDs);
                                                                         }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Date') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Date__c;
-                                                                        }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Decimal') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Decimal__c;
-                                                                        }
-                                                                        else if (action.actionInfo.Product_Adjustment_Field_Type__c === 'Text') {
-                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = action.actionInfo.Product_Field_Value_Text__c;
-                                                                        }
-                                                                    }
-                                                                    // Dynamic Source
-                                                                    else if (action.actionInfo.Value_Source_Type__c === 'Dynamic') {
-                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = this.runCalculations(action.calculationItems, action.actionInfo.Calculation_Type__c, action.actionInfo.Product_Adjustment_Field_Type__c, playbooks, action.actionInfo.Numeric_Math_Operator__c, rule.contributingRecordIDs);
-                                                                    }
-                                                                } else {
-                                                                    if (product.prevValues.hasOwnProperty(action.actionInfo.Product_Adjustment_Field__c)) {
-                                                                        product[action.actionInfo.Product_Adjustment_Field__c] = product.prevValues[action.actionInfo.Product_Adjustment_Field__c];
-                                                                    }
-                                                                }
-
-                                                                // Reset Discount
-                                                                if (action.actionInfo.Product_Adjustment_Field__c === 'Unit_Price' ||
-                                                                    action.actionInfo.Product_Adjustment_Field__c === 'List_Price'
-                                                                ) {
-                                                                    if (product.List_Price !== 0) {
-                                                                        product.Discount = 1 - (product.Unit_Price / product.List_Price);
                                                                     } else {
-                                                                        product.Discount = 0;
+                                                                        if (product.prevValues.hasOwnProperty(action.actionInfo.Product_Adjustment_Field__c)) {
+                                                                            product[action.actionInfo.Product_Adjustment_Field__c] = product.prevValues[action.actionInfo.Product_Adjustment_Field__c];
+                                                                        }
+                                                                    }
+
+                                                                    // Reset Discount
+                                                                    if (action.actionInfo.Product_Adjustment_Field__c === 'Unit_Price' ||
+                                                                        action.actionInfo.Product_Adjustment_Field__c === 'List_Price'
+                                                                    ) {
+                                                                        if (product.List_Price !== 0) {
+                                                                            product.Discount = 1 - (product.Unit_Price / product.List_Price);
+                                                                        } else {
+                                                                            product.Discount = 0;
+                                                                        }
+                                                                    }
+
+                                                                    // Reset Unit Price
+                                                                    else if (action.actionInfo.Product_Adjustment_Field__c === 'Discount') {
+                                                                        product.Unit_Price = (1 - product.Discount) * product.List_Price;
+                                                                    }
+
+                                                                    // Reset prices
+                                                                    product.Total_Price = product.Quantity * product.Unit_Price;
+                                                                    product.Sub_Total_Price = product.Quantity * product.List_Price;
+                                                                }
+                                                                else if (action.actionInfo.Action_Type__c === 'Adjust product field editability') {
+                                                                    if (
+                                                                        (
+                                                                            ruleEvaluation === true &&
+                                                                            action.actionInfo.Product_Field_Value_Boolean__c === true
+                                                                        ) ||
+                                                                        (
+                                                                            ruleEvaluation === false &&
+                                                                            action.actionInfo.Product_Field_Value_Boolean__c === false
+                                                                        )
+                                                                    ) {
+                                                                        if (!product.Adjustable_Product_Columns__c.includes(action.actionInfo.Product_Adjustment_Field__c)) {
+                                                                            product.Adjustable_Product_Columns__c.push(action.actionInfo.Product_Adjustment_Field__c);
+                                                                        }
+                                                                    } else {
+                                                                        product.Adjustable_Product_Columns__c = product.Adjustable_Product_Columns__c.filter(
+                                                                            col => col !== action.actionInfo.Product_Adjustment_Field__c
+                                                                        );
                                                                     }
                                                                 }
-
-                                                                // Reset Unit Price
-                                                                else if (action.actionInfo.Product_Adjustment_Field__c === 'Discount') {
-                                                                    product.Unit_Price = (1 - product.Discount) * product.List_Price;
-                                                                }
-
-                                                                // Reset prices
-                                                                product.Total_Price = product.Quantity * product.Unit_Price;
-                                                                product.Sub_Total_Price = product.Quantity * product.List_Price;
                                                             }
                                                         }, this);
                                                     }
@@ -1964,11 +1986,8 @@ export default class CPQ_ConfigQuote extends LightningElement {
         productToAdd.End_Date = this.quoteEndDate;
 
         // Default Permissions
-        productToAdd.Quantity_Editable = entry.Quantity_Editable__c;
+        productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
         productToAdd.Removable = entry.Removable__c;
-        productToAdd.Discountable = entry.Discountable__c;
-        productToAdd.Dates_Editable = entry.Dates_Editable__c;
-        productToAdd.List_Price_Editable = entry.List_Price_Editable__c;
 
         // Previous values obj
         productToAdd.prevValues = {};
@@ -2013,16 +2032,26 @@ export default class CPQ_ConfigQuote extends LightningElement {
         let productToUpdate = updatedProducts.find(product => product.key === event.detail.key);
         productToUpdate[event.detail.attribute] = event.detail.newValue;
 
-        // Update Discount
+        // Reset Unit Price
+        if (event.detail.attribute === 'Discount') {
+            productToUpdate.Unit_Price = (1 - productToUpdate.Discount) * productToUpdate.List_Price;
+        }
+        else if (event.detail.attribute === 'Total_Price') {
+            productToUpdate.Unit_Price = productToUpdate.Total_Price / productToUpdate.Quantity;
+        } else if (event.detail.attribute === 'Sub_Total_Price') {
+            productToUpdate.List_Price = productToUpdate.Sub_Total_Price / productToUpdate.Quantity;
+        }
+
+        // Reset Discount
         if (productToUpdate.List_Price !== 0) {
             productToUpdate.Discount = 1 - (productToUpdate.Unit_Price / productToUpdate.List_Price);
         } else {
             productToUpdate.Discount = 0;
         }
 
-        // Update prices
-        productToUpdate.Total_Price = productToUpdate.Unit_Price * productToUpdate.Quantity;
-        productToUpdate.Sub_Total_Price = productToUpdate.List_Price * productToUpdate.Quantity;
+        // Reset total prices
+        productToUpdate.Total_Price = productToUpdate.Quantity * productToUpdate.Unit_Price;
+        productToUpdate.Sub_Total_Price = productToUpdate.Quantity * productToUpdate.List_Price;
 
         this.quoteProducts = updatedProducts;
 

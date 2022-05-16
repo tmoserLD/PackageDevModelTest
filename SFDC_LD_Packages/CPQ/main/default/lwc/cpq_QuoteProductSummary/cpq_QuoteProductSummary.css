@@ -9,7 +9,7 @@
     scrollbar-color: var(--thumbBG) var(--scrollbarBG);
   }
   .scroll-shadows::-webkit-scrollbar {
-    width: 1px;
+    width: 6px;
     height: 6px;
   }
   .scroll-shadows::-webkit-scrollbar-track {

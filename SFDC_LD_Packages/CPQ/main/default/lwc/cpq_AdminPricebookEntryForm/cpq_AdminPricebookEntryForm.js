@@ -15,7 +15,7 @@ export default class CPQ_AdminPricebookEntryForm extends LightningElement {
     @api cardTitle;
 
     // Entry
-    @api entry
+    @api entry;
 
     // Entry Id
     @api entryId;
@@ -31,6 +31,16 @@ export default class CPQ_AdminPricebookEntryForm extends LightningElement {
 
     // Prompt to show in Delete Confirmation Modal
     @track confirmDeletePrompt = 'Are you sure you want to delete this pricebook entry?';
+
+    // Adjustable Product Columns
+    @track adjProdColumns;
+
+    // On Mount
+    connectedCallback() {
+        if (this.entry !== undefined) {
+            this.adjProdColumns = this.entry.Adjustable_Product_Columns__c;
+        }
+    }
 
     get hasId() {
         return this.entry !== undefined;
@@ -188,6 +198,20 @@ export default class CPQ_AdminPricebookEntryForm extends LightningElement {
             'cancel'
         );
         this.dispatchEvent(cancelEvent);
+    }
+
+    // Adjustable Product Columns Change
+    adjProdColChange(event) {
+        let cols = '';
+        if (event.detail.length > 0) {
+            let selectedOptions = [];
+            event.detail.forEach(function(option) {
+                selectedOptions.push(option);
+            });
+            cols = selectedOptions.join(';');
+        }
+
+        this.adjProdColumns = cols;
     }
 
 }

@@ -1,0 +1,93 @@
+<template>
+    <template if:true={hasField}>
+        <div class="slds-col" style="position:sticky">
+            <i>
+                <b>
+                    <ul class="slds-list_horizontal">
+                        <li class="slds-m-right_x-small">
+                            {fieldLabel}: 
+                        </li>
+                        <li>
+                            <!-- Boolean -->
+                            <template if:true={isBoolean}>
+                                <lightning-input
+                                    type="checkbox"
+                                    name={col.label}
+                                    label=""
+                                    variant="label-hidden"
+                                    value={group.value}
+                                    checked={group.value}
+                                    disabled="true"
+                                    readonly="true"
+                                    read-only="true"
+                                >
+                                </lightning-input>
+                            </template>
+
+                            <!-- Currency -->
+                            <template if:true={isCurrency}>
+                                <lightning-formatted-number
+                                    value={group.value}
+                                    format-style="currency"
+                                    currency-code={oppCurrency}
+                                >
+                                </lightning-formatted-number>
+                            </template>
+
+                            <!-- Date -->
+                            <template if:true={isDate}>
+                                <lightning-formatted-date-time
+                                    value={group.value}
+                                >
+                                </lightning-formatted-date-time>
+                            </template>
+
+                            <!-- Number -->
+                            <template if:true={isNumber}>
+                                <lightning-formatted-number
+                                    value={group.value}
+                                    maximum-fraction-digits="2"
+                                >
+                                </lightning-formatted-number>
+                            </template>
+
+                            <!-- Percent -->
+                            <template if:true={isPercent}>
+                                <lightning-formatted-number
+                                    value={group.value}
+                                    format-style="percent"
+                                    maximum-fraction-digits="2"
+                                >
+                                </lightning-formatted-number>
+                            </template>
+
+                            <!-- Text -->
+                            <template if:true={isText}>
+                                <lightning-formatted-text
+                                    value={group.value}
+                                >
+                                </lightning-formatted-text>
+                            </template>
+                        </li>
+                    </ul>
+                </b>
+            </i>
+        </div>
+    </template>
+    <template
+        for:each={group.entitlements}
+        for:item="entitlement"
+    >
+        <div key={entitlement.Id}>
+            <c-cpq_-quote-entitlement
+                columns-to-display={columnsToDisplay}
+                contract-currency={contractCurrency}
+                currency-map={currencyMap}
+                entitlement={entitlement}
+                opp-currency={oppCurrency}
+                sorted-entitlements={group.entitlements}
+            >
+            </c-cpq_-quote-entitlement>
+        </div>
+    </template>
+</template>

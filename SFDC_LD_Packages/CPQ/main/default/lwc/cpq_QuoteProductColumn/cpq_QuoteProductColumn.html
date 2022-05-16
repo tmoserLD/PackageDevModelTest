@@ -1,52 +1,90 @@
 <template>
     <template if:true={isEditable}>
+        <div class="slds-p-horizontal_xx-small slds-p-vertical_x-small">
 
-        <!-- Quantity -->
-        <template if:true={isQuantity}>
-            <div class="slds-p-horizontal_xx-small slds-p-vertical_x-small">
+            <!-- Boolean -->
+            <template if:true={isBoolean}>
                 <lightning-input
+                    type="checkbox"
+                    name="Column Input"
+                    label=""
+                    variant="label-hidden"
+                    value={value}
+                    checked={value}
+                    onchange={valueChange}
+                >
+                </lightning-input>
+            </template>
+
+            <!-- Currency -->
+            <template if:true={isCurrency}>
+                <lightning-input
+                    step="any"
                     type="number"
-                    name="quantity"
+                    name="Column Input"
+                    label=""
+                    variant="label-hidden"
+                    value={value}
+                    onblur={valueChange}
+                >
+                </lightning-input>
+            </template>
+
+            <!-- Date -->
+            <template if:true={isDate}>
+                <lightning-input
+                    type="date"
+                    name="Column Input"
                     label=""
                     variant="label-hidden"
                     value={value}
                     onchange={valueChange}
+                    onblur={valueChange}
                 >
                 </lightning-input>
-            </div>
-        </template>
+            </template>
 
-        <!-- Unit Price -->
-        <template if:true={isUnitPrice}>
-            <div class="slds-p-horizontal_xx-small slds-p-vertical_x-small">
+            <!-- Percent -->
+            <template if:true={isPercent}>
                 <lightning-input
+                    step="any"
                     type="number"
-                    step="0.01"
-                    name="unitPrice"
+                    name="Column Input"
                     label=""
                     variant="label-hidden"
                     value={value}
-                    onchange={valueChange}
+                    onblur={valueChange}
                 >
                 </lightning-input>
-            </div>
-        </template>
+            </template>
 
-        <!-- List Price -->
-        <template if:true={isListPrice}>
-            <div class="slds-p-horizontal_xx-small slds-p-vertical_x-small">
+            <!-- Number -->
+            <template if:true={isNumber}>
                 <lightning-input
+                    step="any"
                     type="number"
-                    step="0.01"
-                    name="listPrice"
+                    name="Column Input"
                     label=""
                     variant="label-hidden"
                     value={value}
-                    onchange={valueChange}
+                    onblur={valueChange}
                 >
                 </lightning-input>
-            </div>
-        </template>
+            </template>
+
+            <!-- Text -->
+            <template if:true={isText}>
+                <lightning-input
+                    type="text"
+                    name="Column Input"
+                    label=""
+                    variant="label-hidden"
+                    value={value}
+                    onblur={valueChange}
+                >
+                </lightning-input>
+            </template>
+        </div>
     </template>
 
 

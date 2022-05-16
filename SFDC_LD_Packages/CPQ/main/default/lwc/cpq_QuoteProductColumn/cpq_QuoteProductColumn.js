@@ -18,19 +18,7 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
     get isEditable() {
         let isEditable = false;
 
-        if (this.column.field === 'Quantity' &&
-            this.product.Quantity_Editable === true
-        ) {
-            isEditable = true;
-        }
-        else if (this.column.field === 'Unit_Price' &&
-            this.product.Discountable === true
-        ) {
-            isEditable = true;
-        }
-        else if (this.column.field === 'List_Price' &&
-            this.product.List_Price_Editable === true
-        ) {
+        if (this.product.Adjustable_Product_Columns__c.includes(this.column.field)) {
             isEditable = true;
         }
 
@@ -39,21 +27,6 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
         }
 
         return isEditable;
-    }
-
-    // Quantity
-    get isQuantity() {
-        return this.column.field === 'Quantity';
-    }
-
-    // Unit Price
-    get isUnitPrice() {
-        return this.column.field === 'Unit_Price';
-    }
-
-    // List Price
-    get isListPrice() {
-        return this.column.field === 'List_Price';
     }
 
     // Value
@@ -96,31 +69,32 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
         if (field === this.column.field) {
             this.template.querySelectorAll('lightning-input').forEach(function(input) {
                 input.value = newValue;
+                if (this.column.type === 'Boolean') {
+                    input.checked = newValue;
+                }
             }, this);
         }
     }
 
     // Value change
     valueChange(event) {
-        let newValue = event.detail.value;
-        if (newValue &&
-            newValue !== '' &&
-            newValue >= 0
-        ) {
-            const updateEvent = new CustomEvent(
-                'update', {
-                    detail: {
-                        key: this.product.key,
-                        attribute: this.column.field,
-                        newValue: newValue
-                    }
-                });
-            this.dispatchEvent(updateEvent);
-        } else {
-            this.template.querySelectorAll('lightning-input').forEach(function(input) {
-                input.value = this.product[this.column.field];
-            });
-        }
+        let value;
+        this.template.querySelectorAll('lightning-input').forEach(function(input) {
+            value = input.value;
+            if (this.column.type === 'Boolean') {
+                value = input.checked;
+            }
+        }, this);
+        const updateEvent = new CustomEvent(
+            'update', {
+                detail: {
+                    key: this.product.key,
+                    attribute: this.column.field,
+                    newValue: value
+                }
+            }
+        );
+        this.dispatchEvent(updateEvent);
     }
 
 }

@@ -6,7 +6,7 @@ export default class CPQ_QuoteProduct extends LightningElement {
     @api configType;
 
     // Product
-    @api product;
+    // @api product;
 
     // Opportunity Currency Iso Code
     @api oppCurrency;
@@ -18,40 +18,19 @@ export default class CPQ_QuoteProduct extends LightningElement {
     @api columnsToDisplay;
 
     @api
-    get unitPrice() {
-        return this.product.Unit_Price;
+    get product() {
+        return this.productCopy;
     }
-    set unitPrice(value) {
-        if (this.product !== undefined) {
-            this.template.querySelectorAll('c-cpq_-quote-product-column').forEach(function(col) {
-                col.updateValue('Unit_Price', value);
-            }, this);
+    set product(value) {
+        this.productCopy = value;
+        if (value !== undefined) {
+            for (let index=0; index < this.template.querySelectorAll('c-cpq_-quote-product-column').length; index++) {
+                this.template.querySelectorAll('c-cpq_-quote-product-column')[index].updateValue(this.columnsToDisplay[index].field, value[this.columnsToDisplay[index].field]);
+            }
         }
     }
 
-    @api
-    get quantity() {
-        return this.product.Quantity;
-    }
-    set quantity(value) {
-        if (this.product !== undefined) {
-            this.template.querySelectorAll('c-cpq_-quote-product-column').forEach(function(col) {
-                col.updateValue('Quantity', value);
-            }, this);
-        }
-    }
-
-    @api
-    get listPrice() {
-        return this.product.List_Price;
-    }
-    set listPrice(value) {
-        if (this.product !== undefined) {
-            this.template.querySelectorAll('c-cpq_-quote-product-column').forEach(function(col) {
-                col.updateValue('List_Price', value);
-            }, this);
-        }
-    }
+    @track productCopy;
 
     // CSS class names string for component
     get colCSS() {

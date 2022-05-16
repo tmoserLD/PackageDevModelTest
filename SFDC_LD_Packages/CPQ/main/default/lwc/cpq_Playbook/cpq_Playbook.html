@@ -51,6 +51,8 @@
         <template if:true={showProductSummary}>
             <c-cpq_-quote-product-summary
                 config-type={configType}
+                default-group-by={playbook.playbookInfo.Product_Summary_Group_By_Default__c}
+                default-sort-by={playbook.playbookInfo.Product_Summary_Sort_By_Default__c}
                 opp-currency={oppCurrency}
                 pricebook={pricebook}
                 product-columns={productColumns}
@@ -67,6 +69,8 @@
             <c-cpq_-quote-entitlement-summary
                 contract-currency={contractCurrency}
                 currency-map={currencyMap}
+                default-group-by={playbook.playbookInfo.Entitlement_Summary_Group_By_Default__c}
+                default-sort-by={playbook.playbookInfo.Entitlement_Summary_Sort_By_Default__c}
                 entitlement-columns={entitlementColumns}
                 entitlements={entitlements}
                 opp-currency={oppCurrency}

@@ -65,16 +65,42 @@
 
             <template if:false={collapsed}>
 
-                <template if:true={hasProductsToAdd}>
-                    <div class="slds-col slds-p-around_small">
-                        <lightning-button
-                            onclick={showAddProducts}
-                            label="Add Product(s)"
-                            variant="neutral"
-                        >
-                        </lightning-button>
+                
+                <div class="slds-col slds-grid slds-p-around_small">
+
+                    <!-- Group by -->
+                    <div class="slds-col">
+                        <ul class="slds-list_horizontal slds-wrap">
+                            <li class="slds-p-top_xx-small slds-m-right_x-small">
+                                Group by
+                            </li>
+                            <li>
+                                <lightning-combobox
+                                    name="Group by"
+                                    label="Group by"
+                                    value={groupByField}
+                                    placeholder="Select Field"
+                                    variant="label-hidden"
+                                    options={groupByColumns}
+                                    onchange={groupByChange}
+                                >
+                                </lightning-combobox>
+                            </li>
+                        </ul>
                     </div>
-                </template>
+
+                    <!-- Add Products -->
+                    <template if:true={hasProductsToAdd}>
+                        <div class="slds-col_bump-left">
+                            <lightning-button
+                                onclick={showAddProducts}
+                                label="Add Product(s)"
+                                variant="neutral"
+                            >
+                            </lightning-button>
+                        </div>
+                    </template>
+                </div>
 
                 <div class="slds-col slds-grid">
                     <div
@@ -147,26 +173,27 @@
                             </template>
                         </div>
 
-                        <!-- Quote Products -->
+                        <!-- Grouped Quote Products -->
                         <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
                             <template
-                                for:each={sortedQuoteProducts}
-                                for:item="product"
+                                for:each={productGroups}
+                                for:item="group"
                             >
-                                <div key={product.key}>
-                                    <c-cpq_-quote-product
+                                <div
+                                    key={group.value}
+                                    class="slds-col slds-grid_vertical slds-m-vertical_small slds-theme_default"
+                                >
+                                    <c-cpq_-quote-product-group
+                                        group={group}
                                         columns-to-display={columnsToDisplay}
                                         config-type={configType}
+                                        field-label={groupByFieldLabel}
+                                        field-type={groupByFieldType}
                                         opp-currency={oppCurrency}
-                                        product={product}
-                                        sorted-quote-products={sortedQuoteProducts}
-                                        list-price={product.List_Price}
-                                        quantity={product.Quantity}
-                                        unit-price={product.Unit_Price}
                                         onremove={removeProduct}
                                         onupdate={updateProduct}
                                     >
-                                    </c-cpq_-quote-product>
+                                    </c-cpq_-quote-product-group>
                                 </div>
                             </template>
                         </div>
@@ -188,20 +215,23 @@
                                     </div>
                                 </div>
 
-                                <!-- Quote Actions -->
+                                <!-- Grouped Quote Product Actions -->
                                 <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
                                     <template
-                                        for:each={sortedQuoteProducts}
-                                        for:item="product"
+                                        for:each={productGroups}
+                                        for:item="group"
                                     >
-                                        <div key={product.key}>
-                                            <c-cpq_-quote-product-action
-                                                product={product}
-                                                sorted-quote-products={sortedQuoteProducts}
+                                        <div
+                                            key={group.value}
+                                            class="slds-col slds-grid_vertical slds-m-vertical_small slds-theme_default"
+                                        >
+                                            <c-cpq_-quote-product-group-actions
+                                                group={group}
+                                                field-label={groupByFieldLabel}
                                                 onremove={removeProduct}
                                                 onupdate={updateProduct}
                                             >
-                                            </c-cpq_-quote-product-action>
+                                            </c-cpq_-quote-product-group-actions>
                                         </div>
                                     </template>
                                 </div>

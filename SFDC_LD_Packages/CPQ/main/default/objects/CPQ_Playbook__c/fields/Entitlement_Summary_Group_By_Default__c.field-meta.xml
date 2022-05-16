@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Entitlement_Summary_Group_By_Default__c</fullName>
+    <description>Default Entitlement Column to group entitlements by</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Default Entitlement Column to group entitlements by</inlineHelpText>
+    <label>Entitlement Summary Group By Default</label>
+    <length>100</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

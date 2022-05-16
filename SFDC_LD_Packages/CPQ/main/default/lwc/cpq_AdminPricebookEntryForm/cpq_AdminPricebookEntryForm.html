@@ -156,54 +156,6 @@
                     <!-- Col 1 -->
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
 
-                        <!-- Quantity Editable -->
-                        <lightning-input-field
-                            field-name="Quantity_Editable__c"
-                        >
-                        </lightning-input-field>
-                    </div>
-
-                    <!-- Col 2 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                        <!-- Discountable -->
-                        <lightning-input-field
-                            field-name="Discountable__c"
-                        >
-                        </lightning-input-field>
-                    </div>
-                </div>
-
-                <!-- Row 5 -->
-                <div class="slds-col slds-grid slds-wrap">
-
-                    <!-- Col 1 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                        <!-- List Price Editable -->
-                        <lightning-input-field
-                            field-name="List_Price_Editable__c"
-                        >
-                        </lightning-input-field>
-                    </div>
-
-                    <!-- Col 2 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                        <!-- Dates Editable -->
-                        <lightning-input-field
-                            field-name="Dates_Editable__c"
-                        >
-                        </lightning-input-field>
-                    </div>
-                </div>
-
-                <!-- Row 6 -->
-                <div class="slds-col slds-grid slds-wrap">
-
-                    <!-- Col 1 -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
                         <!-- Manually Addible -->
                         <lightning-input-field
                             field-name="Manually_Addible__c"
@@ -219,6 +171,37 @@
                             field-name="Removable__c"
                         >
                         </lightning-input-field>
+                    </div>
+                </div>
+
+                <!-- Row 5 -->
+                <div class="slds-col slds-grid slds-wrap">
+
+                    <!-- Col 1 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+
+                        <!-- Adjustable Product Columns -->
+                        <c-list-generator
+                            label="Adjustable Product Columns"
+                            order-label-title="Adjust Adjustable Product Column Order"
+                            placeholder="Enter desired CPQ attribute name or QLI field API name"
+                            help-text="Attribute names on the Product level to be made editable in the Product Summary in CPQ. The following CPQ attributes are valid: &apos;Start_Date&apos;, &apos;End_Date&apos;, &apos;Quantity&apos;, &apos;Discount&apos;, &apos;Unit_Price&apos;, &apos;List_Price&apos;, &apos;Sub_Total_Price&apos;, and &apos;Total_Price&apos;. Any QuoteLineItem Field API names are also supported in the event that they are displayed in CPQ."
+                            initial-options={adjProdColumns}
+                            initial-options-source="Semicolon delineated"
+                            onupdate={adjProdColChange}
+                        >
+                        </c-list-generator>
+                        <div style="display:none">
+                            <lightning-input-field
+                                field-name="Adjustable_Product_Columns__c"
+                                value={adjProdColumns}
+                            >
+                            </lightning-input-field>
+                        </div>
+                    </div>
+
+                    <!-- Col 2 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
                     </div>
                 </div>
             </div>

@@ -54,6 +54,30 @@
 
             <template if:false={collapsed}>
 
+                <div class="slds-col slds-grid slds-p-around_small">
+
+                    <!-- Group by -->
+                    <div class="slds-col">
+                        <ul class="slds-list_horizontal slds-wrap">
+                            <li class="slds-p-top_xx-small slds-m-right_x-small">
+                                Group by
+                            </li>
+                            <li>
+                                <lightning-combobox
+                                    name="Group by"
+                                    label="Group by"
+                                    value={groupByField}
+                                    placeholder="Select Field"
+                                    variant="label-hidden"
+                                    options={groupByColumns}
+                                    onchange={groupByChange}
+                                >
+                                </lightning-combobox>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="slds-col slds-grid">
                     <div
                         class="slds-col slds-size_12-of-12 slds-medium-size_12-of-12 slds-large-size_12-of-12 slds-grid_vertical scroll-shadows"
@@ -124,22 +148,26 @@
                             </template>
                         </div>
 
-                        <!-- Entitlements -->
+                        <!-- Grouped Entitlements -->
                         <div class="slds-col slds-grid_vertical slds-theme_default slds-p-horizontal_x-small">
                             <template
-                                for:each={sortedEntitlements}
-                                for:item="ent"
+                                for:each={entitlementGroups}
+                                for:item="group"
                             >
-                                <div key={ent.Id}>
-                                    <c-cpq_-quote-entitlement
+                                <div
+                                    key={group.value}
+                                    class="slds-col slds-grid_vertical slds-m-vertical_small slds-theme_default"
+                                >
+                                    <c-cpq_-quote-entitlement-group
+                                        group={group}
                                         columns-to-display={columnsToDisplay}
                                         contract-currency={contractCurrency}
                                         currency-map={currencyMap}
-                                        entitlement={ent}
+                                        field-label={groupByFieldLabel}
+                                        field-type={groupByFieldType}
                                         opp-currency={oppCurrency}
-                                        sorted-entitlements={sortedEntitlements}
                                     >
-                                    </c-cpq_-quote-entitlement>
+                                    </c-cpq_-quote-entitlement-group>
                                 </div>
                             </template>
                         </div>

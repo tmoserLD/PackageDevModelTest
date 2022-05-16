@@ -17,14 +17,42 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     // Columns to show for Product Summary
     @api productColumns = [];
 
+    // Default group/sort columns
+    @api defaultGroupBy;
+    @api defaultSortBy;
+
     // Collapse toggle
     @track collapsed = false;
+
+    // Group by field
+    @track groupByField;
+
+    // Group by field type
+    @track groupByFieldType;
+
+    // Group by field label
+    @track groupByFieldLabel;
 
     // Add Products Modal Toggle
     @track showAddProductsModal = false;
 
     // Current Sort Column
     @track sortCol = {};
+
+    // On Mount
+    connectedCallback() {
+        if (this.defaultGroupBy !== undefined) {
+            this.groupByField = this.defaultGroupBy;
+            this.groupByFieldType = this.groupByColumns.find(col => col.value === this.defaultGroupBy).type;
+            this.groupByFieldLabel = this.groupByColumns.find(col => col.value === this.defaultGroupBy).label;
+        }
+        if (this.defaultSortBy !== undefined) {
+            this.sortCol = {
+                field: this.defaultSortBy,
+                sort: 'Down'
+            };
+        }
+    }
 
     // Columns to display
     get columnsToDisplay() {
@@ -65,7 +93,7 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
                 }
                 else if (col.field === 'Unit_Price') {
                     colToAdd = {
-                        label: 'Quoted Price',
+                        label: 'Unit Price',
                         field: 'Unit_Price',
                         type: 'Currency'
                     };
@@ -138,13 +166,104 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         return colCSS;
     }
 
+    get groupByColumns() {
+        let columns = [];
+
+        columns.push({
+            label: '-- Select Field --',
+            value: undefined,
+            type: undefined
+        });
+
+        JSON.parse(JSON.stringify(this.productColumns)).forEach(function(col) {
+            let colToAdd;
+
+            // Standard
+            if (col.type === undefined) {
+                
+                if (col.field === 'Product_Name') {
+                    colToAdd = {
+                        label: 'Product',
+                        value: 'Product_Name',
+                        type: 'Text'
+                    };
+                }
+                else if (col.field === 'Start_Date') {
+                    colToAdd = {
+                        label: 'Start Date',
+                        value: 'Start_Date',
+                        type: 'Date'
+                    };
+                }
+                else if (col.field === 'End_Date') {
+                    colToAdd = {
+                        label: 'End Date',
+                        value: 'End_Date',
+                        type: 'Date'
+                    };
+                }
+                else if (col.field === 'Quantity') {
+                    colToAdd = {
+                        label: 'Quantity',
+                        value: 'Quantity',
+                        type: 'Number'
+                    };
+                }
+                else if (col.field === 'Unit_Price') {
+                    colToAdd = {
+                        label: 'Unit Price',
+                        value: 'Unit_Price',
+                        type: 'Currency'
+                    };
+                }
+                else if (col.field === 'List_Price') {
+                    colToAdd = {
+                        label: 'List Price',
+                        value: 'List_Price',
+                        type: 'Currency'
+                    };
+                }
+                else if (col.field === 'Sub_Total_Price') {
+                    colToAdd = {
+                        label: 'Subtotal Price',
+                        value: 'Sub_Total_Price',
+                        type: 'Currency'
+                    };
+                }
+                else if (col.field === 'Total_Price') {
+                    colToAdd = {
+                        label: 'Total Price',
+                        value: 'Total_Price',
+                        type: 'Currency'
+                    };
+                }
+                else if (col.field === 'Discount') {
+                    colToAdd = {
+                        label: 'Discount',
+                        value: 'Discount',
+                        type: 'Percent'
+                    };
+                }
+            } else {
+                colToAdd = {
+                    label: col.label,
+                    value: col.field,
+                    type: col.type
+                }
+            }
+
+            columns.push(colToAdd);
+
+        }, this);
+
+        return columns;
+    }
+
     get hasActions() {
         let hasActions = false;
         if (!this.configType.includes('View')) {
             this.quoteProducts.forEach(function(product) {
-                if (product.Dates_Editable === true ||
-                    product.Removable === true
-                ) {
+                if (product.Removable === true) {
                     hasActions = true;
                 }
             }, this);
@@ -157,9 +276,7 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         let hasActions = false;
         if (!this.configType.includes('View')) {
             this.quoteProducts.forEach(function(product) {
-                if (product.Dates_Editable === true ||
-                    product.Removable === true
-                ) {
+                if (product.Removable === true) {
                     hasActions = true;
                 }
             }, this);
@@ -221,14 +338,59 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         return hasProductsToAdd;
     }
 
-    // Sorted Quote Products
-    get sortedQuoteProducts() {
-        return this.sorter(this.sortCol);
+    // Grouped products
+    get productGroups() {
+        let groups = [];
+
+        if (this.groupByField !== undefined) {
+
+            // Find all unique values for field
+            let uniqueValues = [];
+            this.sorter(
+                this.quoteProducts,
+                {
+                    field: this.groupByField,
+                    sort: 'Down'
+                }
+            ).forEach(function(prod) {
+                if (!uniqueValues.includes(prod[this.groupByField]?.toString())) {
+                    uniqueValues.push(prod[this.groupByField]?.toString());
+                }
+            }, this);
+
+            // Sort each group by sort col
+            uniqueValues.forEach(function(val) {
+                groups.push(
+                    {
+                        value: val,
+                        products: this.sorter(
+                            this.quoteProducts.filter(
+                                prod => prod[this.groupByField]?.toString() === val
+                            ),
+                            this.sortCol
+                        )
+                    }
+                );
+            }, this);
+        } else {
+            // All products in 1 group
+            groups.push(
+                {
+                    value: undefined,
+                    products: this.sorter(
+                        this.quoteProducts,
+                        this.sortCol
+                    )
+                }
+            );
+        }
+
+        return groups;
     }
 
     // Sorter
-    sorter(sortCol) {
-        return JSON.parse(JSON.stringify(this.quoteProducts)).sort(function(productA, productB) {
+    sorter(products, sortCol) {
+        return JSON.parse(JSON.stringify(products)).sort(function(productA, productB) {
 
             // Sort by sort col
             if (sortCol.field !== undefined) {
@@ -287,10 +449,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     sortColumn(event) {
         if (this.sortCol.field !== undefined) {
             if (this.sortCol.field === event.target.id.split('-')[0]) {
-                if (this.sortCol.sort === 'Up') {
+                if (this.sortCol.sort === 'Down') {
                     this.sortCol = {
                         field: event.target.id.split('-')[0],
-                        sort: 'Down'
+                        sort: 'Up'
                     }
                 } else {
                     this.sortCol = {}
@@ -298,13 +460,13 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
             } else {
                 this.sortCol = {
                     field: event.target.id.split('-')[0],
-                    sort: 'Up'
+                    sort: 'Down'
                 };
             }
         } else {
             this.sortCol = {
                 field: event.target.id.split('-')[0],
-                sort: 'Up'
+                sort: 'Down'
             };
         }
     }
@@ -339,5 +501,18 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
                 detail: event.detail
             });
         this.dispatchEvent(addProductsEvent);
+    }
+
+    // Group by field change
+    groupByChange(event) {
+        if (event.detail.value === null) {
+            this.groupByField = undefined;
+            this.groupByFieldType = undefined;
+            this.groupByFieldLabel = undefined;
+        } else {
+            this.groupByField = event.detail.value;
+            this.groupByFieldType = this.groupByColumns.find(col => col.value === event.detail.value).type;
+            this.groupByFieldLabel = this.groupByColumns.find(col => col.value === event.detail.value).label;
+        }
     }
 }

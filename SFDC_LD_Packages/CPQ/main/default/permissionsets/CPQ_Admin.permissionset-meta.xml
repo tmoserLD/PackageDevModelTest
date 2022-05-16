@@ -890,6 +890,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CPQ_Playbook__c.Entitlement_Summary_Group_by_Default__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook__c.Entitlement_Summary_Sort_by_Default__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CPQ_Playbook__c.IsActive__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -901,6 +911,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Playbook__c.Product_Summary_Columns__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook__c.Product_Summary_Group_by_Default__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>CPQ_Playbook__c.Product_Summary_Sort_by_Default__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1185,27 +1205,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>PricebookEntry.Dates_Editable__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>PricebookEntry.Discountable__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>PricebookEntry.List_Price_Editable__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>PricebookEntry.Manually_Addible__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>PricebookEntry.Quantity_Editable__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1216,6 +1216,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>PricebookEntry.Removable__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>PricebookEntry.Adjustable_Product_Columns__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

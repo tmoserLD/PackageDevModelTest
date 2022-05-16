@@ -100,15 +100,15 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
     }
 
     get productType() {
-        return ['Adjust product field', 'Add product'].includes(this.actionType);
+        return ['Adjust product field', 'Add product', 'Adjust product field editability'].includes(this.actionType);
     }
 
     get adjustProductFieldType() {
-        return this.actionType === 'Adjust product field';
+        return ['Adjust product field', 'Adjust product field editability'].includes(this.actionType);
     }
 
     get sourcedActions() {
-        return ['Adjust product field', 'Adjust question field', 'Adjust question group field'].includes(this.actionType);
+        return ['Adjust product field', 'Adjust question field', 'Adjust question group field', 'Adjust product field editability'].includes(this.actionType);
     }
 
     get ruleId() {
@@ -218,8 +218,11 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
     // Boolean input type
     get isBooleanProd() {
         return (
-            this.actionType === 'Adjust product field' &&
-            this.productFieldType === 'Boolean'
+            (
+                this.actionType === 'Adjust product field' &&
+                this.productFieldType === 'Boolean'
+            ) ||
+            this.actionType === 'Adjust product field editability'
         );
     }
 
@@ -476,10 +479,6 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
             'Discount' : 'Decimal',
             'Unit_Price' : 'Currency',
             'List_Price' : 'Currency',
-            'Quantity_Editable' : 'Boolean',
-            'Dates_Editable' : 'Boolean',
-            'Discountable' : 'Boolean',
-            'List_Price_Editable' : 'Boolean',
             'Manually_Addible' : 'Boolean',
             'Removable' : 'Boolean'
         };

@@ -59,15 +59,12 @@ public class cpq_ConfigQuoteClassTest {
             testEntries.add(
                 new PricebookEntry(
                     IsActive = true,
-                    Dates_Editable__c = true,
-                    Discountable__c = true,
+                    Adjustable_Product_Columns__c = 'Unit_Price',
                     UnitPrice = 1,
-                    List_Price_Editable__c = true,
                     Manually_Addible__c = true,
                     Pricebook2Id = testPricebooks[0].Id,
                     Product2Id = testProducts[i].Id,
                     Quantity__c = 1,
-                    Quantity_Editable__c = true,
                     Removable__c = true
                 )
             ); 

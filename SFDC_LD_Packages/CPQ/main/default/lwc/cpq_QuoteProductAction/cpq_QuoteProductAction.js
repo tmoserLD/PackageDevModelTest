@@ -9,12 +9,7 @@ export default class CPQ_QuoteProductAction extends LightningElement {
     @api sortedQuoteProducts;
 
     // Dates Modal toggle
-    @track showChangeDates = false;
-
-    // Determine if product dates can be edited
-    get datesEditable() {
-        return this.product.Dates_Editable;
-    }
+    // @track showChangeDates = false;
 
     // CSS class names string for component
     get mainCSS() {
@@ -35,15 +30,15 @@ export default class CPQ_QuoteProductAction extends LightningElement {
         return this.product.Removable;
     }
 
-    // Adjust Dates clicked
-    adjustDates() {
-        this.showChangeDates = true;
-    }
+    // // Adjust Dates clicked
+    // adjustDates() {
+    //     this.showChangeDates = true;
+    // }
 
-    // Change Dates cancel event
-    cancelChangeDates() {
-        this.showChangeDates = false;
-    }
+    // // Change Dates cancel event
+    // cancelChangeDates() {
+    //     this.showChangeDates = false;
+    // }
 
     // Remove Product clicked
     removeProduct() {
@@ -54,13 +49,13 @@ export default class CPQ_QuoteProductAction extends LightningElement {
         this.dispatchEvent(removeEvent);
     }
 
-    // Change Dates save event
-    saveChangedDates(event) {
-        this.updateProduct('End_Date', event.detail.endDate);
-        this.updateProduct('Start_Date', event.detail.startDate);
+    // // Change Dates save event
+    // saveChangedDates(event) {
+    //     this.updateProduct('End_Date', event.detail.endDate);
+    //     this.updateProduct('Start_Date', event.detail.startDate);
 
-        this.showChangeDates = false;
-    }
+    //     this.showChangeDates = false;
+    // }
 
     // Update product in quote
     updateProduct(attribute, value) {

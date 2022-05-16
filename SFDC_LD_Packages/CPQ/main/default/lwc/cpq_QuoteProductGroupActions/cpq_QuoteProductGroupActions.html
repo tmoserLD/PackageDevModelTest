@@ -1,0 +1,29 @@
+<template>
+    <template if:true={hasField}>
+        <div class="slds-col">
+            <i style="color:white">
+                <b>
+                    <ul class="slds-list_horizontal">
+                        <li class="slds-m-right_x-small">
+                            S 
+                        </li>
+                    </ul>
+                </b>
+            </i>
+        </div>
+    </template>
+    <template
+        for:each={group.products}
+        for:item="product"
+    >
+        <div key={product.key}>
+            <c-cpq_-quote-product-action
+                product={product}
+                sorted-quote-products={group.products}
+                onremove={removeProduct}
+                onupdate={updateProduct}
+            >
+            </c-cpq_-quote-product-action>
+        </div>
+    </template>
+</template>

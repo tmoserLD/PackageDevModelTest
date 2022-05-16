@@ -376,10 +376,6 @@ public with sharing class cpq_ContainerClass {
             'List_Price',
             'Start_Date',
             'End_Date',
-            'Quantity_Editable',
-            'Dates_Editable',
-            'Discountable',
-            'List_Price_Editable',
             'Manually_Addible',
             'Removable'
         };

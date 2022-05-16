@@ -1,14 +1,14 @@
 <template>
 
     <!-- Change Dates -->
-    <template if:true={showChangeDates}>
+    <!-- <template if:true={showChangeDates}>
         <c-cpq_-quote-product-date-modal
             product={product}
             onsave={saveChangedDates}
             oncancel={cancelChangeDates}
         >
         </c-cpq_-quote-product-date-modal>
-    </template>
+    </template> -->
 
     <!-- Actions -->
     <div
@@ -16,21 +16,6 @@
         style="height: 50px;border-bottom: 0.25px solid gray;overflow:auto"
     >
         <ul class="slds-list_horizontal">
-            <template if:true={datesEditable}>
-                <li>
-                    <div class="slds-p-top_x-small slds-p-horizontal_xx-small">
-                        <lightning-icon
-                            icon-name="utility:date_input"
-                            alternative-text="Adjust Dates"
-                            title="Adjust Dates"
-                            size="xx-small"
-                            onclick={adjustDates}
-                            style="cursor:pointer"
-                        >
-                        </lightning-icon>
-                    </div>
-                </li>
-            </template>
             <template if:true={removable}>
                 <li class="slds-m-left_x-small">
                     <div class="slds-p-top_x-small slds-p-horizontal_xx-small">

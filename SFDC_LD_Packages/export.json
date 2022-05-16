@@ -6,7 +6,7 @@
             "externalId": "Name;Description"
         },
         {
-            "query": "SELECT Id,IsActive,Dates_Editable__c,Discountable__c,UnitPrice,List_Price_Editable__c,Manually_Addible__c,Pricebook2Id,Product2Id,Quantity__c,Quantity_Editable__c,Removable__c FROM PricebookEntry WHERE IsActive = TRUE AND Product2.IsActive = TRUE",
+            "query": "SELECT Id,IsActive,Adjustable_Product_Columns__c,UnitPrice,Manually_Addible__c,Pricebook2Id,Product2Id,Quantity__c,Removable__c FROM PricebookEntry WHERE IsActive = TRUE AND Product2.IsActive = TRUE",
             "operation": "Upsert",
             "externalId": "Product2.Name;UnitPrice;Pricebook2.Name",
             "master": false

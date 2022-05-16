@@ -49,10 +49,6 @@ public with sharing class CPQ_Rule_Action_UpdatesUtil {
                         'Discount',
                         'Unit_Price',
                         'List_Price',
-                        'Quantity_Editable',
-                        'Dates_Editable',
-                        'Discountable',
-                        'List_Price_Editable',
                         'Manually_Addible',
                         'Removable'
                     },

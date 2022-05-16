@@ -47,10 +47,6 @@ public with sharing class cpq_ConfigQuoteClass {
             'List_Price',
             'Start_Date',
             'End_Date',
-            'Quantity_Editable',
-            'Dates_Editable',
-            'Discountable',
-            'List_Price_Editable',
             'Manually_Addible',
             'Removable'
         };
@@ -62,14 +58,11 @@ public with sharing class cpq_ConfigQuoteClass {
         // PricebookEntry Base Fields
         Set<String> pricebookEntryFields = new Set<String>{
             'Id',
-            'Dates_Editable__c',
-            'Discountable__c',
-            'List_Price_Editable__c',
+            'Adjustable_Product_Columns__c',
             'Manually_Addible__c',
             'Product2Id',
             'Product2.Name',
             'Quantity__c',
-            'Quantity_Editable__c',
             'Removable__c',
             'UnitPrice',
             'UseStandardPrice'
@@ -117,11 +110,15 @@ public with sharing class cpq_ConfigQuoteClass {
                 Contract_View_Display_Fields__c,
                 Default_Term_in_Months__c,
                 Entitlement_Summary_Columns__c,
+                Entitlement_Summary_Group_by_Default__c,
+                Entitlement_Summary_Sort_by_Default__c,
                 IsActive__c,
                 Label__c,
                 Name,
                 Pricebook__c,
                 Product_Summary_Columns__c,
+                Product_Summary_Group_by_Default__c,
+                Product_Summary_Sort_by_Default__c,
                 Quote_View_Display_Fields__c
             FROM CPQ_Playbook__c
             WHERE IsActive__c = TRUE AND
@@ -301,6 +298,8 @@ public with sharing class cpq_ConfigQuoteClass {
             // Show Contract fields as product fields when viewing contract
             if (contractView == true) {
                 playbookInfoSet.productColumns = playbookInfoSet.entitlementColumns;
+                playbookInfoSet.playbookInfo.Product_Summary_Group_by_Default__c = playbookInfoSet.playbookInfo.Entitlement_Summary_Group_by_Default__c;
+                playbookInfoSet.playbookInfo.Product_Summary_Sort_by_Default__c = playbookInfoSet.playbookInfo.Entitlement_Summary_Sort_by_Default__c;
             }
         }
 
