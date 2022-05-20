@@ -631,7 +631,13 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                     sourceValues.push(record[criterion.criterionInfo.Record_Lookup_Field__c]);
                                                 }, this);
                                             } else {
-                                                sourceValues.push(question.questionInfo.answer);
+                                                if (question.questionInfo.Answer_Type__c === 'Date' &&
+                                                    question.questionInfo.answer
+                                                ) {
+                                                    sourceValues.push(new Date(question.questionInfo.answer));
+                                                } else {
+                                                    sourceValues.push(question.questionInfo.answer);
+                                                }
                                             }
 
                                             // Comparison value
@@ -658,12 +664,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                     criterion.criterionInfo.Record_Lookup_Field_Type__c === 'Date'
                                                 )
                                             ) {
-                                                sourceValues.forEach(function(val) {
-                                                    if (val) {
-                                                        val = new Date(val);
-                                                    }
-                                                }, this);
-                                                if (comparisonValue) {
+                                                if (criterion.criterionInfo.Comparison_Value_Date__c) {
                                                     comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                                 }
                                             }
@@ -776,7 +777,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             ) {
 
                                 // Current value
-                                let value = ent[criterion.criterionInfo.Product_Field__c];
+                                let value;
+                                if (criterion.criterionInfo.Product_Field_Type__c === 'Date' &&
+                                    ent[criterion.criterionInfo.Product_Field__c]
+                                ) {
+                                    value = new Date(ent[criterion.criterionInfo.Product_Field__c]);
+                                } else {
+                                    value = ent[criterion.criterionInfo.Product_Field__c];
+                                }
 
                                 // Comparison value
                                 let comparisonValue;
@@ -788,12 +796,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
                                 }
                                 else if (criterion.criterionInfo.Product_Field_Type__c === 'Date') {
-                                    sourceValues.forEach(function(val) {
-                                        if (val) {
-                                            val = new Date(val);
-                                        }
-                                    }, this);
-                                    if (comparisonValue) {
+                                    if (criterion.criterionInfo.Comparison_Value_Date__c) {
                                         comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                     }
                                 }
@@ -869,7 +872,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             ) {
 
                                 // Current value
-                                let value = product[criterion.criterionInfo.Product_Field__c];
+                                let value;
+                                if (criterion.criterionInfo.Product_Field_Type__c === 'Date' &&
+                                    product[criterion.criterionInfo.Product_Field__c]
+                                ) {
+                                    value = new Date(product[criterion.criterionInfo.Product_Field__c]);
+                                } else {
+                                    value = product[criterion.criterionInfo.Product_Field__c];
+                                }
 
                                 // Comparison value
                                 let comparisonValue;
@@ -880,12 +890,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     comparisonValue = this.convertCurrency(criterion.criterionInfo.Comparison_Value_Currency__c, this.defaultCurrency, this.oppCurrency);
                                 }
                                 else if (criterion.criterionInfo.Product_Field_Type__c === 'Date') {
-                                    sourceValues.forEach(function(val) {
-                                        if (val) {
-                                            val = new Date(val);
-                                        }
-                                    }, this);
-                                    if (comparisonValue) {
+                                    if (criterion.criterionInfo.Comparison_Value_Date__c) {
                                         comparisonValue = new Date(criterion.criterionInfo.Comparison_Value_Date__c);
                                     }
                                 }
@@ -1966,7 +1971,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         }
 
         // List Price
-        productToAdd.List_Price = entry.UnitPrice;
+        productToAdd.List_Price = this.convertCurrency(entry.UnitPrice, this.defaultCurrency, this.oppCurrency);
 
         // Unit Price
         productToAdd.Unit_Price = productToAdd.List_Price;
