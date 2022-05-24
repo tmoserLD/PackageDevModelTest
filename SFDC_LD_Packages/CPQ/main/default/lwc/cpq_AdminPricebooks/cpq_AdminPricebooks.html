@@ -21,6 +21,7 @@
                 selected-value={selectedPricebook}
                 selected-attribute={selectedAttribute}
                 list-style="column"
+                obj-accessor="pricebookInfo"
                 header-attribute="Name"
                 footer-attribute1="IsActive"
                 footer-label1="Active: "
@@ -60,7 +61,7 @@
                     for:item="pricebook"
                 >
                     <c-cpq_-admin-pricebook
-                        key={pricebook.Id}
+                        key={pricebook.pricebookInfo.Id}
                         pricebook={pricebook}
                         selected={selected}
                         onchildsaved={childSaved}

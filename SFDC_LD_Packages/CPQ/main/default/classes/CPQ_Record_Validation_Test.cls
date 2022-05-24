@@ -699,7 +699,11 @@ public class CPQ_Record_Validation_Test {
         ];
 
         playbook.Product_Summary_Columns__c = 'Product_Name';
+        playbook.Product_Summary_Group_By_Default__c = 'Product_Name';
+        playbook.Product_Summary_Sort_By_Default__c = 'Product_Name';
         playbook.Entitlement_Summary_Columns__c = 'Start_Date__c;End_Date__c';
+        playbook.Entitlement_Summary_Group_by_Default__c = 'Start_Date__c';
+        playbook.Entitlement_Summary_Sort_by_Default__c = 'Start_Date__c';
         playbook.Quote_View_Display_Fields__c = 'Name;Start_Date__c';
         playbook.Contract_View_Display_Fields__c = 'Contract_Status__c;ContractNumber';
 
@@ -732,7 +736,11 @@ public class CPQ_Record_Validation_Test {
         ];
 
         playbook.Product_Summary_Columns__c = 'Nonsense';
+        playbook.Product_Summary_Group_By_Default__c = 'Product_Name';
+        playbook.Product_Summary_Sort_By_Default__c = 'Product_Name';
         playbook.Entitlement_Summary_Columns__c = 'Start_Date__c;Nonsense';
+        playbook.Entitlement_Summary_Group_by_Default__c = 'End_Date__c';
+        playbook.Entitlement_Summary_Sort_by_Default__c = 'End_Date__c';
         playbook.Quote_View_Display_Fields__c = 'Name;Nonsense';
         playbook.Contract_View_Display_Fields__c = 'Contract_Status__c;Nonsense';
 

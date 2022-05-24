@@ -39,8 +39,8 @@ export default class CPQ_AdminPricebooks extends LightningElement {
             'select', {
                 detail: {
                     selected: {
-                        pricebook: event.detail.item.Id,
-                        pricebookName: event.detail.item.Name,
+                        pricebook: event.detail.item.pricebookInfo.Id,
+                        pricebookName: event.detail.item.pricebookInfo.Name,
                         pricebookSearch: event.detail.searchTerm
                     }
                 }

@@ -124,6 +124,29 @@ public with sharing class CPQ_Record_Validation {
         return resultsObj;
     }
 
+    /**
+    * @description Verify that the child field contains value that parent field has
+    * @param parentFieldValue Value of parent field
+    * @param parentField Name of parent field
+    * @param childFieldValue Value of child field
+    * @param childField Name of child field
+    * @return Verification Result
+    */
+    public static ResultClass verifyDependentFields(String parentFieldValue, String parentField, String childFieldValue, String childField) {
+
+        ResultClass resultsObj = new ResultClass();
+        resultsObj.result = true;
+        resultsObj.errorMessage = '';
+
+        // Validate child field value in parent field value
+        if (!parentFieldValue.split(';').contains(childFieldValue)) {
+            resultsObj.result = false;
+            resultsObj.errorMessage = '"' + childFieldValue + '" is not listed in the "'+ parentField + '" field. Please adjust the "' + parentField +'" field or input a different value for the "' + childField + '" field.';
+        }
+
+        return resultsObj;
+    }
+
     public class ResultClass {
         public Boolean result;
         public String errorMessage;

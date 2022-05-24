@@ -274,6 +274,32 @@ export default class CPQ_AdminArchitectureManager extends LightningElement {
                         tabValue: 'entry'
                     });
                 }
+                // Pricing Set
+                if (this.selected.pricingSet !== undefined) {
+                    chain.push({
+                        label: 'Pricing Sets',
+                        obj: 'CPQ_Pricing_Set__c',
+                        recordId: this.selected.pricingSet,
+                        recordName: this.selected.pricingSetName,
+                        idAttribute: 'pricingSet',
+                        parentTabAttribute: 'pricebookTab',
+                        parentTabValue: 'sets',
+                        tabValue: 'pricingSet'
+                    });
+                }
+                // Pricing Threshold
+                if (this.selected.pricingThreshold !== undefined) {
+                    chain.push({
+                        label: 'Pricing Thresholds',
+                        obj: 'CPQ_Pricing_Threshold__c',
+                        recordId: this.selected.pricingThreshold,
+                        recordName: this.selected.pricingThresholdName,
+                        idAttribute: 'pricingThreshold',
+                        parentTabAttribute: 'pricingSetTab',
+                        parentTabValue: 'thresholds',
+                        tabValue: 'threshold'
+                    });
+                }
             } else {
                 chain.push({
                     base: true,

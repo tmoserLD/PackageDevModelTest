@@ -480,6 +480,7 @@ export default class CPQ_AdminRuleActionForm extends LightningElement {
             'Unit_Price' : 'Currency',
             'List_Price' : 'Currency',
             'Manually_Addible' : 'Boolean',
+            'Pricing_Set_Identifier' : 'Text',
             'Removable' : 'Boolean'
         };
         if (cpqFields[this.productField] !== undefined) {

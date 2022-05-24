@@ -136,6 +136,7 @@ public with sharing class cpq_ApprovalsHubClass {
             'Start_Date',
             'End_Date',
             'Manually_Addible',
+            'Pricing_Set_Identifier',
             'Removable'
         };
         // Query all active product stamping actions from active rules from active playbooks

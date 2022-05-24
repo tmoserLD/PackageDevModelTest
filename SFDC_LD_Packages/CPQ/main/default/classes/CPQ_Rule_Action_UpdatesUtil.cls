@@ -50,6 +50,7 @@ public with sharing class CPQ_Rule_Action_UpdatesUtil {
                         'Unit_Price',
                         'List_Price',
                         'Manually_Addible',
+                        'Pricing_Set_Identifier',
                         'Removable'
                     },
                     'QuoteLineItem',

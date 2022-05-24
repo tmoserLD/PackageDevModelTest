@@ -1,0 +1,92 @@
+<template>
+
+    <div
+        class="slds-p-horizontal_x-small slds-p-vertical_small"
+        style="border-bottom: 0.25px solid gray"
+    >
+
+        <ul
+            class="slds-list_horizontal"
+            style="cursor:pointer;"
+            onclick={selectSet}
+        >
+            <li class="slds-p-top_xx-small">
+                <lightning-icon
+                    icon-name="standard:price_books"
+                >
+                </lightning-icon>
+            </li>
+            <li class="slds-p-left_medium slds-m-left_x-small slds-truncate">
+                <p 
+                    class="slds-text-heading_small slds-truncate"
+                    title={pricingSet.Name}
+                >
+                    <b class="slds-truncate">
+                        {pricingSet.Name}
+                    </b>
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={pricingSet.IsActive__c}
+                >
+                    Active: {pricingSet.IsActive__c}
+                </p>
+                <p
+                    class="slds-truncate"
+                    style="color:gray"
+                    title={pricingSet.Identifier__c}
+                >
+                    Identifier: {pricingSet.Identifier__c}
+                </p>
+            </li>
+        </ul>
+
+        <template if:true={isSelected}>
+
+            <!-- Error Modal -->
+            <c-error-modal>
+            </c-error-modal>
+
+            <!-- Loading Spinner -->
+            <template if:true={loading}>
+                <lightning-spinner
+                    alternative-text="Loading"
+                    size="medium"
+                >
+                </lightning-spinner>
+            </template>
+
+            <!-- Pricing Set Tabs -->
+            <lightning-tabset>
+                <lightning-tab
+                    label="Pricing Set Info"
+                    value="set"
+                    onactive={handleTabChange}
+                >
+                    <div class="slds-col slds-p-horizontal_medium">
+                        <!-- Pricing Set Edit Form -->
+                        <c-cpq_-admin-pricing-set-form
+                            button-label="Save"
+                            card-title="Edit Pricing Set"
+                            pricing-set={pricingSet}
+                            pricing-set-id={pricingSet.Id}
+                            selected={selected}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-pricing-set-form>
+
+                        <!-- Pricing Threshold -->
+                        <c-cpq_-admin-pricing-thresholds
+                            pricing-thresholds={pricingSet.CPQ_Pricing_Thresholds__r}
+                            selected={selected}
+                            onselect={updateSelections}
+                            onchildsaved={childSaved}
+                        >
+                        </c-cpq_-admin-pricing-thresholds>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </div>
+</template>

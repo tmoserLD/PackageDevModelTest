@@ -115,14 +115,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 }
                 let selectedPlaybook = playbooks.find(p => p.playbookInfo.Id === this.selectedPlaybookId);
                 this.selectedPricebook = JSON.parse(JSON.stringify(
-                    this.pricebooks.find(pricebook => pricebook.Id === selectedPlaybook.playbookInfo.Pricebook__c)
+                    this.pricebooks.find(pricebook => pricebook.pricebookInfo.Id === selectedPlaybook.playbookInfo.Pricebook__c)
                 ));
                 this.productColumns = selectedPlaybook.productColumns;
                 this.entitlementColumns = selectedPlaybook.entitlementColumns;
                 if (this.selectedPricebook !== undefined &&
-                    this.selectedPricebook.PricebookEntries !== undefined    
+                    this.selectedPricebook.entries !== undefined    
                 ) {
-                    this.selectedPricebook.PricebookEntries.forEach(function(pbe) {
+                    this.selectedPricebook.entries.forEach(function(pbe) {
                         if (this.configType.includes('View')) {
                             pbe.Manually_Addible = false;
                         } else {
@@ -234,14 +234,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 }
                                 question.questionInfo.answer = value;
                             }
-
                             // Value found from existing answer
                             else if (existingValue !== undefined) {
                                 question.questionInfo.answer = existingValue;
                                 question.questionInfo.selectedRecords = existingSelectedRecords;
                                 question.questionInfo.touched = existingTouch;
                             }
-
                             // Default Values
                             // Boolean
                             else if (question.questionInfo.Default_Value_Boolean__c !== undefined &&
@@ -284,7 +282,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             ) {
                                 question.questionInfo.answer = question.questionInfo.Default_Value_Text__c;
                             }
-
                             // No Default
                             else {
                                 if (question.questionInfo.Answer_Type__c === 'Boolean') {
@@ -295,76 +292,61 @@ export default class CPQ_ConfigQuote extends LightningElement {
                     }, this);
                 }, this);
             }, this);
-
             // Add existing products
             if (this.existingQuoteData.QuoteLineItems !== undefined) {
                 this.existingQuoteData.QuoteLineItems.forEach(function(qli) {
-                    
-                    // Find associated product
                     // Selected Pricebook
                     if (this.selectedPricebook !== undefined &&
-                        this.selectedPricebook.PricebookEntries !== undefined    
+                        this.selectedPricebook.entries !== undefined    
                     ) {
-                        this.selectedPricebook.PricebookEntries.forEach(function(entry) {
+                        this.selectedPricebook.entries.forEach(function(entry) {
                             // Matching product
                             if (entry.Product2Id === qli.Product2Id ||
                                 entry.Product2Id === qli.Product__c    
                             ) {
                                 let productToAdd = JSON.parse(JSON.stringify(entry));
-
                                 // Get all qli attributes
                                 for (const [key, value] of Object.entries(qli)) {
                                     if (key !== 'Id') {
                                         productToAdd[key] = value;
                                     }
-                                  }
-
+                                }
                                 // Product Name
-                                productToAdd.Product_Name = entry.Product2.Name;
-                                                    
+                                productToAdd.Product_Name = entry.Product2.Name;             
                                 // Quantity
                                 productToAdd.Quantity = qli.Quantity__c;
-
                                 // List Price
                                 productToAdd.List_Price = qli.List_Price__c;
-
                                 // Unit Price
                                 productToAdd.Unit_Price = qli.Unit_Price__c;
-
                                 // Discount
                                 if (productToAdd.List_Price !== 0) {
                                     productToAdd.Discount = 1 - (productToAdd.Unit_Price / productToAdd.List_Price);
                                 } else {
                                     productToAdd.Discount = 0;
                                 }
-
                                 // Prices
                                 productToAdd.Total_Price = productToAdd.Unit_Price * productToAdd.Quantity;
                                 productToAdd.Sub_Total_Price = productToAdd.List_Price * productToAdd.Quantity;
-
                                 // Dates
                                 productToAdd.Start_Date = qli.Start_Date__c;
                                 productToAdd.End_Date = qli.End_Date__c;
-
                                 // Permissions
                                 productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
                                 productToAdd.Removable = entry.Removable__c;
-
+                                productToAdd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
                                 // Previous values obj
                                 productToAdd.prevValues = {};
-
                                 // QLI Stamp Fields
                                 productToAdd.qliFields = [];
-
                                 // Added by action
                                 productToAdd.addedByAction = qli.CPQ_Playbook_Rule_Action__c; 
-
                                 // Key
                                 productToAdd.key = this.quoteProducts.length.toString() + '.' + this.quoteProductKeyHelper.toString();
-
                                 // Playbook
                                 productToAdd.playbookId = this.selectedPlaybookId;
-
+                                // Evaluate Pricing
+                                this.evalProductPricing(productToAdd);
                                 let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
                                 updatedProducts.push(productToAdd);
 
@@ -1341,9 +1323,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     // Find associated product
                                     // Selected pricebook
                                     if (this.selectedPricebook !== undefined &&
-                                        this.selectedPricebook.PricebookEntries !== undefined    
+                                        this.selectedPricebook.entries !== undefined    
                                     ) {
-                                        this.selectedPricebook.PricebookEntries.forEach(function(entry) {
+                                        this.selectedPricebook.entries.forEach(function(entry) {
                                             // Matching product
                                             if (entry.Product2Id === action.actionInfo.Product__c) {
 
@@ -1477,6 +1459,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                     // Reset prices
                                                                     product.Total_Price = product.Quantity * product.Unit_Price;
                                                                     product.Sub_Total_Price = product.Quantity * product.List_Price;
+
+                                                                    // Evaluate Pricing
+                                                                    this.evalProductPricing(product);
                                                                 }
                                                                 else if (action.actionInfo.Action_Type__c === 'Adjust product field editability') {
                                                                     if (
@@ -1542,14 +1527,14 @@ export default class CPQ_ConfigQuote extends LightningElement {
         this.selectedPlaybookId = event.detail.value;
         let selectedPlaybook = this.playbooks.find(p => p.playbookInfo.Id === this.selectedPlaybookId);
         this.selectedPricebook = JSON.parse(JSON.stringify(
-            this.pricebooks.find(pricebook => pricebook.Id === selectedPlaybook.playbookInfo.Pricebook__c)
+            this.pricebooks.find(pricebook => pricebook.pricebookInfo.Id === selectedPlaybook.playbookInfo.Pricebook__c)
         ));
         this.productColumns = selectedPlaybook.productColumns;
         this.entitlementColumns = selectedPlaybook.entitlementColumns;
         if (this.selectedPricebook !== undefined &&
-            this.selectedPricebook.PricebookEntries !== undefined    
+            this.selectedPricebook.entries !== undefined    
         ) {
-            this.selectedPricebook.PricebookEntries.forEach(function(pbe) {
+            this.selectedPricebook.entries.forEach(function(pbe) {
                 pbe.Manually_Addible = pbe.Manually_Addible__c;
             }, this);
         }
@@ -1692,23 +1677,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                 }, this);
             }
             else if (item.itemInfo.Calculation_Source__c === 'Current Date') {
-                let today = new Date();
-                let year = today.getFullYear().toString();
-                let month = (today.getMonth() + 1).toString();
-                if ((today.getMonth() + 1) < 10) {
-                    month = '0' + month;
-                }
-                let day = today.getDate().toString();
-                if (today.getDate() < 10) {
-                    day = '0' + day;
-                }
-                calcValue = this.getCalcValue(calcType, calcValue, year + '-' + month + '-' + day, answerType, 'Date');
-            }
-            else if (item.itemInfo.Calculation_Source__c === 'Contract Start Date') {
-                calcValue = this.getCalcValue(calcType, calcValue, this.contractInfo.Contract_Start_Date__c, answerType, 'Date');
-            }
-            else if (item.itemInfo.Calculation_Source__c === 'Contract End Date') {
-                calcValue = this.getCalcValue(calcType, calcValue, this.contractInfo.Contract_End_Date__c, answerType, 'Date');
+                calcValue = this.getCalcValue(calcType, calcValue, this.convertDate(new Date()), answerType, 'Date');
             }
             else if (item.itemInfo.Calculation_Source__c === 'Static Value') {
                 let staticValue;
@@ -1993,6 +1962,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         // Default Permissions
         productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
         productToAdd.Removable = entry.Removable__c;
+        productToAdd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
 
         // Previous values obj
         productToAdd.prevValues = {};
@@ -2008,6 +1978,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
         // Playbook
         productToAdd.playbookId = this.selectedPlaybookId;
+
+        // Evaluate Pricing
+        this.evalProductPricing(productToAdd);
 
         let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
         updatedProducts.push(productToAdd);
@@ -2058,6 +2031,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
         productToUpdate.Total_Price = productToUpdate.Quantity * productToUpdate.Unit_Price;
         productToUpdate.Sub_Total_Price = productToUpdate.Quantity * productToUpdate.List_Price;
 
+        // Evaluate Pricing
+        this.evalProductPricing(productToUpdate);
+
         this.quoteProducts = updatedProducts;
 
         this.updateQuoteDates(this.playbooks);
@@ -2068,6 +2044,51 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
         // Evaluate approvals
         this.evaluateApprovals();
+    }
+
+    // Evaluate Product Pricing
+    evalProductPricing(product) {
+        if (product.Pricing_Set_Identifier !== undefined) {
+            this.selectedPricebook.pricingSets?.forEach(function (pricingSet) {
+                if (product.Pricing_Set_Identifier === pricingSet.Identifier__c) {
+                    let newSubTotal = 0;
+                    let numThresholdsMet = 0;
+                    pricingSet.CPQ_Pricing_Thresholds__r?.forEach(function(pricingThreshold) {
+                        if (
+                            (
+                                pricingThreshold.Lower_Bound__c === undefined ||
+                                product[pricingSet.Tiering_Field__c] >= pricingThreshold.Lower_Bound__c
+                            ) &&
+                            (
+                                pricingThreshold.Upper_Bound__c === undefined ||
+                                product[pricingSet.Tiering_Field__c] <= pricingThreshold.Upper_Bound__c ||
+                                (
+                                    pricingSet.Pricing_Type__c === 'Cumulative' &&
+                                    product[pricingSet.Tiering_Field__c] > pricingThreshold.Upper_Bound__c
+                                )
+                            ) &&
+                            (
+                                pricingSet.Pricing_Type__c === 'Cumulative' ||
+                                numThresholdsMet === 0
+                            )
+                        ) {
+                            if (pricingSet.Pricing_Type__c === 'Cumulative') {
+                                let lowerBound = pricingThreshold.Lower_Bound__c === undefined ? 0 : pricingThreshold.Lower_Bound__c;
+                                let upperBound = pricingThreshold.Upper_Bound__c === undefined ? product[pricingSet.Tiering_Field__c] : (pricingThreshold.Upper_Bound__c >= product[pricingSet.Tiering_Field__c] ? product[pricingSet.Tiering_Field__c] : pricingThreshold.Upper_Bound__c);
+                                newSubTotal += (upperBound - lowerBound) * pricingThreshold.Unit_Price__c;
+                            } else {
+                                newSubTotal += product[pricingSet.Tiering_Field__c] * pricingThreshold.Unit_Price__c;
+                            }
+                            numThresholdsMet += 1;
+                        }
+                    }, this);
+                    product.Sub_Total_Price = newSubTotal;
+                    product.List_Price = newSubTotal / product.Quantity;
+                    product.Unit_Price = (1 - product.Discount) * product.List_Price;
+                    product.Total_Price = product.Unit_Price * product.Quantity;
+                }
+            }, this);
+        }
     }
 
     // Update Quote Start/End Dates
@@ -2090,17 +2111,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         if (quoteStart !== undefined) {
             this.quoteStartDate = quoteStart;
         } else {
-            let today = new Date();
-            let year = today.getFullYear().toString();
-            let month = (today.getMonth() + 1).toString();
-            if ((today.getMonth() + 1) < 10) {
-                month = '0' + month;
-            }
-            let day = today.getDate().toString();
-            if (today.getDate() < 10) {
-                day = '0' + day;
-            }
-            this.quoteStartDate = year + '-' + month + '-' + day;
+            this.quoteStartDate = this.convertDate(new Date());
         }
         if (quoteEnd !== undefined) {
             this.quoteEndDate = quoteEnd;
@@ -2115,16 +2126,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
             let monthsFuture = new Date();
             monthsFuture.setMonth(today.getMonth() + defaultTerm);
             monthsFuture.setDate(monthsFuture.getDate() - 1);
-            let year = monthsFuture.getFullYear().toString();
-            let month = (monthsFuture.getMonth() + 1).toString();
-            if ((monthsFuture.getMonth() + 1) < 10) {
-                month = '0' + month;
-            }
-            let day = monthsFuture.getDate().toString();
-            if (monthsFuture.getDate() < 10) {
-                day = '0' + day;
-            }
-            this.quoteEndDate = year + '-' + month + '-' + day;
+            this.quoteEndDate = this.convertDate(monthsFuture);
         }
     }
 
@@ -2136,6 +2138,19 @@ export default class CPQ_ConfigQuote extends LightningElement {
             this.currencyMap[toISO] / this.currencyMap[fromISO]
         }
         return value * rate;
+    }
+
+    convertDate(dateValue) {
+        let year = dateValue.getFullYear().toString();
+        let month = (dateValue.getMonth() + 1).toString();
+        if ((dateValue.getMonth() + 1) < 10) {
+            month = '0' + month;
+        }
+        let day = dateValue.getDate().toString();
+        if (dateValue.getDate() < 10) {
+            day = '0' + day;
+        }
+        return year + '-' + month + '-' + day;
     }
 
     configTypeUpdate(event) {

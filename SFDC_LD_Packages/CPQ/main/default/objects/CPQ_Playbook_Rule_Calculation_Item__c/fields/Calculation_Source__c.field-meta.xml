@@ -28,16 +28,6 @@
                 <label>Static Value</label>
             </value>
             <value>
-                <fullName>Contract Start Date</fullName>
-                <default>false</default>
-                <label>Contract Start Date</label>
-            </value>
-            <value>
-                <fullName>Contract End Date</fullName>
-                <default>false</default>
-                <label>Contract End Date</label>
-            </value>
-            <value>
                 <fullName>Current Date</fullName>
                 <default>false</default>
                 <label>Current Date</label>

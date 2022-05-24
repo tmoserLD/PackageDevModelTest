@@ -295,9 +295,9 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     get showProductSummary() {
         let hasProductsToAdd = false;
         if (this.pricebook !== undefined &&
-            this.pricebook.PricebookEntries !== undefined    
+            this.pricebook.entries !== undefined    
         ) {
-            let addibleProducts = this.pricebook.PricebookEntries.filter(
+            let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
             );
             if (addibleProducts.length > 0) {
@@ -319,9 +319,9 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     get hasProductsToAdd() {
         let hasProductsToAdd = false;
         if (this.pricebook !== undefined &&
-            this.pricebook.PricebookEntries !== undefined    
+            this.pricebook.entries !== undefined    
         ) {
-            let addibleProducts = this.pricebook.PricebookEntries.filter(
+            let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
             );
             if (addibleProducts.length > 0) {

@@ -341,7 +341,7 @@ export default class CPQ_AdminContainer extends LightningElement {
     }
 
     // Undo Event
-    undoPricebookSelections(event) {
+    undoProductSelections(event) {
         let updatedProductSelectedHistory = JSON.parse(JSON.stringify(this.productSelectedHistory));
         updatedProductSelectedHistory.pop();
         this.productSelectedHistory = updatedProductSelectedHistory;

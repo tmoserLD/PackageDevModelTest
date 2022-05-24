@@ -16,7 +16,7 @@ export default class CPQ_AdminPricebook extends LightningElement {
         if (this.selected !== undefined &&
             this.selected.pricebook !== undefined
         ) {
-            return this.selected.pricebook.includes(this.pricebook.Id);
+            return this.selected.pricebook.includes(this.pricebook.pricebookInfo.Id);
         } else {
             return false;
         }

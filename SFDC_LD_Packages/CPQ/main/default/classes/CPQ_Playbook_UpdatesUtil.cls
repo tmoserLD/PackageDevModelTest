@@ -110,6 +110,90 @@ public with sharing class CPQ_Playbook_UpdatesUtil {
                     playbook.addError(results.errorMessage);
                 }
             }
+
+            // Product Summary Group By Default (or related) field change
+            if (
+                (
+                    playbook.Product_Summary_Group_By_Default__c != oldPlaybook.Product_Summary_Group_By_Default__c ||
+                    playbook.Product_Summary_Columns__c != oldPlaybook.Product_Summary_Columns__c
+                ) &&
+                playbook.Product_Summary_Group_By_Default__c != null
+            ) {
+
+                // Validate Group By field in Product Summary fields
+                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyDependentFields(
+                    playbook.Product_Summary_Columns__c,
+                    'Product Summary Columns',
+                    playbook.Product_Summary_Group_By_Default__c,
+                    'Product Summary Group By Default'
+                );
+                if (results.result == false) {
+                    playbook.addError(results.errorMessage);
+                }
+            }
+
+            // Product Summary Sort By Default (or related) field change
+            if (
+                (
+                    playbook.Product_Summary_Sort_By_Default__c != oldPlaybook.Product_Summary_Sort_By_Default__c ||
+                    playbook.Product_Summary_Columns__c != oldPlaybook.Product_Summary_Columns__c
+                ) &&
+                playbook.Product_Summary_Sort_By_Default__c != null
+            ) {
+
+                // Validate Sort By field in Product Summary fields
+                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyDependentFields(
+                    playbook.Product_Summary_Columns__c,
+                    'Product Summary Columns',
+                    playbook.Product_Summary_Sort_By_Default__c,
+                    'Product Summary Sort By Default'
+                );
+                if (results.result == false) {
+                    playbook.addError(results.errorMessage);
+                }
+            }
+
+            // Entitlement Summary Group By Default (or related) field change
+            if (
+                (
+                    playbook.Entitlement_Summary_Group_By_Default__c != oldPlaybook.Entitlement_Summary_Group_By_Default__c ||
+                    playbook.Entitlement_Summary_Columns__c != oldPlaybook.Entitlement_Summary_Columns__c
+                ) &&
+                playbook.Entitlement_Summary_Group_By_Default__c != null
+            ) {
+
+                // Validate Group By field in Entitlement Summary fields
+                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyDependentFields(
+                    playbook.Entitlement_Summary_Columns__c,
+                    'Entitlement Summary Columns',
+                    playbook.Entitlement_Summary_Group_By_Default__c,
+                    'Entitlement Summary Group By Default'
+                );
+                if (results.result == false) {
+                    playbook.addError(results.errorMessage);
+                }
+            }
+
+            // Entitlement Summary Sort By Default (or related) field change
+            if (
+                (
+                    playbook.Entitlement_Summary_Sort_By_Default__c != oldPlaybook.Entitlement_Summary_Sort_By_Default__c ||
+                    playbook.Entitlement_Summary_Columns__c != oldPlaybook.Entitlement_Summary_Columns__c
+                ) &&
+                playbook.Entitlement_Summary_Sort_By_Default__c != null
+            ) {
+
+                // Validate Sort By field in Entitlement Summary fields
+                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyDependentFields(
+                    playbook.Entitlement_Summary_Columns__c,
+                    'Entitlement Summary Columns',
+                    playbook.Entitlement_Summary_Sort_By_Default__c,
+                    'Entitlement Summary Sort By Default'
+                );
+                if (results.result == false) {
+                    playbook.addError(results.errorMessage);
+                }
+            }
         }
     }
 }

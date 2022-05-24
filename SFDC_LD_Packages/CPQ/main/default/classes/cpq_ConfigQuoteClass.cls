@@ -24,7 +24,7 @@ public with sharing class cpq_ConfigQuoteClass {
         configObj.playbooks = new List<PlaybookInfo>();
         configObj.rules = new List<RuleInfo>();
         configObj.approvals = new List<ApprovalInfo>();
-        configObj.pricebooks = new List<Pricebook2>();
+        configObj.pricebooks = new List<PricebookInfo>();
         configObj.currencyMap = getCurrencyMap(System.UserInfo.isMultiCurrencyOrganization());
 
         // Check if User is CPQ Admin
@@ -48,6 +48,7 @@ public with sharing class cpq_ConfigQuoteClass {
             'Start_Date',
             'End_Date',
             'Manually_Addible',
+            'Pricing_Set_Identifier',
             'Removable'
         };
         SObjectType qliType;
@@ -60,6 +61,7 @@ public with sharing class cpq_ConfigQuoteClass {
             'Id',
             'Adjustable_Product_Columns__c',
             'Manually_Addible__c',
+            'Pricing_Set_Identifier__c',
             'Product2Id',
             'Product2.Name',
             'Quantity__c',
@@ -875,7 +877,45 @@ public with sharing class cpq_ConfigQuoteClass {
                                 +  ' IsActive = true';
         pricebooks = Database.query(pricebookQuery);
 
-        configObj.pricebooks = pricebooks;
+        List<PricebookInfo> pricebookInfoSets = new List<PricebookInfo>();
+        for (Pricebook2 pricebook : pricebooks) {
+
+            // Configure PricebookInfo class object 
+            PricebookInfo pricebookInfoSet = new PricebookInfo();
+            pricebookInfoSet.pricebookInfo = pricebook;
+            pricebookInfoSet.entries = pricebook.PricebookEntries;
+            pricebookInfoSet.pricingSets = new List<CPQ_Pricing_Set__c>();
+
+            pricebookInfoSets.add(pricebookInfoSet);
+        }
+
+        for (CPQ_Pricing_Set__c pricingSet : [
+            SELECT Id,
+                Identifier__c,
+                Pricing_Type__c,
+                Pricebook__c,
+                Tiering_Field__c,
+                (
+                    SELECT Id,
+                        Lower_Bound__c,
+                        Upper_Bound__c,
+                        Unit_Price__c
+                    FROM CPQ_Pricing_Thresholds__r
+                    WHERE IsActive__c = true
+                )
+            FROM CPQ_Pricing_Set__c
+            WHERE Pricebook__c IN:pricebookIDs AND
+                Pricebook__r.IsActive = true AND
+                IsActive__c = true
+        ]) {
+            for (PricebookInfo pricebookInfoSet : pricebookInfoSets) {
+                if (pricingSet.Pricebook__c == pricebookInfoSet.pricebookInfo.Id) {
+                    pricebookInfoSet.pricingSets.add(pricingSet);
+                }
+            }
+        }
+
+        configObj.pricebooks = pricebookInfoSets;
 
 
         // Configure Entitlements query string for contract query if necessary
@@ -899,7 +939,7 @@ public with sharing class cpq_ConfigQuoteClass {
         @AuraEnabled public List<PlaybookInfo> playbooks;
         @AuraEnabled public List<RuleInfo> rules;
         @AuraEnabled public List<ApprovalInfo> approvals;
-        @AuraEnabled public List<Pricebook2> pricebooks;
+        @AuraEnabled public List<PricebookInfo> pricebooks;
         @AuraEnabled public String contractFields;
         @AuraEnabled public String entitlementFields; 
         @AuraEnabled public Map<String, Double> currencyMap;
@@ -968,6 +1008,12 @@ public with sharing class cpq_ConfigQuoteClass {
 
     public class ApproverInfo {
         @AuraEnabled public CPQ_Playbook_Approver__c approverInfo;
+    }
+
+    public class PricebookInfo {
+        @AuraEnabled public Pricebook2 pricebookInfo;
+        @AuraEnabled public List<PricebookEntry> entries;
+        @AuraEnabled public List<CPQ_Pricing_Set__c> pricingSets;
     }
 
     public class RecordColumn {

@@ -945,6 +945,31 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Pricing_Set__c.Pricebook__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Pricing_Set__c.IsActive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Pricing_Threshold__c.IsActive__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Pricing_Threshold__c.Lower_Bound__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Pricing_Threshold__c.Upper_Bound__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>CPQ_Quote_Approval__c.Notes_for_Approvers__c</field>
         <readable>true</readable>
@@ -1227,6 +1252,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>PricebookEntry.Adjustable_Product_Columns__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>PricebookEntry.Pricing_Set_Identifier__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

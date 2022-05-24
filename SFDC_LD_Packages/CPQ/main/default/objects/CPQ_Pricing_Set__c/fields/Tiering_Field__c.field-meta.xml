@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tiering_Field__c</fullName>
+    <description>QuoteLineItem Field API Name or CPQ Product Attribute that is used to determine the comparing value for the underlying Pricing Threshold records</description>
+    <externalId>false</externalId>
+    <inlineHelpText>QuoteLineItem Field API Name or CPQ Product Attribute that is used to determine the comparing value for the underlying Pricing Threshold records</inlineHelpText>
+    <label>Tiering Field</label>
+    <length>255</length>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

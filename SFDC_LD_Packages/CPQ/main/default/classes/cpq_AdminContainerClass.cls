@@ -960,7 +960,7 @@ public with sharing class cpq_AdminContainerClass {
     * @return List of Pricebook records with PricebookEntries
     */
     @AuraEnabled
-    public static List<Pricebook2> getPricebooks() {
+    public static List<PricebookInfo> getPricebooks() {
 
         // All Pricebooks
         List<Pricebook2> pricebooks = new List<Pricebook2>();
@@ -977,6 +977,7 @@ public with sharing class cpq_AdminContainerClass {
                         UnitPrice,
                         Manually_Addible__c,
                         Pricebook2Id,
+                        Pricing_Set_Identifier__c,
                         Product2Id,
                         Product2.Name,
                         Quantity__c,
@@ -995,7 +996,52 @@ public with sharing class cpq_AdminContainerClass {
                 Name
         ];
 
-        return pricebooks;
+        // Pricebook Sets
+        List<PricebookInfo> pricebookInfoSets = new List<PricebookInfo>();
+        for (Pricebook2 pricebook : pricebooks) {
+
+            // Configure PricebookInfo class object 
+            PricebookInfo pricebookInfoSet = new PricebookInfo();
+            pricebookInfoSet.pricebookInfo = pricebook;
+            pricebookInfoSet.entries = pricebook.PricebookEntries;
+            pricebookInfoSet.pricingSets = new List<CPQ_Pricing_Set__c>();
+
+            pricebookInfoSets.add(pricebookInfoSet);
+        }
+
+        for (CPQ_Pricing_Set__c pricingSet : [
+            SELECT Id,
+                IsActive__c,
+                Identifier__c,
+                Name,
+                Pricing_Type__c,
+                Pricebook__c,
+                Tiering_Field__c,
+                (
+                    SELECT Id,
+                        IsActive__c,
+                        Name,
+                        Lower_Bound__c,
+                        Upper_Bound__c,
+                        Unit_Price__c
+                    FROM CPQ_Pricing_Thresholds__r
+                )
+            FROM CPQ_Pricing_Set__c
+        ]) {
+            for (PricebookInfo pricebookInfoSet : pricebookInfoSets) {
+                if (pricingSet.Pricebook__c == pricebookInfoSet.pricebookInfo.Id) {
+                    pricebookInfoSet.pricingSets.add(pricingSet);
+                }
+            }
+        }
+
+        return pricebookInfoSets;
+    }
+
+    public class PricebookInfo {
+        @AuraEnabled public Pricebook2 pricebookInfo;
+        @AuraEnabled public List<PricebookEntry> entries;
+        @AuraEnabled public List<CPQ_Pricing_Set__c> pricingSets;
     }
 
     /**
@@ -1218,6 +1264,9 @@ public with sharing class cpq_AdminContainerClass {
         // Adjust fields on cloned record
         if (objectAPI == 'CPQ_Playbook_Question__c') {
             clonedRecord.put('Variable_Name__c', '*' + clonedRecord.get('Variable_Name__c'));
+        }
+        if (objectAPI == 'CPQ_Pricing_Set__c') {
+            clonedRecord.put('Identifier__c', '*' + clonedRecord.get('Identifier__c'));
         }
         String currentName = (String) clonedRecord.get('Name');
         clonedRecord.put('Name', 'CLONE: ' + currentName.left(73));

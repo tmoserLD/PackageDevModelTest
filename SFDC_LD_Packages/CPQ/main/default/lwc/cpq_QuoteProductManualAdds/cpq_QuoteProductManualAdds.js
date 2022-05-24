@@ -21,9 +21,9 @@ export default class CPQ_QuoteProductManualAdds extends LightningElement {
     connectedCallback() {
         let products = [];
         if (this.pricebook !== undefined &&
-            this.pricebook.PricebookEntries !== undefined    
+            this.pricebook.entries !== undefined    
         ) {
-            this.pricebook.PricebookEntries.forEach(function(pbe) {
+            this.pricebook.entries.forEach(function(pbe) {
                 if (pbe.Manually_Addible === true) {
                     if (this.quoteProducts.filter(
                         product => product.addedByAction === undefined && product.Product2Id === pbe.Product2Id

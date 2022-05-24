@@ -472,7 +472,7 @@ public class cpq_AdminContainerClassTest {
     @isTest
     public static void testQueryPricebooks() {
 
-        List<Pricebook2> pricebooks = new List<Pricebook2>();
+        List<cpq_AdminContainerClass.PricebookInfo> pricebooks = new List<cpq_AdminContainerClass.PricebookInfo>();
 
         Test.startTest();
 

@@ -124,7 +124,7 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
             Name: this.quoteName,
             OpportunityId: this.oppInfo.Id,
             CPQ_Playbook__c: this.selectedPlaybookId,
-            Pricebook2Id: this.selectedPricebook.Id,
+            Pricebook2Id: this.selectedPricebook.pricebookInfo.Id,
             Adjustment_of_Contract__c: this.existingQuoteData.Adjustment_of_Contract__c,
             Adjustment_Type__c: this.existingQuoteData.Adjustment_Type__c,
             Shell_Quote__c: shellQuote

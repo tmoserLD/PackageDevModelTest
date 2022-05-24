@@ -33,19 +33,28 @@
                         button-label="Save"
                         card-title="Edit Pricebook"
                         pricebook={pricebook}
-                        pricebook-id={pricebook.Id}
+                        pricebook-id={pricebook.pricebookInfo.Id}
                         onchildsaved={childSaved}
                     >
                     </c-cpq_-admin-pricebook-form>
 
                     <!-- Entries -->
                     <c-cpq_-admin-pricebook-entries
-                        entries={pricebook.PricebookEntries}
+                        entries={pricebook.entries}
                         selected={selected}
                         onselect={updateSelections}
                         onchildsaved={childSaved}
                     >
                     </c-cpq_-admin-pricebook-entries>
+
+                    <!-- Pricing Sets -->
+                    <c-cpq_-admin-pricing-sets
+                        pricing-sets={pricebook.pricingSets}
+                        selected={selected}
+                        onselect={updateSelections}
+                        onchildsaved={childSaved}
+                    >
+                    </c-cpq_-admin-pricing-sets>
 
                     <!-- Playbooks that reference Pricebook -->
                     <c-item-selector
