@@ -9,8 +9,13 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
     @api quoteStartDate;
     @api quoteId;
 
-    get displayFields() {
-        let displayFields = [];
+    get displayFieldSets() {
+        let displayFieldSets = [];
+        let currentFieldSet = {
+            label: undefined,
+            fields: [],
+            index: 0
+        };
         if (this.playbook !== undefined) {
 
             // Quote Display Fields
@@ -19,7 +24,19 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
                 this.playbook.playbookInfo.Quote_View_Display_Fields__c !== undefined
             ) {
                 this.playbook.playbookInfo.Quote_View_Display_Fields__c.split(';').forEach(function(field) {
-                    displayFields.push(field);
+                    if (field.startsWith('#')) {
+                        if (currentFieldSet.fields.length > 0) {
+                            if (currentFieldSet.label !== undefined) {
+                                currentFieldSet.hasLabel = true;
+                            }
+                            displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
+                        }
+                        currentFieldSet.label = field.substring(1);
+                        currentFieldSet.fields = [];
+                        currentFieldSet.index = displayFieldSets.length;
+                    } else {
+                        currentFieldSet.fields.push(field);
+                    }
                 }, this);
             }
 
@@ -29,12 +46,31 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
                 this.playbook.playbookInfo.Contract_View_Display_Fields__c !== undefined
             ) {
                 this.playbook.playbookInfo.Contract_View_Display_Fields__c.split(';').forEach(function(field) {
-                    displayFields.push(field);
+                    if (field.startsWith('#')) {
+                        if (currentFieldSet.fields.length > 0) {
+                            if (currentFieldSet.label !== undefined) {
+                                currentFieldSet.hasLabel = true;
+                            }
+                            displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
+                        }
+                        currentFieldSet.label = field.substring(1);
+                        currentFieldSet.fields = [];
+                        currentFieldSet.index = displayFieldSets.length;
+                    } else {
+                        currentFieldSet.fields.push(field);
+                    }
                 }, this);
+            }
+
+            if (currentFieldSet.fields.length > 0) {
+                if (currentFieldSet.label !== undefined) {
+                    currentFieldSet.hasLabel = true;
+                }
+                displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
             }
         }
 
-        return displayFields;
+        return displayFieldSets;
     }
 
     get displayObj() {

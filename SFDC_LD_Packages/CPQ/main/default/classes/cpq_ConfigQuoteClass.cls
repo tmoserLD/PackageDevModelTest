@@ -902,6 +902,7 @@ public with sharing class cpq_ConfigQuoteClass {
                         Unit_Price__c
                     FROM CPQ_Pricing_Thresholds__r
                     WHERE IsActive__c = true
+                    ORDER BY Lower_Bound__c, Upper_Bound__c
                 )
             FROM CPQ_Pricing_Set__c
             WHERE Pricebook__c IN:pricebookIDs AND

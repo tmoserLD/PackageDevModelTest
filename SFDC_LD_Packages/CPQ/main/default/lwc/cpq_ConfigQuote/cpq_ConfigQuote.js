@@ -346,7 +346,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 // Playbook
                                 productToAdd.playbookId = this.selectedPlaybookId;
                                 // Evaluate Pricing
-                                this.evalProductPricing(productToAdd);
+                                if (!this.configType.includes('View')) {
+                                    this.evalProductPricing(productToAdd);
+                                }
                                 let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
                                 updatedProducts.push(productToAdd);
 
@@ -1031,11 +1033,11 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                 ruleEvaluation === true
                             ) ||
                             (
-                                rule.ruleInfo.Evaluate_When__c === 'On first evalutation' &&
+                                rule.ruleInfo.Evaluate_When__c === 'On first evaluation' &&
                                 rule.ruleInfo.prevEvaluation === undefined
                             ) ||
                             (
-                                rule.ruleInfo.Evaluate_When__c === 'On first TRUE evalutation' &&
+                                rule.ruleInfo.Evaluate_When__c === 'On first TRUE evaluation' &&
                                 rule.ruleInfo.hasHadTrueEvaluation === undefined &&
                                 ruleEvaluation === true
                             ) ||
@@ -1047,7 +1049,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             }
 
                             // Flag rule to never evaluate again
-                            if (rule.ruleInfo.Evaluate_When__c === 'On first TRUE evalutation') {
+                            if (rule.ruleInfo.Evaluate_When__c === 'On first TRUE evaluation') {
                                 rule.ruleInfo.doNotEvaluate = true;
                             }
 
@@ -1503,7 +1505,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                         }
 
                         // Set doNotEvaluate after first evaluation
-                        if (rule.ruleInfo.Evaluate_When__c === 'On first evalutation') {
+                        if (rule.ruleInfo.Evaluate_When__c === 'On first evaluation') {
                             rule.ruleInfo.doNotEvaluate = true;
                         }
                     }
@@ -2051,7 +2053,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         if (product.Pricing_Set_Identifier !== undefined) {
             this.selectedPricebook.pricingSets?.forEach(function (pricingSet) {
                 if (product.Pricing_Set_Identifier === pricingSet.Identifier__c) {
-                    let newSubTotal = 0;
+                    let newList = 0;
                     let numThresholdsMet = 0;
                     pricingSet.CPQ_Pricing_Thresholds__r?.forEach(function(pricingThreshold) {
                         if (
@@ -2075,15 +2077,20 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             if (pricingSet.Pricing_Type__c === 'Cumulative') {
                                 let lowerBound = pricingThreshold.Lower_Bound__c === undefined ? 0 : pricingThreshold.Lower_Bound__c;
                                 let upperBound = pricingThreshold.Upper_Bound__c === undefined ? product[pricingSet.Tiering_Field__c] : (pricingThreshold.Upper_Bound__c >= product[pricingSet.Tiering_Field__c] ? product[pricingSet.Tiering_Field__c] : pricingThreshold.Upper_Bound__c);
-                                newSubTotal += (upperBound - lowerBound) * pricingThreshold.Unit_Price__c;
+                                newList += (upperBound - lowerBound) * pricingThreshold.Unit_Price__c;
                             } else {
-                                newSubTotal += product[pricingSet.Tiering_Field__c] * pricingThreshold.Unit_Price__c;
+                                newList += product[pricingSet.Tiering_Field__c] * pricingThreshold.Unit_Price__c;
                             }
                             numThresholdsMet += 1;
                         }
                     }, this);
-                    product.Sub_Total_Price = newSubTotal;
-                    product.List_Price = newSubTotal / product.Quantity;
+                    if (pricingSet.Tiering_Field__c === 'Quantity') {
+                        product.Sub_Total_Price = newList;
+                        product.List_Price = newList / product.Quantity;
+                    } else {
+                        product.List_Price = newList;
+                        product.Sub_Total_Price = newList * product.Quantity;
+                    }
                     product.Unit_Price = (1 - product.Discount) * product.List_Price;
                     product.Total_Price = product.Unit_Price * product.Quantity;
                 }

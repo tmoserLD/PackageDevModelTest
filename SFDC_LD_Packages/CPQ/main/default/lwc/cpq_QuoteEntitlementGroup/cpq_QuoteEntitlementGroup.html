@@ -15,8 +15,8 @@
                                     name={col.label}
                                     label=""
                                     variant="label-hidden"
-                                    value={group.value}
-                                    checked={group.value}
+                                    value={value}
+                                    checked={value}
                                     disabled="true"
                                     readonly="true"
                                     read-only="true"
@@ -27,7 +27,7 @@
                             <!-- Currency -->
                             <template if:true={isCurrency}>
                                 <lightning-formatted-number
-                                    value={group.value}
+                                    value={value}
                                     format-style="currency"
                                     currency-code={oppCurrency}
                                 >
@@ -37,7 +37,7 @@
                             <!-- Date -->
                             <template if:true={isDate}>
                                 <lightning-formatted-date-time
-                                    value={group.value}
+                                    value={value}
                                 >
                                 </lightning-formatted-date-time>
                             </template>
@@ -45,7 +45,7 @@
                             <!-- Number -->
                             <template if:true={isNumber}>
                                 <lightning-formatted-number
-                                    value={group.value}
+                                    value={value}
                                     maximum-fraction-digits="2"
                                 >
                                 </lightning-formatted-number>
@@ -54,7 +54,7 @@
                             <!-- Percent -->
                             <template if:true={isPercent}>
                                 <lightning-formatted-number
-                                    value={group.value}
+                                    value={value}
                                     format-style="percent"
                                     maximum-fraction-digits="2"
                                 >
@@ -64,7 +64,7 @@
                             <!-- Text -->
                             <template if:true={isText}>
                                 <lightning-formatted-text
-                                    value={group.value}
+                                    value={value}
                                 >
                                 </lightning-formatted-text>
                             </template>

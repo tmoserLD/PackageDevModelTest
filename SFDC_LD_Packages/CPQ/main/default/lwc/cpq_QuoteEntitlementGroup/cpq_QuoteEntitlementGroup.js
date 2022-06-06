@@ -23,6 +23,23 @@ export default class CPQ_QuoteEntitlementGroup extends LightningElement {
     // Opp Currency
     @api oppCurrency;
 
+    // Value
+    get value() {
+        let val = this.group.value;
+        if (val !== undefined &&
+            val !== null &&
+            val !== ''    
+        ) {
+            if (this.fieldType === 'Currency') {
+                val = this.convertCurrency(val, this.contractCurrency, this.oppCurrency);
+            }
+            else if (this.fieldType === 'Percent') {
+                val = val / 100;
+            }
+        }
+        return val;
+    }
+
 
     // Determine if groupings exist
     get hasField() {
@@ -57,6 +74,17 @@ export default class CPQ_QuoteEntitlementGroup extends LightningElement {
     // Text type
     get isText() {
         return this.fieldType === 'Text';
+    }
+
+    // Currency Conversion
+    convertCurrency(value, fromISO, toISO) {
+        let rate = 1;
+        if (this.currencyMap[toISO] !== undefined &&
+            this.currencyMap[fromISO] !== undefined
+        ) {
+            this.currencyMap[toISO] / this.currencyMap[fromISO]
+        }
+        return value * rate;
     }
 
 }

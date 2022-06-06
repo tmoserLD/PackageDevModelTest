@@ -13,7 +13,16 @@ export default class CPQ_ContractListItemColumn extends LightningElement {
 
     // Value
     get value() {
-        return this.contract[this.column.field];
+        let val = this.contract[this.column.field];
+        if (val !== undefined &&
+            val !== null &&
+            val !== ''
+        ) {
+            if (this.column.type === 'Percent') {
+                val = val / 100;
+            }
+        }
+        return val;
     }
 
     // Boolean type

@@ -33,14 +33,14 @@
                 <label>Always when TRUE</label>
             </value>
             <value>
-                <fullName>On first evalutation</fullName>
+                <fullName>On first evaluation</fullName>
                 <default>false</default>
-                <label>On first evalutation</label>
+                <label>On first evaluation</label>
             </value>
             <value>
-                <fullName>On first TRUE evalutation</fullName>
+                <fullName>On first TRUE evaluation</fullName>
                 <default>false</default>
-                <label>On first TRUE evalutation</label>
+                <label>On first TRUE evaluation</label>
             </value>
         </valueSetDefinition>
     </valueSet>

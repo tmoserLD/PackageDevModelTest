@@ -296,7 +296,7 @@
                             label="Quote View Display Fields"
                             order-label-title="Adjust Quote View Display Field Order"
                             placeholder="Enter desired Quote field API name"
-                            help-text="Quote Field API names to be shown in CPQ when viewing a Quote record's configuration"
+                            help-text="Quote Field API names to be shown in CPQ when viewing a Quote record's configuration.  Sections can be created by inputting a label preceded by the '#' character (e.g. #Header). Blank spaces can be created by inputting a value that is not a valid field API name."
                             initial-options={quoteViewDisplayFields}
                             initial-options-source="Semicolon delineated"
                             onupdate={quoteViewDisplayFieldsChange}
@@ -319,7 +319,7 @@
                             label="Contract View Display Fields"
                             order-label-title="Adjust Contract View Display Field Order"
                             placeholder="Enter desired Contract field API name"
-                            help-text="Contract Field API names to be shown in CPQ when viewing a Contract record's configuration"
+                            help-text="Contract Field API names to be shown in CPQ when viewing a Contract record's configuration.  Sections can be created by inputting a label preceded by the '#' character (e.g. #Header). Blank spaces can be created by inputting a value that is not a valid field API name."
                             initial-options={contractViewDisplayFields}
                             initial-options-source="Semicolon delineated"
                             onupdate={contractViewDisplayFieldsChange}

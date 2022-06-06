@@ -30,8 +30,8 @@ export default class CPQ_AdminPlaybookForm extends LightningElement {
     @track entSummaryColumns = 'Product_Name__c;Start_Date__c;End_Date__c;Quantity__c;Unit_Price__c;List_Price__c;Total_Price__c';
 
     // View Display Fields
-    @track quoteViewDisplayFields = '';
-    @track contractViewDisplayFields = '';
+    @track quoteViewDisplayFields;
+    @track contractViewDisplayFields;
 
     // Default Term
     @track defaultTerm = 12;

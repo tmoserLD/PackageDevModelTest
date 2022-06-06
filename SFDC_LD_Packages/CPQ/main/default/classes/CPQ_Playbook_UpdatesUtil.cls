@@ -77,39 +77,39 @@ public with sharing class CPQ_Playbook_UpdatesUtil {
                 }
             }
 
-            // Quote View Display Fields field change
-            if (playbook.Quote_View_Display_Fields__c != oldPlaybook.Quote_View_Display_Fields__c &&
-                playbook.Quote_View_Display_Fields__c != null
-            ) {
+            // // Quote View Display Fields field change
+            // if (playbook.Quote_View_Display_Fields__c != oldPlaybook.Quote_View_Display_Fields__c &&
+            //     playbook.Quote_View_Display_Fields__c != null
+            // ) {
 
-                // Validate Quote View Display Fields
-                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyFields(
-                    playbook.Quote_View_Display_Fields__c.split(';'),
-                    new List<String>(),
-                    'Quote',
-                    'Quote View Display Fields'
-                );
-                if (results.result == false) {
-                    playbook.addError(results.errorMessage);
-                }
-            }
+            //     // Validate Quote View Display Fields
+            //     CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyFields(
+            //         playbook.Quote_View_Display_Fields__c.split(';'),
+            //         new List<String>(),
+            //         'Quote',
+            //         'Quote View Display Fields'
+            //     );
+            //     if (results.result == false) {
+            //         playbook.addError(results.errorMessage);
+            //     }
+            // }
 
-            // Contract View Display Fields field change
-            if (playbook.Contract_View_Display_Fields__c != oldPlaybook.Contract_View_Display_Fields__c &&
-                playbook.Contract_View_Display_Fields__c != null
-            ) {
+            // // Contract View Display Fields field change
+            // if (playbook.Contract_View_Display_Fields__c != oldPlaybook.Contract_View_Display_Fields__c &&
+            //     playbook.Contract_View_Display_Fields__c != null
+            // ) {
 
-                // ValidateContract View Display Fields
-                CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyFields(
-                    playbook.Contract_View_Display_Fields__c.split(';'),
-                    new List<String>(),
-                    'Contract',
-                    'Contract View Display Fields'
-                );
-                if (results.result == false) {
-                    playbook.addError(results.errorMessage);
-                }
-            }
+            //     // ValidateContract View Display Fields
+            //     CPQ_Record_Validation.ResultClass results = CPQ_Record_Validation.verifyFields(
+            //         playbook.Contract_View_Display_Fields__c.split(';'),
+            //         new List<String>(),
+            //         'Contract',
+            //         'Contract View Display Fields'
+            //     );
+            //     if (results.result == false) {
+            //         playbook.addError(results.errorMessage);
+            //     }
+            // }
 
             // Product Summary Group By Default (or related) field change
             if (

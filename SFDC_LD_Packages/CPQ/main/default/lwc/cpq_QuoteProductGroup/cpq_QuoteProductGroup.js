@@ -21,6 +21,20 @@ export default class CPQ_QuoteProductGroup extends LightningElement {
     @api oppCurrency;
 
 
+    // Value
+    get value() {
+        let val = this.group.value;
+        if (val !== undefined &&
+            val !== null &&
+            val !== ''    
+        ) {
+            if (this.fieldType === 'Percent') {
+                val = val / 100;
+            }
+        }
+        return val;
+    }
+
     // Determine if groupings exist
     get hasField() {
         return this.fieldLabel !== undefined;
