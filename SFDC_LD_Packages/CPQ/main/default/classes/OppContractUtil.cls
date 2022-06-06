@@ -80,10 +80,10 @@ public with sharing class OppContractUtil {
                 newCont.CPQ_Playbook__c = syncedQuote.CPQ_Playbook__c;
 
                 // Contract being adjusted (if applicable)
-                newCont.Adjustment_of_Contract__c = syncedQuote.Adjustment_of_Contract__c;
+                newCont.Adjustment_of_Contract__c = opp.Adjustment_of_Contract_Override__c != null ? opp.Adjustment_of_Contract_Override__c: syncedQuote.Adjustment_of_Contract__c;
 
                 // Adjustment Type (if applicable)
-                newCont.Adjustment_Type__c = syncedQuote.Adjustment_Type__c;
+                newCont.Adjustment_Type__c = opp.Adjustment_Type_Override__c != null ? opp.Adjustment_Type_Override__c: syncedQuote.Adjustment_Type__c;
 
                 // Generate new Contract Entitlements
                 Date startDate;
