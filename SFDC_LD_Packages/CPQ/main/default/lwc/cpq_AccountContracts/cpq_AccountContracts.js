@@ -91,7 +91,7 @@ export default class CPQ_AccountContracts extends NavigationMixin(LightningEleme
             if (mostActiveContract === undefined &&
                 contract.Contract_Status__c === 'Active'    
             ) {
-                mostFutureContract = contract;
+                mostActiveContract = contract;
             }
         }, this);
 
