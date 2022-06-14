@@ -33,9 +33,6 @@ export default class CPQ_QuoteEntitlementGroup extends LightningElement {
             if (this.fieldType === 'Currency') {
                 val = this.convertCurrency(val, this.contractCurrency, this.oppCurrency);
             }
-            else if (this.fieldType === 'Percent') {
-                val = val / 100;
-            }
         }
         return val;
     }

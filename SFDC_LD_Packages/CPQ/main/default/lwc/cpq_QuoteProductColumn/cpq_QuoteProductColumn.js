@@ -32,14 +32,6 @@ export default class CPQ_QuoteProductColumn extends LightningElement {
     // Value
     get value() {
         let val = this.product[this.column.field];
-        if (val !== undefined &&
-            val !== null &&
-            val !== ''
-        ) {
-            if (this.column.type === 'Percent') {
-                val = val / 100;
-            }
-        }
         return val;
     }
 

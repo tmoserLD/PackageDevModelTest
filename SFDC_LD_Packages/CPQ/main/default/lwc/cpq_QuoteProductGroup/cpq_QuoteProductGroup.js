@@ -24,14 +24,6 @@ export default class CPQ_QuoteProductGroup extends LightningElement {
     // Value
     get value() {
         let val = this.group.value;
-        if (val !== undefined &&
-            val !== null &&
-            val !== ''    
-        ) {
-            if (this.fieldType === 'Percent') {
-                val = val / 100;
-            }
-        }
         return val;
     }
 
