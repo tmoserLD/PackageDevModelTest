@@ -37,7 +37,7 @@ export default class CPQ_RecordLookupModal extends LightningElement {
         if (this.questionInfo.Maximum_Record_Selections__c !== undefined &&
             answerIDs.length > this.questionInfo.Maximum_Record_Selections__c    
         ) {
-            alert("Error! Only " + this.questionInfo.Maximum_Record_Selections__c + " record(s) are allowed to be selected.");
+            alert("Error! Only " + this.questionInfo.Maximum_Record_Selections__c + " record(s) is/are allowed to be selected.");
         }
         
         else {

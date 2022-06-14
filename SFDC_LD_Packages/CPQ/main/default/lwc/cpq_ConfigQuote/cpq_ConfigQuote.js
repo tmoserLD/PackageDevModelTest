@@ -1351,12 +1351,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                             product => product.addedByAction !== action.actionInfo.Id
                                                         );
 
-                                                        // Re-Key products
-                                                        this.quoteProductKeyHelper += 1;
-                                                        updatedProducts.forEach(function(productToKey) {
-                                                            productToKey.key = updatedProducts.indexOf(productToKey).toString() + '.' + this.quoteProductKeyHelper.toString()
-                                                        }, this);
-                                                        this.quoteProducts = updatedProducts;
+                                                        this.rekeyProducts(updatedProducts);
                                                     }
                                                 }
                                                 else if (action.actionInfo.Action_Type__c === 'Adjust product field' ||
@@ -1380,11 +1375,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                             );
 
                                                             // Re-Key products
-                                                            this.quoteProductKeyHelper += 1;
-                                                            updatedProducts.forEach(function(productToKey) {
-                                                                productToKey.key = updatedProducts.indexOf(productToKey).toString() + '.' + this.quoteProductKeyHelper.toString()
-                                                            }, this);
-                                                            this.quoteProducts = updatedProducts;
+                                                            this.rekeyProducts(updatedProducts);
                                                         }
                                                     }
                                                     // All others (quote product level)
@@ -1907,15 +1898,18 @@ export default class CPQ_ConfigQuote extends LightningElement {
         let updatedProducts = this.quoteProducts.filter(
             product => product.key !== productToRemove.key
         );
+        this.rekeyProducts(updatedProducts);
+        // Evaluate approvals
+        this.evaluateApprovals();
+
+    }
+
+    rekeyProducts(updatedProducts) {
         this.quoteProductKeyHelper += 1;
         updatedProducts.forEach(function(product) {
             product.key = updatedProducts.indexOf(product).toString() + '.' + this.quoteProductKeyHelper.toString()
         }, this);
         this.quoteProducts = updatedProducts;
-
-        // Evaluate approvals
-        this.evaluateApprovals();
-
     }
 
     // Save event received

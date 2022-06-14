@@ -13,7 +13,7 @@ export default class CPQ_QuoteProductManualAdds extends LightningElement {
 
     get cannotSave() {
         return this.products.filter(
-            prod => prod.selected === true
+            prod => prod.amountSelected > 0
         ).length === 0;
     }
 
@@ -25,25 +25,47 @@ export default class CPQ_QuoteProductManualAdds extends LightningElement {
         ) {
             this.pricebook.entries.forEach(function(pbe) {
                 if (pbe.Manually_Addible === true) {
-                    if (this.quoteProducts.filter(
-                        product => product.addedByAction === undefined && product.Product2Id === pbe.Product2Id
-                        ).length === 0
-                    ) {
-                        let prodToAdd = JSON.parse(JSON.stringify(pbe));
-                        prodToAdd.selected = false;
-                        products.push(prodToAdd);
-                    }
+                    let prodToAdd = JSON.parse(JSON.stringify(pbe));
+                    prodToAdd.amountSelected = 0;
+                    products.push(prodToAdd);
                 }
             }, this);
         }
         this.products = products;
     }
 
-    // Toggle Product selection
-    toggleSelection(event) {
+    // Change Product Selection Amount
+    changeSelection(event) {
         this.products.forEach(function(prod) {
             if (prod.Id === event.target.name) {
-                prod.selected = !prod.selected;
+                prod.amountSelected = Number(event.target.value);
+                if (prod.amountSelected === undefined ||
+                    prod.amountSelected === null ||
+                    prod.amountSelected === ''    
+                ) {
+                    prod.amountSelected = 0;
+                }
+            }
+        }, this);
+    }
+
+    // Increase Product Selection Amount
+    increaseSelection(event) {
+        this.products.forEach(function(prod) {
+            if (prod.Id === event.target.name) {
+                prod.amountSelected += 1;
+            }
+        }, this);
+    }
+
+    // Decrease Product Selection Amount
+    decreaseSelection(event) {
+        this.products.forEach(function(prod) {
+            if (prod.Id === event.target.name) {
+                prod.amountSelected -= 1;
+                if (prod.amountSelected < 0) {
+                    prod.amountSelected = 0;
+                }
             }
         }, this);
     }
@@ -51,12 +73,22 @@ export default class CPQ_QuoteProductManualAdds extends LightningElement {
     // Save clicked
     saveClick() {
 
+        let detail = [];
+
+        this.products.filter(
+            prod => prod.amountSelected > 0
+        ).forEach(function(entry) {
+            for (let i=0; i < entry.amountSelected; i++) {
+                detail.push(entry);
+            }
+        }, this);
+
         // Send save event
         const saveEvent = new CustomEvent(
             'save', {
-                detail: JSON.stringify(this.products.filter(
-                    prod => prod.selected === true
-                ))
+                detail: JSON.stringify(
+                    detail
+                )
             }
         );
         this.dispatchEvent(saveEvent);

@@ -51,26 +51,52 @@
                         >
                         
                             <div
-                                class="slds-size_1-of-2 slds-p-horizontal_large slds-p-vertical_x-small"
+                                class="slds-size_1-of-2 slds-p-horizontal_small slds-p-vertical_x-small"
                                 key={product.Id}
                             > 
-                                <ul class="slds-list_horizontal">
-                                    <li>
-                                        <lightning-input
-                                            type="checkbox"
-                                            name={product.Id}
-                                            label=""
-                                            variant="label-hidden"
-                                            value={product.selected}
-                                            checked={product.selected}
-                                            onchange={toggleSelection}
-                                        >
-                                        </lightning-input>
-                                    </li>
-                                    <li class="slds-m-left_small">
-                                        {product.Product2.Name}
-                                    </li>
-                                </ul>
+                                <div class="slds-grid">
+                                    <div class="slds-col slds-size_2-of-6 slds-m-horizontal_small slds-p-vertical_x-small">
+                                        <i>
+                                            {product.Product2.Name}
+                                        </i>
+                                    </div>
+                                    <div class="slds-col slds-grid slds-size_1-of-3 slds-m-horizontal_xx-small">
+                                        <div class="slds-col slds-size_5-of-6 slds-m-top_xx-small">
+                                            <lightning-input
+                                                type="number"
+                                                step="1"
+                                                name={product.Id}
+                                                label=""
+                                                variant="label-hidden"
+                                                value={product.amountSelected}
+                                                onchange={changeSelection}
+                                            >
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-size_1-of-6 slds-p-horizontal_x-small">
+                                            <lightning-icon
+                                                icon-name="utility:chevronup"
+                                                alternative-text="Increase"
+                                                title="Increase"
+                                                size="xx-small"
+                                                style="cursor: pointer;"
+                                                name={product.Id}
+                                                onclick={increaseSelection}
+                                            >
+                                            </lightning-icon>
+                                            <lightning-icon
+                                                icon-name="utility:chevrondown"
+                                                alternative-text="Decrease"
+                                                title="Decrease"
+                                                size="xx-small"
+                                                style="cursor: pointer;"
+                                                name={product.Id}
+                                                onclick={decreaseSelection}
+                                            >
+                                            </lightning-icon>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </template>
                     <!-- </div> -->

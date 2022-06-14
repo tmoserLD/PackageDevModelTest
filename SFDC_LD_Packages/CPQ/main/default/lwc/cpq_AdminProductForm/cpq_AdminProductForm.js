@@ -136,7 +136,7 @@ export default class CPQ_AdminProductForm extends LightningElement {
         try {
             let newRecord = await cloneRecord({
                 recordId: this.product.Id,
-                objectAPI: 'Priceboo2'
+                objectAPI: 'Product2'
             });
 
             // Send childsaved event to parent

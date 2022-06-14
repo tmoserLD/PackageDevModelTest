@@ -301,14 +301,7 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
                 pbe => pbe.Manually_Addible === true
             );
             if (addibleProducts.length > 0) {
-                addibleProducts.forEach(function(prod) {
-                    if (this.quoteProducts.filter(
-                        product => product.addedByAction === undefined && product.Product2Id === prod.Product2Id
-                        ).length === 0
-                    ) {
-                        hasProductsToAdd = true;
-                    }
-                }, this);
+                hasProductsToAdd = true;
             }
         }
         
@@ -325,14 +318,7 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
                 pbe => pbe.Manually_Addible === true
             );
             if (addibleProducts.length > 0) {
-                addibleProducts.forEach(function(prod) {
-                    if (this.quoteProducts.filter(
-                        product => product.addedByAction === undefined && product.Product2Id === prod.Product2Id
-                        ).length === 0
-                    ) {
-                        hasProductsToAdd = true;
-                    }
-                }, this);
+                hasProductsToAdd = true;
             }
         }
         return hasProductsToAdd;
