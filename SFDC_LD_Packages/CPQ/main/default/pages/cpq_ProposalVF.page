@@ -206,7 +206,7 @@
                                         <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
                                     </p>
                                 </div>
-                                <div style="width: 64%;float: left">
+                                <div style="width: 65%;float: right">
                                     <div style="width: 49%;float: left">
                                         <p rendered="{!section.section.Body_Text_Block_2__c != null}">
                                             <apex:outputtext value="{!section.section.Body_Text_Block_2__c}" escape="false"/>

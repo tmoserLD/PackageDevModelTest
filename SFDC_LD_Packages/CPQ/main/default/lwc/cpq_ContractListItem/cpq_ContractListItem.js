@@ -40,4 +40,12 @@ export default class CPQ_ContractListItem extends LightningElement {
         return colCSS;
     }
 
+    get contractCurrency() {
+        if (this.contract.CurrencyIsoCode !== undefined) {
+            return this.contract.CurrencyIsoCode;
+        } else {
+            return this.sourceInfo.CurrencyIsoCode;
+        }
+    }
+
 }

@@ -48,7 +48,7 @@
                     <template if:false={isBoolean}>
 
                         <template if:true={isRecordLookup}>
-                            {recordsSelected} record(s) selected
+                            {recordsSelectedText}
                         </template>
 
                         <template if:false={isRecordLookup}>
@@ -109,20 +109,24 @@
             <!-- Currency -->
             <template if:true={isCurrency}>
                 <div class="slds-grid">
-                    <div class="slds-size_11-of-12">
-                        <lightning-input
-                            type="number"
-                            step={questionInfo.Step_Value__c}
-                            min={questionInfo.Minimum_Value__c}
-                            max={questionInfo.Maximum_Value__c}
-                            name="Answer Input"
-                            formatter="currency"
-                            label=""
-                            variant="label-hidden"
-                            value={questionInfo.answer}
-                            onblur={answerChange}
-                        >
-                        </lightning-input>
+                    <div class="slds-size_11-of-12 slds-grid">
+                        <div class="slds-size_1-of-6 slds-p-right_x-small slds-p-top_xx-small">
+                            {oppCurrency}
+                        </div>
+                        <div class="slds-size_5-of-6">
+                            <lightning-input
+                                type="number"
+                                step={questionInfo.Step_Value__c}
+                                min={questionInfo.Minimum_Value__c}
+                                max={questionInfo.Maximum_Value__c}
+                                name="Answer Input"
+                                label=""
+                                variant="label-hidden"
+                                value={questionInfo.answer}
+                                onblur={answerChange}
+                            >
+                            </lightning-input>
+                        </div>
                     </div>
                     <div class="slds-size_1-of-12 slds-p-left_x-small">
                         <lightning-icon
@@ -287,7 +291,7 @@
                         </li>
                     </template>
                     <li>
-                        {recordsSelected} record(s) selected
+                        {recordsSelectedText}
                     </li>
                 </ul>
             </template>

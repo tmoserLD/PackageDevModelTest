@@ -56,13 +56,27 @@ public class cpq_ConfigQuoteClassTest {
         // Pricebook Entries
         List<PricebookEntry> testEntries = new List<PricebookEntry>();
         for (Integer i = 0; i < testSize; i++) {
+            if (i != 0) {
+                testEntries.add(
+                    new PricebookEntry(
+                        IsActive = true,
+                        Adjustable_Product_Columns__c = 'Unit_Price',
+                        UnitPrice = 1,
+                        Manually_Addible__c = true,
+                        Pricebook2Id = testPricebooks[0].Id,
+                        Product2Id = testProducts[i].Id,
+                        Quantity__c = 1,
+                        Removable__c = true
+                    )
+                ); 
+            }
             testEntries.add(
                 new PricebookEntry(
                     IsActive = true,
                     Adjustable_Product_Columns__c = 'Unit_Price',
                     UnitPrice = 1,
                     Manually_Addible__c = true,
-                    Pricebook2Id = testPricebooks[0].Id,
+                    Pricebook2Id = testPricebooks[i].Id,
                     Product2Id = testProducts[i].Id,
                     Quantity__c = 1,
                     Removable__c = true
@@ -471,6 +485,9 @@ public class cpq_ConfigQuoteClassTest {
             StageName = 'Qualification', 
             CloseDate = Date.today()
         );
+        if (System.UserInfo.isMultiCurrencyOrganization()) {
+            testOpportunity.put('CurrencyIsoCode', 'EUR');
+        }
         insert testOpportunity;
 
     }
@@ -610,8 +627,12 @@ public class cpq_ConfigQuoteClassTest {
 
         PricebookEntry testPBE = [
             SELECT Id,
-                Pricebook2Id
+                Pricebook2Id,
+                Product2Id,
+                Quantity__c,
+                UnitPrice
             FROM PricebookEntry
+            WHERE Pricebook2.IsStandard = false
             LIMIT 1
         ];
 
@@ -626,6 +647,9 @@ public class cpq_ConfigQuoteClassTest {
             IsClone__c = false,
             Playbook_Status__c = 'Complete'
         );
+        if (System.UserInfo.isMultiCurrencyOrganization()) {
+            testQuote.put('CurrencyIsoCode', 'EUR');
+        }
 
         // New Quote Line Items
         List<QuoteLineItem> testQLIs = new List<QuoteLineItem>();
@@ -633,6 +657,7 @@ public class cpq_ConfigQuoteClassTest {
             new QuoteLineItem(
                 Quantity = 1,
                 PricebookEntryId = testPBE.Id,
+                Product2Id = testPBE.Product2Id,
                 CPQ_Playbook_Rule_Action__c = testRuleAction.Id,
                 Discount__c = 0,
                 Start_Date__c = Date.today(),
@@ -697,8 +722,14 @@ public class cpq_ConfigQuoteClassTest {
             testAnswers,
             testApprovals,
             testApprovalSteps,
-            testApprovers
+            testApprovers,
+            'EUR',
+            'USD',
+            new List<PricebookEntry>{testPBE}
         );
+
+        // Revert updated quote pricebook
+        testQuote.Pricebook2Id = testPBE.Pricebook2Id;
 
         // Remove Ids from child records
         for (QuoteLineItem qli : testQLIs) {
@@ -736,7 +767,10 @@ public class cpq_ConfigQuoteClassTest {
             testAnswers,
             testApprovals,
             testApprovalSteps,
-            testApprovers
+            testApprovers,
+            'EUR',
+            'USD',
+            new List<PricebookEntry>{testPBE}
         );
 
         Test.stopTest();

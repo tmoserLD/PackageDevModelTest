@@ -2,10 +2,10 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Pricebook__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <description>Pricebook used for products added in playbook</description>
+    <description>Price book used for products added in playbook</description>
     <externalId>false</externalId>
-    <inlineHelpText>Pricebook from which products are pulled from for rules</inlineHelpText>
-    <label>Pricebook</label>
+    <inlineHelpText>Price book from which products are pulled from for rules</inlineHelpText>
+    <label>Price Book</label>
     <referenceTo>Pricebook2</referenceTo>
     <relationshipLabel>CPQ Playbooks</relationshipLabel>
     <relationshipName>CPQ_Playbooks</relationshipName>

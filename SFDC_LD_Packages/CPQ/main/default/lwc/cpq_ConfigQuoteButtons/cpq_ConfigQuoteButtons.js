@@ -9,6 +9,7 @@ import deleteRecords from '@salesforce/apex/cpq_ContainerClass.deleteRecords';
 export default class CPQ_ConfigQuoteButtons extends LightningElement {
 
     @api configType;
+    @api defaultCurrency;
     @api existingQuoteData;
     @api oppInfo;
     @api playbooks;
@@ -298,7 +299,10 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
                 playbookAnswers: playbookAnswers,
                 quoteApprovals: quoteApprovals,
                 quoteApprovalSteps: quoteApprovalSteps,
-                quoteApprovers: quoteApprovers
+                quoteApprovers: quoteApprovers,
+                oppCurrency: this.oppInfo.CurrencyIsoCode,
+                defaultCurrency: this.defaultCurrency,
+                selectedPricebookEntries: this.selectedPricebook.entries
             });
 
             if (shellQuote !== true) {

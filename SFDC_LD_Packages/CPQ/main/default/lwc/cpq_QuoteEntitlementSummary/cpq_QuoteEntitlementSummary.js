@@ -214,7 +214,7 @@ export default class CPQ_QuoteEntitlementSummary extends LightningElement {
     get totalPrice() {
         let totalPrice = 0;
         this.entitlements.forEach(function(ent) {
-            totalPrice += this.convertCurrency((ent.Unit_Price__c * ent.Quantity__c), this.contractCurrency, this.oppCurrency);
+            totalPrice += ent.Unit_Price__c * ent.Quantity__c;
         }, this);
         return totalPrice;
     }
@@ -248,17 +248,6 @@ export default class CPQ_QuoteEntitlementSummary extends LightningElement {
                 sort: 'Down'
             };
         }
-    }
-
-    // Currency Conversion
-    convertCurrency(value, fromISO, toISO) {
-        let rate = 1;
-        if (this.currencyMap[toISO] !== undefined &&
-            this.currencyMap[fromISO] !== undefined
-        ) {
-            this.currencyMap[toISO] / this.currencyMap[fromISO]
-        }
-        return value * rate;
     }
 
     // Group by field change

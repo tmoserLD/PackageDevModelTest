@@ -66,13 +66,27 @@ public class cpq_ContainerClassTest {
         // Pricebook Entries
         List<PricebookEntry> testEntries = new List<PricebookEntry>();
         for (Integer i = 0; i < testSize; i++) {
+            if (i != 0) {
+                testEntries.add(
+                    new PricebookEntry(
+                        IsActive = true,
+                        Adjustable_Product_Columns__c = 'Unit_Price',
+                        UnitPrice = 1,
+                        Manually_Addible__c = true,
+                        Pricebook2Id = testPricebooks[0].Id,
+                        Product2Id = testProducts[i].Id,
+                        Quantity__c = 1,
+                        Removable__c = true
+                    )
+                ); 
+            }
             testEntries.add(
                 new PricebookEntry(
                     IsActive = true,
                     Adjustable_Product_Columns__c = 'Unit_Price',
                     UnitPrice = 1,
                     Manually_Addible__c = true,
-                    Pricebook2Id = testPricebooks[0].Id,
+                    Pricebook2Id = testPricebooks[i].Id,
                     Product2Id = testProducts[i].Id,
                     Quantity__c = 1,
                     Removable__c = true
@@ -264,6 +278,9 @@ public class cpq_ContainerClassTest {
             StageName = 'Qualification', 
             CloseDate = Date.today()
         );
+        if (System.UserInfo.isMultiCurrencyOrganization()) {
+            testOpportunity.put('CurrencyIsoCode', 'USD');
+        }
         insert testOpportunity;
 
     }
@@ -647,6 +664,15 @@ public class cpq_ContainerClassTest {
         List<List<List<CPQ_Quote_Approver__c>>> testApprovers = new List<List<List<CPQ_Quote_Approver__c>>>();
         testApprovers.add(testApproversSubBase);
 
+        // Pricebook Entries
+        List<PricebookEntry> pricebookEntries = [
+            SELECT Id,
+                Product2Id,
+                Quantity__c,
+                UnitPrice
+            FROM PricebookEntry
+        ];
+
         // Save initial quote data
         Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
@@ -654,7 +680,10 @@ public class cpq_ContainerClassTest {
             new List<CPQ_Playbook_Answer__c>(),
             testApprovals,
             testApprovalSteps,
-            testApprovers
+            testApprovers,
+            'USD',
+            'USD',
+            pricebookEntries
         );
 
         Test.startTest();
@@ -818,6 +847,15 @@ public class cpq_ContainerClassTest {
         List<List<List<CPQ_Quote_Approver__c>>> testApprovers = new List<List<List<CPQ_Quote_Approver__c>>>();
         testApprovers.add(testApproversSubBase);
 
+        // Pricebook Entries
+        List<PricebookEntry> pricebookEntries = [
+            SELECT Id,
+                Product2Id,
+                Quantity__c,
+                UnitPrice
+            FROM PricebookEntry
+        ];
+
         // Save initial quote data
         Id quoteId = cpq_ConfigQuoteClass.saveQuoteConfiguration(
             testQuote,
@@ -825,7 +863,10 @@ public class cpq_ContainerClassTest {
             new List<CPQ_Playbook_Answer__c>(),
             testApprovals,
             testApprovalSteps,
-            testApprovers
+            testApprovers,
+            'USD',
+            'USD',
+            pricebookEntries
         );
 
         Test.startTest();
@@ -1008,8 +1049,12 @@ public class cpq_ContainerClassTest {
 
         PricebookEntry testPBE = [
             SELECT Id,
-                Pricebook2Id
+                Pricebook2Id,
+                Product2Id,
+                Quantity__c,
+                UnitPrice
             FROM PricebookEntry
+            WHERE Pricebook2.IsStandard = false
             LIMIT 1
         ];
 
@@ -1024,6 +1069,9 @@ public class cpq_ContainerClassTest {
             IsClone__c = false,
             Playbook_Status__c = 'Complete'
         );
+        if (System.UserInfo.isMultiCurrencyOrganization()) {
+            testQuote.put('CurrencyIsoCode', 'USD');
+        }
 
         // New Quote Line Items
         List<QuoteLineItem> testQLIs = new List<QuoteLineItem>();
@@ -1031,6 +1079,7 @@ public class cpq_ContainerClassTest {
             new QuoteLineItem(
                 Quantity = 1,
                 PricebookEntryId = testPBE.Id,
+                Product2Id = testPBE.Product2Id,
                 CPQ_Playbook_Rule_Action__c = null,
                 Discount__c = 0,
                 Start_Date__c = Date.today(),
@@ -1093,7 +1142,10 @@ public class cpq_ContainerClassTest {
             testAnswers,
             testApprovals,
             testApprovalSteps,
-            testApprovers
+            testApprovers,
+            'USD',
+            'USD',
+            new List<PricebookEntry>{testPBE}
         );
 
         Test.startTest();

@@ -79,6 +79,10 @@ public with sharing class OppContractUtil {
                 newCont.Quote__c = opp.SyncedQuoteId;
                 newCont.CPQ_Playbook__c = syncedQuote.CPQ_Playbook__c;
 
+                if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+                    newCont.put('CurrencyIsoCode', opp.get('CurrencyIsoCode'));
+                }
+
                 // Contract being adjusted (if applicable)
                 newCont.Adjustment_of_Contract__c = opp.Adjustment_of_Contract_Override__c != null ? opp.Adjustment_of_Contract_Override__c: syncedQuote.Adjustment_of_Contract__c;
 
@@ -102,6 +106,10 @@ public with sharing class OppContractUtil {
                     // Map fields
                     for (Entitlement_Field_Mapping__mdt fm : fieldMappings) {
                         ent.put(fm.Entitlement_Field__c, oli.get(fm.OpportunityLineItem_Field__c));
+                    }
+
+                    if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+                        ent.put('CurrencyIsoCode', opp.get('CurrencyIsoCode'));
                     }
 
                     entitlementsToInsert.get(opp.Id).add(ent);
@@ -139,6 +147,10 @@ public with sharing class OppContractUtil {
                             // Map fields
                             for (Entitlement_Field_Mapping__mdt fm : fieldMappings) {
                                 ent.put(fm.Entitlement_Field__c, existingEnt.get(fm.Entitlement_Field__c));
+                            }
+
+                            if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+                                ent.put('CurrencyIsoCode', opp.get('CurrencyIsoCode'));
                             }
 
                             entitlementsToInsert.get(opp.Id).add(ent);
@@ -187,6 +199,10 @@ public with sharing class OppContractUtil {
                         ans.Value_Decimal__c = answer.Value_Decimal__c;
                         ans.Value_Integer__c = answer.Value_Integer__c;
                         ans.Value_Text__c = answer.Value_Text__c;
+
+                        if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+                            ans.put('CurrencyIsoCode', opp.get('CurrencyIsoCode'));
+                        }
 
                         answersToInsert.get(opp.Id).add(ans);
                     }

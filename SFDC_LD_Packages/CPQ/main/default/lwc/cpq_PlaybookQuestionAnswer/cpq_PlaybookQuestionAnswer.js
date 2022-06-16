@@ -147,18 +147,23 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     }
 
     // # of records selected for record lookup
-    get recordsSelected() {
+    get recordsSelectedText() {
         if (this.questionInfo.Answer_Type__c === 'Record Lookup') {
             if (this.questionInfo.answer !== undefined &&
                 this.questionInfo.answer !== null &&
                 this.questionInfo.answer !== ''
             ) {
-                return this.questionInfo.answer.split(';').length;
+                let recordsSelected = this.questionInfo.answer.split(';').length;
+                if (recordsSelected === 1) {
+                    return '1 record selected';
+                } else {
+                    return recordsSelected + ' records selected';
+                }
             } else {
-                return 0;
+                return '0 records selected';
             }
         } else {
-            return 0;
+            return '0 records selected';
         }
     }
 

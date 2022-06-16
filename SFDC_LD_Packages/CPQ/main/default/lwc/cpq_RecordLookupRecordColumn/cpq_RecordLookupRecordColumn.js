@@ -5,9 +5,6 @@ export default class CPQ_RecordLookupRecordColumn extends LightningElement {
     // Column
     @api column;
 
-    // Currency Iso Code
-    @api currency;
-
     // Record
     @api record;
 

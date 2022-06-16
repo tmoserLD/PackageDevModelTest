@@ -17,22 +17,9 @@ export default class CPQ_QuoteEntitlementColumn extends LightningElement {
     // Opportunity Currency Iso Code
     @api oppCurrency;
 
-    // Quantity
-    get isQuantity() {
-        return this.column.field === 'Quantity';
-    }
-
     // Value
     get value() {
         let val = this.entitlement[this.column.field];
-        if (val !== undefined &&
-            val !== null &&
-            val !== ''    
-        ) {
-            if (this.column.type === 'Currency') {
-                val = this.convertCurrency(val, this.contractCurrency, this.oppCurrency);
-            }
-        }
         return val;
     }
 
@@ -64,16 +51,5 @@ export default class CPQ_QuoteEntitlementColumn extends LightningElement {
     // Text type
     get isText() {
         return this.column.type === 'Text';
-    }
-
-    // Currency Conversion
-    convertCurrency(value, fromISO, toISO) {
-        let rate = 1;
-        if (this.currencyMap[toISO] !== undefined &&
-            this.currencyMap[fromISO] !== undefined
-        ) {
-            this.currencyMap[toISO] / this.currencyMap[fromISO]
-        }
-        return value * rate;
     }
 }

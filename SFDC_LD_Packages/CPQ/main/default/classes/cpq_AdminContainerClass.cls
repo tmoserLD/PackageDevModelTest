@@ -983,6 +983,7 @@ public with sharing class cpq_AdminContainerClass {
                         Quantity__c,
                         Removable__c
                     FROM PricebookEntries
+                    WHERE Currency__c = null
                 ),
                 (
                     SELECT Id,
@@ -992,6 +993,7 @@ public with sharing class cpq_AdminContainerClass {
                     ORDER BY IsActive__c DESC, Name
                 )
             FROM Pricebook2
+            WHERE Parent_Price_Book__c = null
             ORDER BY IsActive DESC,
                 Name
         ];

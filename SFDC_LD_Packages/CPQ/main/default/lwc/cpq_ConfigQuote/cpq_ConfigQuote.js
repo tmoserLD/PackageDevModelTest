@@ -71,8 +71,16 @@ export default class CPQ_ConfigQuote extends LightningElement {
             this.rules = configInfo.rules;
             this.approvals = configInfo.approvals;
             this.pricebooks = configInfo.pricebooks;
+            this.pricebooks.forEach(function(pricebook) {
+                pricebook.entries = pricebook.entries.filter(
+                    entry => entry.CurrencyIsoCode === undefined || entry.CurrencyIsoCode === this.defaultCurrency
+                )
+            }, this);
             this.currencyMap = configInfo.currencyMap;
             this.oppCurrency = this.oppInfo.CurrencyIsoCode;
+            if (this.configType.includes('View') && this.existingQuoteData.contractId !== undefined && this.existingQuoteData.CurrencyIsoCode !== undefined) {
+                this.oppCurrency = this.existingQuoteData.CurrencyIsoCode;
+            }
             this.isCPQAdmin = configInfo.isCPQAdmin;
 
             // Set existing quote Name
@@ -155,7 +163,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     if (this.existingQuoteData.contractId !== undefined && 
                                         answer.Value_Currency__c !== undefined    
                                     ) {
-                                        existingValue = this.convertCurrency(answer.Value_Currency__c, this.contractCurrency, this.oppCurrency);
+                                        existingValue = this.convertCurrency(answer.Value_Currency__c, this.existingQuoteData.CurrencyIsoCode, this.oppCurrency);
                                     } else {
                                         existingValue = answer.Value_Currency__c;
                                     }
@@ -304,54 +312,58 @@ export default class CPQ_ConfigQuote extends LightningElement {
                             if (entry.Product2Id === qli.Product2Id ||
                                 entry.Product2Id === qli.Product__c    
                             ) {
-                                let productToAdd = JSON.parse(JSON.stringify(entry));
+                                let prd = JSON.parse(JSON.stringify(entry));
                                 // Get all qli attributes
                                 for (const [key, value] of Object.entries(qli)) {
                                     if (key !== 'Id') {
-                                        productToAdd[key] = value;
+                                        prd[key] = value;
                                     }
                                 }
                                 // Product Name
-                                productToAdd.Product_Name = entry.Product2.Name;             
+                                prd.Product_Name = entry.Product2.Name;             
                                 // Quantity
-                                productToAdd.Quantity = qli.Quantity__c;
+                                prd.Quantity = qli.Quantity__c;
+                                // Currency conversion
+                                let conversionCurrency = this.oppCurrency;
+                                if (this.existingQuoteData.contractId !== undefined) {
+                                    conversionCurrency = this.existingQuoteData.CurrencyIsoCode;
+                                }
                                 // List Price
-                                productToAdd.List_Price = qli.List_Price__c;
+                                prd.List_Price = this.convertCurrency(qli.List_Price__c, conversionCurrency, this.oppCurrency);
                                 // Unit Price
-                                productToAdd.Unit_Price = qli.Unit_Price__c;
+                                prd.Unit_Price = this.convertCurrency(qli.Unit_Price__c, conversionCurrency, this.oppCurrency);
                                 // Discount
-                                if (productToAdd.List_Price !== 0) {
-                                    productToAdd.Discount = 1 - (productToAdd.Unit_Price / productToAdd.List_Price);
+                                if (prd.List_Price !== 0) {
+                                    prd.Discount = 1 - (prd.Unit_Price / prd.List_Price);
                                 } else {
-                                    productToAdd.Discount = 0;
+                                    prd.Discount = 0;
                                 }
                                 // Prices
-                                productToAdd.Total_Price = productToAdd.Unit_Price * productToAdd.Quantity;
-                                productToAdd.Sub_Total_Price = productToAdd.List_Price * productToAdd.Quantity;
+                                prd.Total_Price = prd.Unit_Price * prd.Quantity;
+                                prd.Sub_Total_Price = prd.List_Price * prd.Quantity;
                                 // Dates
-                                productToAdd.Start_Date = qli.Start_Date__c;
-                                productToAdd.End_Date = qli.End_Date__c;
+                                prd.Start_Date = qli.Start_Date__c;
+                                prd.End_Date = qli.End_Date__c;
                                 // Permissions
-                                productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
-                                productToAdd.Removable = entry.Removable__c;
-                                productToAdd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
+                                prd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
+                                prd.Removable = entry.Removable__c;
+                                prd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
                                 // Previous values obj
-                                productToAdd.prevValues = {};
+                                prd.prevValues = {};
                                 // QLI Stamp Fields
-                                productToAdd.qliFields = [];
+                                prd.qliFields = [];
                                 // Added by action
-                                productToAdd.addedByAction = qli.CPQ_Playbook_Rule_Action__c; 
+                                prd.addedByAction = qli.CPQ_Playbook_Rule_Action__c; 
                                 // Key
-                                productToAdd.key = this.quoteProducts.length.toString() + '.' + this.quoteProductKeyHelper.toString();
+                                prd.key = this.quoteProducts.length.toString() + '.' + this.quoteProductKeyHelper.toString();
                                 // Playbook
-                                productToAdd.playbookId = this.selectedPlaybookId;
+                                prd.playbookId = this.selectedPlaybookId;
                                 // Evaluate Pricing
                                 if (!this.configType.includes('View')) {
-                                    this.evalProductPricing(productToAdd);
+                                    this.evalProductPricing(prd);
                                 }
                                 let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
-                                updatedProducts.push(productToAdd);
-
+                                updatedProducts.push(prd);
                                 this.quoteProducts = updatedProducts;
                             }
                         }, this);
@@ -1654,6 +1666,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
                         // Entitlement level
                         if (item.itemInfo.Entitlement_Calculation_Field__c.split('.').length === 1) {
                             entValue = ent[item.itemInfo.Entitlement_Calculation_Field__c];
+                            if (item.itemInfo.Product_Calculation_Field_Type__c === 'Currency') {
+                                entValue = this.convertCurrency(entValue, this.contractCurrency, this.oppCurrency);
+                            }
                         }
                         // Product__c level
                         else if (item.itemInfo.Entitlement_Calculation_Field__c.split('.').length > 1) {
@@ -1923,63 +1938,63 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
     // Add Prodct to quote
     addProduct(entry, actionId) {
-        let productToAdd = entry;
+        let prd = entry;
 
         // Product Name
-        productToAdd.Product_Name = entry.Product2.Name;
+        prd.Product_Name = entry.Product2.Name;
         
         // Quantity
         if (entry.Quantity__c !== undefined) {
-            productToAdd.Quantity = entry.Quantity__c;
+            prd.Quantity = entry.Quantity__c;
         } else {
-            productToAdd.Quantity = 1;
+            prd.Quantity = 1;
         }
 
         // List Price
-        productToAdd.List_Price = this.convertCurrency(entry.UnitPrice, this.defaultCurrency, this.oppCurrency);
+        prd.List_Price = this.convertCurrency(entry.UnitPrice, this.defaultCurrency, this.oppCurrency);
 
         // Unit Price
-        productToAdd.Unit_Price = productToAdd.List_Price;
+        prd.Unit_Price = prd.List_Price;
 
         // Total Price
-        productToAdd.Total_Price = productToAdd.Unit_Price * productToAdd.Quantity;
+        prd.Total_Price = prd.Unit_Price * prd.Quantity;
 
         // Discount
-        productToAdd.Discount = 0;
+        prd.Discount = 0;
 
         // Prices
-        productToAdd.Total_Price = productToAdd.Unit_Price * productToAdd.Quantity;
-        productToAdd.Sub_Total_Price = productToAdd.List_Price * productToAdd.Quantity;
+        prd.Total_Price = prd.Unit_Price * prd.Quantity;
+        prd.Sub_Total_Price = prd.List_Price * prd.Quantity;
 
         // Dates
-        productToAdd.Start_Date = this.quoteStartDate;
-        productToAdd.End_Date = this.quoteEndDate;
+        prd.Start_Date = this.quoteStartDate;
+        prd.End_Date = this.quoteEndDate;
 
         // Default Permissions
-        productToAdd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
-        productToAdd.Removable = entry.Removable__c;
-        productToAdd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
+        prd.Adjustable_Product_Columns__c = entry.Adjustable_Product_Columns__c !== undefined ? entry.Adjustable_Product_Columns__c.split(';') : [];
+        prd.Removable = entry.Removable__c;
+        prd.Pricing_Set_Identifier = entry.Pricing_Set_Identifier__c;
 
         // Previous values obj
-        productToAdd.prevValues = {};
+        prd.prevValues = {};
 
         // QLI Stamp Fields
-        productToAdd.qliFields = [];
+        prd.qliFields = [];
 
         // Added by action
-        productToAdd.addedByAction = actionId; 
+        prd.addedByAction = actionId; 
 
         // Key
-        productToAdd.key = this.quoteProducts.length.toString() + '.' + this.quoteProductKeyHelper.toString();
+        prd.key = this.quoteProducts.length.toString() + '.' + this.quoteProductKeyHelper.toString();
 
         // Playbook
-        productToAdd.playbookId = this.selectedPlaybookId;
+        prd.playbookId = this.selectedPlaybookId;
 
         // Evaluate Pricing
-        this.evalProductPricing(productToAdd);
+        this.evalProductPricing(prd);
 
         let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
-        updatedProducts.push(productToAdd);
+        updatedProducts.push(prd);
 
         this.quoteProducts = updatedProducts;
     }
@@ -2136,7 +2151,7 @@ export default class CPQ_ConfigQuote extends LightningElement {
         if (this.currencyMap[toISO] !== undefined &&
             this.currencyMap[fromISO] !== undefined
         ) {
-            this.currencyMap[toISO] / this.currencyMap[fromISO]
+            rate = this.currencyMap[toISO] / this.currencyMap[fromISO]
         }
         return value * rate;
     }

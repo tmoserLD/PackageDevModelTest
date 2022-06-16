@@ -60,6 +60,7 @@ public with sharing class cpq_ConfigQuoteClass {
         Set<String> pricebookEntryFields = new Set<String>{
             'Id',
             'Adjustable_Product_Columns__c',
+            'Currency__c',
             'Manually_Addible__c',
             'Pricing_Set_Identifier__c',
             'Product2Id',
@@ -69,6 +70,9 @@ public with sharing class cpq_ConfigQuoteClass {
             'UnitPrice',
             'UseStandardPrice'
         };
+        if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+            pricebookEntryFields.add('CurrencyIsoCode');
+        }
 
         // Contract_Entitlement__c Base Fields
         Set<String> entitlementFields = new Set<String>{
@@ -1097,6 +1101,9 @@ public with sharing class cpq_ConfigQuoteClass {
     * @param quoteApprovals List of Unsaved CPQ_Quote_Approval__c record data
     * @param quoteApprovalSteps List of List of Unsaved CPQ_Quote_Approval_Step__c record data
     * @param quoteApprovers List of List of List of Unsaved CPQ_Quote_Approver__c record data
+    * @param oppCurrency CurrencyIsoCode of opportunity
+    * @param defaultCurrency Corporate CurrencyIsoCode of org
+    * @param selectedPricebookEntries pricebook entries of pricebook used in CPQ configuration
     */
     @AuraEnabled
     public static Id saveQuoteConfiguration(
@@ -1105,8 +1112,177 @@ public with sharing class cpq_ConfigQuoteClass {
         List<CPQ_Playbook_Answer__c> playbookAnswers,
         List<CPQ_Quote_Approval__c> quoteApprovals,
         List<List<CPQ_Quote_Approval_Step__c>> quoteApprovalSteps,
-        List<List<List<CPQ_Quote_Approver__c>>> quoteApprovers
+        List<List<List<CPQ_Quote_Approver__c>>> quoteApprovers,
+        String oppCurrency,
+        String defaultCurrency,
+        List<PricebookEntry> selectedPricebookEntries
     ) {
+
+        // Ensure proper pricebook
+        Boolean adjustPricebookRecords = (oppCurrency != defaultCurrency && System.UserInfo.isMultiCurrencyOrganization());
+        if (adjustPricebookRecords == true) {
+            // Get existing entries of opp currency in standard price book
+            String standardPriceBookQuery = ''
+                + 'SELECT Id,'
+                    + '('
+                        + 'SELECT Id,'
+                            + 'Product2Id,'
+                            + 'Pricebook2Id'
+                        + ' FROM PricebookEntries'
+                        + ' WHERE CurrencyIsoCode =:oppCurrency'
+                    + ')'
+                + ' FROM Pricebook2'
+                + ' WHERE IsStandard = true'
+                + ' LIMIT 1';
+            Pricebook2 standardPriceBook = Database.query(standardPriceBookQuery);
+            Set<Id> standardPricebookProducts = new Set<Id>();
+            for (PricebookEntry entry : standardPriceBook.PricebookEntries) {
+                standardPricebookProducts.add(entry.Product2Id);
+            }
+            // Find existing child price book
+            List<Pricebook2> childPriceBooks = new List<Pricebook2>();
+            childPriceBooks = [
+                SELECT Id,
+                    Name,
+                    (
+                        SELECT Id,
+                            Product2Id,
+                            Pricebook2Id,
+                            Quantity__c,
+                            UnitPrice
+                        FROM PricebookEntries
+                        WHERE IsActive = true
+                    )
+                FROM Pricebook2
+                WHERE Parent_Price_Book__c =:quoteToSave.Pricebook2Id AND
+                    Currency__c =:oppCurrency
+                LIMIT 1
+            ];
+            // Child price book exists
+            if (childPriceBooks.size() > 0) {
+                // Associate to quote
+                quoteToSave.Pricebook2Id = childPriceBooks[0].Id;
+
+                // Check for entry differences
+                Set<Id> childPricebookProducts = new Set<Id>();
+                for (PricebookEntry entry : childPriceBooks[0].PricebookEntries) {
+                    childPricebookProducts.add(entry.Product2Id);
+                }
+                List<PricebookEntry> missingChildProductEntries = new List<PricebookEntry>();
+                for (PricebookEntry entry : selectedPricebookEntries) {
+                    if (!childPricebookProducts.contains(entry.Product2Id)) {
+                        missingChildProductEntries.add(entry);
+                    }
+                }
+
+                // Create missing entries if necessary
+                List<PricebookEntry> newChildEntries = new List<PricebookEntry>();
+                for (PricebookEntry entry : missingChildProductEntries) {
+                    // Ensure entry exists on standard pricebook
+                    if (!standardPricebookProducts.contains(entry.Product2Id)) {
+                        PricebookEntry standardEntry = new PricebookEntry(
+                            IsActive = true,
+                            UnitPrice = entry.UnitPrice, // Consider adjusting for currency -- although irrelevant since this is more of a formality
+                            Quantity__c = entry.Quantity__c,
+                            Product2Id = entry.Product2Id,
+                            Pricebook2Id = standardPriceBook.Id,
+                            Currency__c = oppCurrency
+                        );
+                        standardEntry.put('CurrencyIsoCode', oppCurrency);
+                        newChildEntries.add(standardEntry); 
+                    }
+                    // New child entry
+                    PricebookEntry childEntry = new PricebookEntry(
+                        IsActive = true,
+                        UnitPrice = entry.UnitPrice, // Consider adjusting for currency -- although irrelevant since this is more of a formality
+                        Quantity__c = entry.Quantity__c,
+                        Product2Id = entry.Product2Id,
+                        Pricebook2Id = childPriceBooks[0].Id,
+                        Currency__c = oppCurrency
+                    );
+                    childEntry.put('CurrencyIsoCode', oppCurrency);
+                    newChildEntries.add(childEntry);
+                }
+                if (newChildEntries.size() > 0) {
+                    insert newChildEntries;
+                }
+
+                // Associate to qlis
+                for (QuoteLineItem qli : quoteLineItems) {
+                    for (PricebookEntry entry : childPriceBooks[0].PricebookEntries) {
+                        if (qli.Product2Id == entry.Product2Id &&
+                            quoteToSave.Pricebook2Id == entry.Pricebook2Id
+                        ) {
+                            qli.PricebookEntryId = entry.Id;
+                        }
+                    }
+                    for (PricebookEntry entry : newChildEntries) {
+                        if (qli.Product2Id == entry.Product2Id &&
+                            quoteToSave.Pricebook2Id == entry.Pricebook2Id
+                        ) {
+                            qli.PricebookEntryId = entry.Id;
+                        }
+                    }
+                }
+            }
+            // Child price book does not exist
+            else {
+                // Create child price book
+                Pricebook2 childPriceBook = new Pricebook2(
+                    Name = oppCurrency + ' (' + quoteToSave.Pricebook2Id + ')',
+                    Description = 'Child Price Book of ' + quoteToSave.Pricebook2Id + ' for the currency of ' + oppCurrency,
+                    Currency__c = oppCurrency,
+                    IsActive = true,
+                    Parent_Price_Book__c = quoteToSave.Pricebook2Id
+                );
+                childPriceBook.put('CurrencyIsoCode', oppCurrency);
+                insert childPriceBook;
+
+                // Associate to quote
+                quoteToSave.Pricebook2Id = childPriceBook.Id;
+
+                // Create child price book entries
+                List<PricebookEntry> childPriceBookEntries = new List<PricebookEntry>();
+                for (PricebookEntry entry : selectedPricebookEntries) {
+                    // Ensure entry exists on standard pricebook
+                    if (!standardPricebookProducts.contains(entry.Product2Id)) {
+                        PricebookEntry standardEntry = new PricebookEntry(
+                            IsActive = true,
+                            UnitPrice = entry.UnitPrice, // Consider adjusting for currency -- although irrelevant since this is more of a formality
+                            Quantity__c = entry.Quantity__c,
+                            Product2Id = entry.Product2Id,
+                            Pricebook2Id = standardPriceBook.Id,
+                            Currency__c = oppCurrency
+                        );
+                        standardEntry.put('CurrencyIsoCode', oppCurrency);
+                        childPriceBookEntries.add(standardEntry); 
+                    }
+                    // New child entry
+                    PricebookEntry childEntry = new PricebookEntry(
+                        IsActive = true,
+                        UnitPrice = entry.UnitPrice, // Consider adjusting for currency -- although irrelevant since this is more of a formality
+                        Quantity__c = entry.Quantity__c,
+                        Product2Id = entry.Product2Id,
+                        Pricebook2Id = childPriceBook.Id,
+                        Currency__c = oppCurrency
+                    );
+                    childEntry.put('CurrencyIsoCode', oppCurrency);
+                    childPriceBookEntries.add(childEntry);
+                }
+                insert childPriceBookEntries;
+
+                // Associate to qlis
+                for (QuoteLineItem qli : quoteLineItems) {
+                    for (PricebookEntry entry : childPriceBookEntries) {
+                        if (qli.Product2Id == entry.Product2Id &&
+                            quoteToSave.Pricebook2Id == entry.Pricebook2Id
+                        ) {
+                            qli.PricebookEntryId = entry.Id;
+                        }
+                    }
+                }
+            }
+        }
 
         // Save quote;
         upsert quoteToSave;
@@ -1144,6 +1320,11 @@ public with sharing class cpq_ConfigQuoteClass {
         // Associate Quote to Answers
         for (CPQ_Playbook_Answer__c answer : playbookAnswers) {
             answer.Quote__c = quoteToSave.Id;
+            
+            // Currency
+            if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+                answer.put('CurrencyIsoCode', oppCurrency);
+            }
         }
 
         // Insert Answers
@@ -1229,6 +1410,7 @@ public with sharing class cpq_ConfigQuoteClass {
 
         QueryInfo returnQueryInfo = new QueryInfo();
         returnQueryInfo.records = new List<sObject>();
+        returnQueryInfo.recordCurrencies = new Map<Id, String>();
 
         // Query records
         String queryString = question.Query_String__c;
@@ -1294,12 +1476,33 @@ public with sharing class cpq_ConfigQuoteClass {
             }
         }
 
+        // Determine currency of records
+        if (System.UserInfo.isMultiCurrencyOrganization()) {
+            Set<Id> recordIDs = new Set<Id>();
+            for (sObject record : returnQueryInfo.records) {
+                recordIDs.add((Id) record.get('Id'));
+            }
+            String recordQuery = ''
+                + 'SELECT Id,'
+                    + 'CurrencyIsoCode'
+                + ' FROM ' + objectName
+                + ' WHERE Id IN:recordIDs';
+            for (sObject record : Database.query(recordQuery)) {
+                returnQueryInfo.recordCurrencies.put((Id) record.get('Id'), (String) record.get('CurrencyIsoCode'));
+            }
+        } else {
+            for (sObject record : returnQueryInfo.records) {
+                returnQueryInfo.recordCurrencies.put((Id) record.get('Id'), System.UserInfo.getDefaultCurrency());
+            }
+        }
+
         return returnQueryInfo;
     }
 
     public class QueryInfo {
         @AuraEnabled public List<sObject> records;
         @AuraEnabled public List<RecordColumn> columns;
+        @AuraEnabled public Map<Id, String> recordCurrencies;
     }
 }
     

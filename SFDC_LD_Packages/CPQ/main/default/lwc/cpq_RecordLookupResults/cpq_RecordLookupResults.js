@@ -204,6 +204,10 @@ export default class CPQ_RecordLookupResults extends LightningElement {
 
             this.columns = queryReturnInfo.columns;
             this.queriedRecords = queryReturnInfo.records;
+            // Assign currency
+            this.queriedRecords.forEach(function(record) {
+                record.CurrencyIsoCode = queryReturnInfo.recordCurrencies[record.Id];
+            }, this);
         } catch (e) {
             this.template.querySelector('c-error-modal').showError(
                 {
@@ -219,7 +223,7 @@ export default class CPQ_RecordLookupResults extends LightningElement {
             !this.configType.includes('View') &&
             (
                 this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (With Deselection)' &&
-                this.configType !== 'Edit'  
+                this.questionInfo.touched !== true 
             ) ||
             this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (No Deselection)'
         ) {

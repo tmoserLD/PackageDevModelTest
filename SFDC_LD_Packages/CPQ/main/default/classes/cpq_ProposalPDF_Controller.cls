@@ -33,18 +33,67 @@ public with sharing class cpq_ProposalPDF_Controller {
 
 
         // Quote Info
-        Quote quoteInfo = [
-            SELECT Id,
-                Adjustment_of_Contract__c,
-                Adjustment_Type__c,
-                CPQ_Playbook__c,
-                End_Date__c,
-                Start_Date__c,
-                SubTotal_Price__c,
-                Total_Price__c
-            FROM Quote
-            WHERE Id=:quoteRecordId
-        ];
+        String quoteQuery = ''
+            + 'SELECT Id,'
+                + 'Adjustment_of_Contract__c,'
+                + 'Adjustment_Type__c,'
+                + 'CPQ_Playbook__c,'
+                + (System.UserInfo.isMultiCurrencyOrganization() == true ? 'CurrencyIsoCode,' : '')
+                + 'End_Date__c,'
+                + 'Start_Date__c,'
+                + 'SubTotal_Price__c,'
+                + 'Total_Price__c'
+            + ' FROM Quote'
+            + ' WHERE Id=:quoteRecordId';
+        Quote quoteInfo = Database.query(quoteQuery);
+
+        // Currency Iso Code
+        String currencyIsoCode;
+        if (System.UserInfo.isMultiCurrencyOrganization() == true) {
+            currencyIsoCode = (String) quoteInfo.get('CurrencyIsoCode');
+        } else {
+            currencyIsoCode = System.UserInfo.getDefaultCurrency();
+        }
+
+        // Currency Symbol
+        String currencySymbol = currencyIsoCode;
+        Map<String, String> currencySymbolsByIsoCode = new Map<String, String>{
+            'AUD' => 'A$',
+            'AWG' => 'ƒ',
+            'BDT' => '৳',
+            'CAD' => 'CAD$',
+            'CNY' => '¥',
+            'CRC' => '₡',
+            'DKK' => 'kr',
+            'EGP' => '£',
+            'EUR' => '€',
+            'FKP' => '£',
+            'GBP' => '£',
+            'GIP' => '£',
+            'ILS' => '₪',
+            'INR' => '₹',
+            'ISK' => 'kr',
+            'JPY' => '¥',
+            'KHR' => '៛',
+            'KRW' => '₩',
+            'KZT' => '₸',
+            'LBP' => '£',
+            'NGN' => '₦',
+            'NOK' => 'kr',
+            'PHP' => '₱',
+            'PYG' => '₲',
+            'RUB' => '₽',
+            'SDG' => '£',
+            'SEK' => 'kr',
+            'SHP' => '£',
+            'SYP' => '£',
+            'TRY' => '₺',
+            'USD' => '$'
+        };
+        if (currencySymbolsByIsoCode.containsKey(currencyIsoCode)) {
+            currencySymbol = currencySymbolsByIsoCode.get(currencyIsoCode);
+        }
+
 
         // Playbook
         playbook = [
@@ -526,7 +575,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                 section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Boolean__c));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
-                                section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('{%'+questionVar+'%}','$'+String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
+                                section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('{%'+questionVar+'%}',currencySymbol + String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
                                 section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Date__c != null ? answer.Value_Date__c.format() : ''));
@@ -551,7 +600,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                 section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Boolean__c));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
-                                section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('{%'+questionVar+'%}','$'+String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
+                                section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('{%'+questionVar+'%}',currencySymbol + String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
                                 section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Date__c != null ? answer.Value_Date__c.format() : ''));
@@ -576,7 +625,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                 section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Boolean__c));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Currency') {
-                                section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('{%'+questionVar+'%}','$'+String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
+                                section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('{%'+questionVar+'%}',currencySymbol + String.valueOf(answer.Value_Currency__c != null ? answer.Value_Currency__c.format() : ''));
                             }
                             else if (answer.CPQ_Playbook_Question__r.Answer_Type__c == 'Date') {
                                 section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('{%'+questionVar+'%}',String.valueOf(answer.Value_Date__c != null ? answer.Value_Date__c.format() : ''));
@@ -598,16 +647,20 @@ public with sharing class cpq_ProposalPDF_Controller {
                     }
                 }
 
-                // EOL Text wrap / Empty Span resolution
+                // Remaining Question / EOL Text wrap / Empty Span resolution
+                String remainingQuestionRegex = '\\{%[^%\\}]*%\\}';
                 if (section.Body_Text_Block_1__c != null) {
+                    section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replaceAll(remainingQuestionRegex, '');
                     section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
                     section.Body_Text_Block_1__c = section.Body_Text_Block_1__c.replaceAll(emptySpanRegex, '');
                 }
                 if (section.Body_Text_Block_2__c != null) {
+                    section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replaceAll(remainingQuestionRegex, '');
                     section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
                     section.Body_Text_Block_2__c = section.Body_Text_Block_2__c.replaceAll(emptySpanRegex, '');
                 }
                 if (section.Body_Text_Block_3__c != null) {
+                    section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replaceAll(remainingQuestionRegex, '');
                     section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replace('</p>', ' <span style="font-size:0.1px;color:white">|</span></p>');
                     section.Body_Text_Block_3__c = section.Body_Text_Block_3__c.replaceAll(emptySpanRegex, '');
                 }
@@ -663,7 +716,7 @@ public with sharing class cpq_ProposalPDF_Controller {
                                 }
                                 else if (fieldType == Schema.DisplayType.Currency) {
                                     Decimal decVal = (Decimal)rec.get(field);
-                                    val = '$'+String.valueOf(decVal.format());
+                                    val = currencySymbol + String.valueOf(decVal.format());
                                 }
                                 else if (fieldType == Schema.DisplayType.Integer) {
                                     Integer intVal = (Integer)rec.get(field);
