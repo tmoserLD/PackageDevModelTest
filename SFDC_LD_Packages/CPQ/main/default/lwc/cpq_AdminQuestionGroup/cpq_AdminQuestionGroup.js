@@ -62,24 +62,4 @@ export default class CPQ_AdminQuestionGroup extends LightningElement {
         this.dispatchEvent(selectEvent);
     }
 
-    actionSelected(event) {
-        // Send select event to parent
-        const selectEvent = new CustomEvent(
-            'select', {
-                detail: {
-                    selected: {
-                        playbook: event.detail.item.CPQ_Playbook_Rule__r.CPQ_Playbook__c,
-                        playbookName: event.detail.item.CPQ_Playbook_Rule__r.CPQ_Playbook__r.Name,
-                        playbookTab: 'rules',
-                        rule: event.detail.item.CPQ_Playbook_Rule__c,
-                        ruleName: event.detail.item.CPQ_Playbook_Rule__r.Name,
-                        ruleTab: 'actions',
-                        ruleAction: event.detail.item.Id,
-                        ruleActionName: event.detail.item.Name,
-                        ruleActionTab: 'action'
-                    }
-                }
-            });
-        this.dispatchEvent(selectEvent);
-    }
 }

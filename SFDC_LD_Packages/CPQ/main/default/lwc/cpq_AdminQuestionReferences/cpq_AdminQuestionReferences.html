@@ -1,0 +1,115 @@
+<template>
+    <div
+        class="slds-col slds-grid slds-p-around_x-small slds-m-horizontal_x-small slds-theme_shade"
+        style="border-radius: 10px;cursor:pointer;"
+        onclick={toggleSelection} 
+    >
+        <div>
+            <ul class="slds-list_horizontal">
+                <li class="slds-m-right_small"   >
+                    <template if:true={isSelected}>
+                        <lightning-icon
+                            icon-name="utility:chevronright"
+                            alternative-text="Expand"
+                            title="Expand"
+                            size="x-small"
+                        >
+                        </lightning-icon>
+                    </template>
+                    <template if:false={isSelected}>
+                        <lightning-icon
+                            icon-name="utility:chevrondown"
+                            alternative-text="Collapse"
+                            title="Collapse"
+                            size="x-small"
+                        >
+                        </lightning-icon>
+                    </template>
+                </li>
+                <li class="slds-text-heading_small">
+                    Referencing Records
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <template if:false={isSelected}>
+
+        <!-- Rule Criteria that reference Question -->
+        <c-item-selector
+            items={question.questionInfo.CPQ_Playbook_Rule_Criteria__r}
+            list-style="row"
+            header-attribute="Name"
+            footer-attribute1="IsActive__c"
+            footer-label1="Active: "
+            icon-name="standard:filter_criteria_rule"
+            show-search="false"
+            show-create="false"
+            header="Rule Criteria referencing this Question"
+            onselect={ruleCriterionSelected}
+        >
+        </c-item-selector>
+
+        <!-- Approval Criteria that reference Question -->
+        <c-item-selector
+            items={question.questionInfo.CPQ_Playbook_Approval_Criteria__r}
+            list-style="row"
+            header-attribute="Name"
+            footer-attribute1="IsActive__c"
+            footer-label1="Active: "
+            icon-name="standard:filter_criteria_rule"
+            show-search="false"
+            show-create="false"
+            header="Approval Criteria referencing this Question"
+            onselect={approvalCriterionSelected}
+        >
+        </c-item-selector>
+
+        <!-- Proposal Criteria that reference Question -->
+        <c-item-selector
+            items={question.questionInfo.CPQ_Playbook_Proposal_Criteria__r}
+            list-style="row"
+            header-attribute="Name"
+            footer-attribute1="IsActive__c"
+            footer-label1="Active: "
+            icon-name="standard:filter_criteria_rule"
+            show-search="false"
+            show-create="false"
+            header="Proposal Criteria referencing this Question"
+            onselect={proposalCriterionSelected}
+        >
+        </c-item-selector>
+
+        <!-- Rule Actions that reference Question -->
+        <c-item-selector
+            items={question.questionInfo.CPQ_Playbook_Rule_Actions__r}
+            list-style="row"
+            header-attribute="Name"
+            footer-attribute1="IsActive__c"
+            footer-label1="Active: "
+            icon-name="standard:actions_and_buttons"
+            show-search="false"
+            show-create="false"
+            header="Rule Actions referencing this Question"
+            onselect={actionSelected}
+        >
+        </c-item-selector>
+
+        <!-- Rule Calculation Items that reference Question -->
+        <c-item-selector
+            items={question.questionInfo.CPQ_Playbook_Rule_Calculation_Items__r}
+            list-style="row"
+            header-attribute="Name"
+            footer-attribute1="IsActive__c"
+            footer-label1="Active: "
+            footer-attribute2="Action_Name__c"
+            footer-label2="Action: "
+            icon-name="standard:calculated_insights"
+            show-search="false"
+            show-create="false"
+            header="Rule Calculation Items referencing this Question"
+            onselect={calcItemSelected}
+        >
+        </c-item-selector>
+    </template>
+</template>

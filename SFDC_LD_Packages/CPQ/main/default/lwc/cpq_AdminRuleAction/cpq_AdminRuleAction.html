@@ -76,6 +76,7 @@
                         >
                         </c-cpq_-admin-rule-action-form>
 
+                        <!-- Calculation Items -->
                         <template if:true={dynamicSource}>
                             <c-cpq_-admin-rule-calculation-items
                                 items={action.calculationItems}
@@ -86,82 +87,14 @@
                             </c-cpq_-admin-rule-calculation-items>
                         </template>
 
-                        <!-- Rule Criteria that reference Action -->
-                        <c-item-selector
-                            items={action.actionInfo.CPQ_Playbook_Rule_Criteria__r}
-                            list-style="row"
-                            header-attribute="Name"
-                            footer-attribute1="IsActive__c"
-                            footer-label1="Active: "
-                            icon-name="standard:filter_criteria_rule"
-                            show-search="false"
-                            show-create="false"
-                            header="Rule Criteria referencing this Action"
-                            onselect={ruleCriterionSelected}
+                        <!-- Referencing Records -->
+                        <c-cpq_-admin-rule-action-references
+                            action={action}
+                            selected={selected}
+                            onselect={updateSelections}
                         >
-                        </c-item-selector>
-
-                        <!-- Approval Criteria that reference Action -->
-                        <c-item-selector
-                            items={action.actionInfo.CPQ_Playbook_Approval_Criteria__r}
-                            list-style="row"
-                            header-attribute="Name"
-                            footer-attribute1="IsActive__c"
-                            footer-label1="Active: "
-                            icon-name="standard:filter_criteria_rule"
-                            show-search="false"
-                            show-create="false"
-                            header="Approval Criteria referencing this Action"
-                            onselect={approvalCriterionSelected}
-                        >
-                        </c-item-selector>
-
-                        <!-- Proposal Criteria that reference Action -->
-                        <c-item-selector
-                            items={action.actionInfo.CPQ_Playbook_Proposal_Criteria__r}
-                            list-style="row"
-                            header-attribute="Name"
-                            footer-attribute1="IsActive__c"
-                            footer-label1="Active: "
-                            icon-name="standard:filter_criteria_rule"
-                            show-search="false"
-                            show-create="false"
-                            header="Proposal Criteria referencing this Action"
-                            onselect={proposalCriterionSelected}
-                        >
-                        </c-item-selector>
-
-                        <!-- Rule Actions that reference Action -->
-                        <c-item-selector
-                            items={action.actionInfo.CPQ_Playbook_Rule_Actions__r}
-                            list-style="row"
-                            header-attribute="Name"
-                            footer-attribute1="IsActive__c"
-                            footer-label1="Active: "
-                            icon-name="standard:actions_and_buttons"
-                            show-search="false"
-                            show-create="false"
-                            header="Rule Actions referencing this Action"
-                            onselect={actionSelected}
-                        >
-                        </c-item-selector>
-
-                        <!-- Rule Calculation Items that reference Action -->
-                        <c-item-selector
-                            items={action.actionInfo.CPQ_Playbook_Rule_Calculation_Items__r}
-                            list-style="row"
-                            header-attribute="Name"
-                            footer-attribute1="IsActive__c"
-                            footer-label1="Active: "
-                            footer-attribute2="Action_Name__c"
-                            footer-label2="Action: "
-                            icon-name="standard:calculated_insights"
-                            show-search="false"
-                            show-create="false"
-                            header="Rule Calculation Items referencing this Action"
-                            onselect={calcItemSelected}
-                        >
-                        </c-item-selector>
+                        </c-cpq_-admin-rule-action-references>
+                        
                     </div>
                 </lightning-tab>
             </lightning-tabset>

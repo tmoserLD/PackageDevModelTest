@@ -66,11 +66,7 @@ export default class CPQ_AdminPricebook extends LightningElement {
         const selectEvent = new CustomEvent(
             'playbookselect', {
                 detail: {
-                    selected: {
-                        playbook: event.detail.item.Id,
-                        playbookName: event.detail.item.Name,
-                        playbookTab: 'playbook'
-                    }
+                    selected: event.detail.selected
                 }
             });
         this.dispatchEvent(selectEvent);

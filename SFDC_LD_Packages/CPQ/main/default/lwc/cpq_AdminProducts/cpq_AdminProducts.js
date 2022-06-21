@@ -41,6 +41,7 @@ export default class CPQ_AdminProducts extends LightningElement {
                     selected: {
                         product: event.detail.item.Id,
                         productName: event.detail.item.Name,
+                        productTab: 'product',
                         productSearch: event.detail.searchTerm
                     }
                 }

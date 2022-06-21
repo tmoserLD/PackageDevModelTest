@@ -56,20 +56,14 @@
                     >
                     </c-cpq_-admin-pricing-sets>
 
-                    <!-- Playbooks that reference Pricebook -->
-                    <c-item-selector
-                        items={pricebook.CPQ_Playbooks__r}
-                        list-style="row"
-                        header-attribute="Name"
-                        footer-attribute1="IsActive__c"
-                        footer-label1="Active: "
-                        icon-name="standard:article"
-                        show-search="false"
-                        show-create="false"
-                        header="Playbooks referencing this Pricebook"
-                        onselect={playbookSelected}
+                    <!-- Referencing Records -->
+                    <c-cpq_-admin-pricebook-references
+                        pricebook={pricebook}
+                        selected={selected}
+                        onselect={updateSelections}
+                        onplaybookselect={playbookSelected}
                     >
-                    </c-item-selector>
+                    </c-cpq_-admin-pricebook-references>
 
                     <!-- Empty Spacer -->
                     <div style="height: 250px;">

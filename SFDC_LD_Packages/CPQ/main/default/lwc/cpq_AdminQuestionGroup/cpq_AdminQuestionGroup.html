@@ -46,20 +46,13 @@
                     >
                     </c-cpq_-admin-questions>
 
-                    <!-- Rule Actions that reference Question Group -->
-                    <c-item-selector
-                        items={group.groupInfo.CPQ_Playbook_Rule_Actions__r}
-                        list-style="row"
-                        header-attribute="Name"
-                        footer-attribute1="IsActive__c"
-                        footer-label1="Active: "
-                        icon-name="standard:actions_and_buttons"
-                        show-search="false"
-                        show-create="false"
-                        header="Rule Actions referencing this Question Group"
-                        onselect={actionSelected}
+                    <!-- Referencing Records -->
+                    <c-cpq_-admin-question-group-references
+                        group={group}
+                        selected={selected}
+                        onselect={updateSelections}
                     >
-                    </c-item-selector>
+                    </c-cpq_-admin-question-group-references>
 
                     <!-- Empty Spacer -->
                     <div style="height: 250px;">
