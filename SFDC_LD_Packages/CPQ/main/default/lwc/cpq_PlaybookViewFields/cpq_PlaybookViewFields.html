@@ -36,6 +36,13 @@
                             class="slds-grid slds-wrap"
                             key={set.index}    
                         >
+                            <template if:true={set.hasBlankLabel}>
+                                <div
+                                    class="slds-col slds-size_1-of-1 slds-m-around_xx-small"
+                                    style="border: solid rgb(163, 206, 241) 1px;"
+                                >     
+                                </div>
+                            </template>
                             <template if:true={set.hasLabel}>
                                 <div
                                     class="slds-col slds-size_1-of-1 slds-text-heading_small slds-p-around_x-small slds-m-around_xx-small"

@@ -26,12 +26,17 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
                 this.playbook.playbookInfo.Quote_View_Display_Fields__c.split(';').forEach(function(field) {
                     if (field.startsWith('#')) {
                         if (currentFieldSet.fields.length > 0) {
-                            if (currentFieldSet.label !== undefined) {
-                                currentFieldSet.hasLabel = true;
-                            }
                             displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
                         }
-                        currentFieldSet.label = field.substring(1);
+                        if (field !== '#') {
+                            currentFieldSet.label = field.substring(1);
+                            currentFieldSet.hasBlankLabel = false;
+                            currentFieldSet.hasLabel = true;
+                        } else {
+                            currentFieldSet.label = undefined;
+                            currentFieldSet.hasBlankLabel = true;
+                            currentFieldSet.hasLabel = false;
+                        }
                         currentFieldSet.fields = [];
                         currentFieldSet.index = displayFieldSets.length;
                     } else {
@@ -48,12 +53,17 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
                 this.playbook.playbookInfo.Contract_View_Display_Fields__c.split(';').forEach(function(field) {
                     if (field.startsWith('#')) {
                         if (currentFieldSet.fields.length > 0) {
-                            if (currentFieldSet.label !== undefined) {
-                                currentFieldSet.hasLabel = true;
-                            }
                             displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
                         }
-                        currentFieldSet.label = field.substring(1);
+                        if (field !== '#') {
+                            currentFieldSet.label = field.substring(1);
+                            currentFieldSet.hasBlankLabel = false;
+                            currentFieldSet.hasLabel = true;
+                        } else {
+                            currentFieldSet.label = undefined;
+                            currentFieldSet.hasBlankLabel = true;
+                            currentFieldSet.hasLabel = false;
+                        }
                         currentFieldSet.fields = [];
                         currentFieldSet.index = displayFieldSets.length;
                     } else {
@@ -63,9 +73,6 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
             }
 
             if (currentFieldSet.fields.length > 0) {
-                if (currentFieldSet.label !== undefined) {
-                    currentFieldSet.hasLabel = true;
-                }
                 displayFieldSets.push(JSON.parse(JSON.stringify(currentFieldSet)));
             }
         }
