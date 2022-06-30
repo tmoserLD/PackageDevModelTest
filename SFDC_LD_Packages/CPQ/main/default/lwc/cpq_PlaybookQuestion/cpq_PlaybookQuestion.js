@@ -44,7 +44,7 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
     get mainCSS() {
         let mainCSS = 'slds-grid_vertical ';
         if (this.allQuestions.filter(
-                question => question.questionInfo.IsHidden__c !== true
+                question => (this.configType.includes('Admin') || question.questionInfo.IsHidden__c !== true)
             ).indexOf(this.question) % 2 === 1
         ) {
             mainCSS += 'slds-theme_shade';
@@ -71,7 +71,7 @@ export default class CPQ_PlaybookQuestion extends LightningElement {
     }
 
     get visible() {
-        return (this.question.questionInfo.IsHidden__c !== true || this.configType === 'Admin View')
+        return (this.question.questionInfo.IsHidden__c !== true || this.configType.includes('Admin'))
     }
 
     // Answer "Touched" Event

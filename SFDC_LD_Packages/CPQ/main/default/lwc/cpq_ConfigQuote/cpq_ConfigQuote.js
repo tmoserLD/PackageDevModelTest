@@ -193,8 +193,6 @@ export default class CPQ_ConfigQuote extends LightningElement {
                         }
                         // View Mode
                         if (this.configType.includes('View')) {
-                            // Mark read only
-                            question.questionInfo.IsReadOnly__c = true;
                             // Set answers from source
                             question.questionInfo.answer = existingValue;
                             question.questionInfo.selectedRecords = existingSelectedRecords;
@@ -397,9 +395,9 @@ export default class CPQ_ConfigQuote extends LightningElement {
 
     // Title for Quote Configuration
     get configTitle() {
-        if (this.configType == 'New') {
+        if (this.configType.includes('New')) {
             return 'Configure New Quote';
-        } else if (this.configType == 'Edit') {
+        } else if (this.configType.includes('Edit')) {
             return 'Configure Quote';
         } else if (this.configType.includes('View')) {
             return 'View Only';

@@ -3,6 +3,7 @@
     <!-- Add Product(s) -->
     <template if:true={showAddProductsModal}>
         <c-cpq_-quote-product-manual-adds
+            config-type={configType}
             pricebook={pricebook}
             quote-products={quoteProducts}
             onsave={addProducts}
@@ -226,6 +227,7 @@
                                             class="slds-col slds-grid_vertical slds-m-vertical_small slds-theme_default"
                                         >
                                             <c-cpq_-quote-product-group-actions
+                                                config-type={configType}
                                                 group={group}
                                                 field-label={groupByFieldLabel}
                                                 onremove={removeProduct}

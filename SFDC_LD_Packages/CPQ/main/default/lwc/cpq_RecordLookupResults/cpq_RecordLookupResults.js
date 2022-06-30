@@ -222,10 +222,12 @@ export default class CPQ_RecordLookupResults extends LightningElement {
         if (this.mode === 'selected' &&
             !this.configType.includes('View') &&
             (
-                this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (With Deselection)' &&
-                this.questionInfo.touched !== true 
-            ) ||
-            this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (No Deselection)'
+                (
+                    this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (With Deselection)' &&
+                    this.questionInfo.touched !== true 
+                ) ||
+                this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (No Deselection)'
+            )
         ) {
 
             // Store all record IDs

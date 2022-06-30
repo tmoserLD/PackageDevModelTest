@@ -5,6 +5,9 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     // Question
     @api questionInfo;
 
+    // Configuration Type
+    @api configType;
+
     // Opportunity Currency Iso Code
     @api oppCurrency;
 
@@ -67,7 +70,17 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
 
     // Can answer be modified?
     get isReadOnly() {
-        return this.questionInfo.IsReadOnly__c;
+        let readOnly = false;
+        if (this.questionInfo.IsReadOnly__c === true &&
+            this.configType !== 'Admin Edit' &&
+            this.configType !== 'Admin New'    
+        ) {
+            readOnly = true;
+        }
+        if (this.configType.includes('View')) {
+            readOnly = true;
+        }
+        return readOnly;
     }
 
     // Boolean input type
@@ -170,7 +183,9 @@ export default class CPQ_PlaybookQuestionAnswer extends LightningElement {
     // If manual record selection/deselection is allowed for record lookup
     get manualRecordSelection() {
         if (this.questionInfo.Record_Selection_Behavior__c === 'Automatic Record Selection (With Deselection)' ||
-            this.questionInfo.Record_Selection_Behavior__c === 'Manual Record Selection'
+            this.questionInfo.Record_Selection_Behavior__c === 'Manual Record Selection' ||
+            this.configType === 'Admin Edit' ||
+            this.configType === 'Admin New'
         ) {
             return true;
         } else {

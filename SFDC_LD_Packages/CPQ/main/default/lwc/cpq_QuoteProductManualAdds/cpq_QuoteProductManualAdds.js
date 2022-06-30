@@ -2,6 +2,9 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteProductManualAdds extends LightningElement {
 
+    // Configuration Type
+    @api configType;
+
     // Products added to Quote
     @api quoteProducts = [];
 
@@ -24,7 +27,10 @@ export default class CPQ_QuoteProductManualAdds extends LightningElement {
             this.pricebook.entries !== undefined    
         ) {
             this.pricebook.entries.forEach(function(pbe) {
-                if (pbe.Manually_Addible === true) {
+                if (pbe.Manually_Addible === true ||
+                    this.configType === 'Admin Edit' ||
+                    this.configType === 'Admin New'    
+                ) {
                     let prodToAdd = JSON.parse(JSON.stringify(pbe));
                     prodToAdd.amountSelected = 0;
                     products.push(prodToAdd);

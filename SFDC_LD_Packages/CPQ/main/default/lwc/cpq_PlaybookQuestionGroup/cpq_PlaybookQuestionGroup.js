@@ -61,7 +61,7 @@ export default class CPQ_PlaybookQuestionGroup extends LightningElement {
     }
 
     get visible() {
-        return (this.group.groupInfo.IsHidden__c !== true || this.configType === 'Admin View')
+        return (this.group.groupInfo.IsHidden__c !== true || this.configType.includes('Admin'))
     }
 
     // Toggle Collapse Value

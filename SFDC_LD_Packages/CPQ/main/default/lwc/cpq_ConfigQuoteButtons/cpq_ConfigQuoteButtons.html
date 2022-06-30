@@ -34,11 +34,38 @@
                         label="Preview Proposal"
                         title="Preview Proposal"
                         variant="base"
+                        icon-name="utility:preview"
                         onclick={previewProposal}
                         disabled={disablePreviewButton}
                     >
                     </lightning-button>            
                 </li>
+            </template>
+            <template if:true={isCPQAdmin}>
+                <template if:true={normalMode}>
+                    <li class="slds-m-right_x-small">
+                        <lightning-button
+                            label="Admin Mode"
+                            title="Admin Mode"
+                            variant="brand-outline"
+                            icon-name="utility:unlock"
+                            onclick={toggleAdminMode}
+                        >
+                        </lightning-button>            
+                    </li>
+                </template>
+                <template if:false={normalMode}>
+                    <li class="slds-m-right_x-small">
+                        <lightning-button
+                            label="Normal Mode"
+                            title="Normal Mode"
+                            variant="brand-outline"
+                            icon-name="utility:lock"
+                            onclick={toggleAdminMode}
+                        >
+                        </lightning-button>            
+                    </li>
+                </template>
             </template>
             <li class="slds-m-right_x-small">
                 <lightning-button
@@ -64,22 +91,26 @@
         <!-- View Mode -->
         <template if:true={viewMode}>
             <template if:true={isCPQAdmin}>
-                <template if:true={normalView}>
+                <template if:true={normalMode}>
                     <li class="slds-m-right_x-small">
                         <lightning-button
                             label="Admin View"
                             title="Admin View"
-                            onclick={toggleAdminView}
+                            variant="brand-outline"
+                            icon-name="utility:unlock"
+                            onclick={toggleAdminMode}
                         >
                         </lightning-button>            
                     </li>
                 </template>
-                <template if:false={normalView}>
+                <template if:false={normalMode}>
                     <li class="slds-m-right_x-small">
                         <lightning-button
                             label="Normal View"
                             title="Normal View"
-                            onclick={toggleAdminView}
+                            variant="brand-outline"
+                            icon-name="utility:lock"
+                            onclick={toggleAdminMode}
                         >
                         </lightning-button>            
                     </li>

@@ -89,8 +89,8 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
         return this.configType.includes('View');
     }
 
-    get normalView() {
-        return this.configType === 'View';
+    get normalMode() {
+        return !this.configType.includes('Admin')
     }
 
     // Cancel clicked - return to main
@@ -375,12 +375,21 @@ export default class CPQ_ConfigQuoteButtons extends LightningElement {
         this.loading = false;
     }
 
-    // Toggle Admin View
-    toggleAdminView() {
+    // Toggle Admin Mode
+    toggleAdminMode() {
+
+        // Base Mode
+        let baseMode = 'New';
+        if (this.configType.includes('Edit')) {
+            baseMode = 'Edit';
+        } else if (this.configType.includes('View')) {
+            baseMode = 'View';
+        }
+
         const configTypeUpdateEvent = new CustomEvent(
             'configtypeupdate', {
-                detail: this.configType === 'View' ? 'Admin View' : 'View'
+                detail: this.configType === baseMode ? ('Admin ' + baseMode) : baseMode
             });
-        this.dispatchEvent(configTypeUpdateEvent);
+        this.dispatchEvent(configTypeUpdateEvent);  
     }
 }

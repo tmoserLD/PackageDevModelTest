@@ -2,14 +2,14 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class CPQ_QuoteProductAction extends LightningElement {
 
+    // Configuration Type
+    @api configType;
+
     // Product
     @api product;
 
     // Products sorted by sort rules
     @api sortedQuoteProducts;
-
-    // Dates Modal toggle
-    // @track showChangeDates = false;
 
     // CSS class names string for component
     get mainCSS() {
@@ -27,18 +27,12 @@ export default class CPQ_QuoteProductAction extends LightningElement {
 
     // Determine if product can be removed
     get removable() {
-        return this.product.Removable;
+        return (
+            this.product.Removable ||
+            this.configType === 'Admin Edit' ||
+            this.configType === 'Admin New'
+        );
     }
-
-    // // Adjust Dates clicked
-    // adjustDates() {
-    //     this.showChangeDates = true;
-    // }
-
-    // // Change Dates cancel event
-    // cancelChangeDates() {
-    //     this.showChangeDates = false;
-    // }
 
     // Remove Product clicked
     removeProduct() {
@@ -48,14 +42,6 @@ export default class CPQ_QuoteProductAction extends LightningElement {
             });
         this.dispatchEvent(removeEvent);
     }
-
-    // // Change Dates save event
-    // saveChangedDates(event) {
-    //     this.updateProduct('End_Date', event.detail.endDate);
-    //     this.updateProduct('Start_Date', event.detail.startDate);
-
-    //     this.showChangeDates = false;
-    // }
 
     // Update product in quote
     updateProduct(attribute, value) {

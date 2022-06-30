@@ -263,7 +263,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         let hasActions = false;
         if (!this.configType.includes('View')) {
             this.quoteProducts.forEach(function(product) {
-                if (product.Removable === true) {
+                if (product.Removable === true ||
+                    this.configType === 'Admin Edit' ||
+                    this.configType === 'Admin New'    
+                ) {
                     hasActions = true;
                 }
             }, this);
@@ -276,7 +279,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
         let hasActions = false;
         if (!this.configType.includes('View')) {
             this.quoteProducts.forEach(function(product) {
-                if (product.Removable === true) {
+                if (product.Removable === true ||
+                    this.configType === 'Admin Edit' ||
+                    this.configType === 'Admin New'    
+                ) {
                     hasActions = true;
                 }
             }, this);
@@ -300,7 +306,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
             let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
             );
-            if (addibleProducts.length > 0) {
+            if (addibleProducts.length > 0 ||
+                this.configType === 'Admin Edit' ||
+                this.configType === 'Admin New'    
+            ) {
                 hasProductsToAdd = true;
             }
         }
@@ -317,7 +326,10 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
             let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
             );
-            if (addibleProducts.length > 0) {
+            if (addibleProducts.length > 0 ||
+                this.configType === 'Admin Edit' ||
+                this.configType === 'Admin New'    
+            ) {
                 hasProductsToAdd = true;
             }
         }
