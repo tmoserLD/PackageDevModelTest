@@ -155,11 +155,25 @@
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
 
                         <!-- Unit Price -->
-                        <lightning-input-field
-                            field-name="Unit_Price__c"
-                            required="true"
+                        <lightning-input
+                            class="slds-p-horizontal_xx-small"
+                            type="number"
+                            step="0.000001"
+                            name="Unit Price Input"
+                            label="Unit Price"
+                            field-level-help="Price per unit of the parent Pricing Set's Tiering Field"
+                            value={unitPrice}
+                            onblur={unitPriceChange}
                         >
-                        </lightning-input-field>
+                        </lightning-input>
+                        <div style="display:none">
+                            <lightning-input-field
+                                field-name="Unit_Price__c"
+                                required="true"
+                                value={unitPriceTrimmed}
+                            >
+                            </lightning-input-field>
+                        </div>
                     </div>
 
                     <!-- Col 2 -->

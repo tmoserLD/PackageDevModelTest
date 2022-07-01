@@ -1306,9 +1306,12 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                                                 }
                                                                             }
                                                                         }
-
+                                                                        if (action.actionInfo.Question_Adjustment_Field__c === 'Picklist_Answers__c' &&
+                                                                            !question.questionInfo.Picklist_Answers__c.includes(question.questionInfo.answer)
+                                                                        ) {
+                                                                            question.questionInfo.answer = '';
+                                                                        }
                                                                         question.questionInfo.actionSet = question.questionInfo.actionSet === undefined ? 1 : (question.questionInfo.actionSet + 1);
-
                                                                         if (action.actionInfo.Question_Adjustment_Field__c === 'Query_String__c') {
                                                                             question.questionInfo.querySet = question.questionInfo.querySet === undefined ? 1 : (question.questionInfo.querySet + 1);
                                                                         }
@@ -1331,20 +1334,15 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                     ) &&
                                     action.actionInfo.Product__c !== undefined
                                 ) {
-                                    
                                     // Find associated product
-                                    // Selected pricebook
                                     if (this.selectedPricebook !== undefined &&
                                         this.selectedPricebook.entries !== undefined    
                                     ) {
                                         this.selectedPricebook.entries.forEach(function(entry) {
                                             // Matching product
                                             if (entry.Product2Id === action.actionInfo.Product__c) {
-
                                                 if (action.actionInfo.Action_Type__c === 'Add product') {
-
                                                     if (ruleEvaluation === true) {
-
                                                         // Only add if not already added by this rule (only relevant for initial action on edit)
                                                         if (this.quoteProducts.filter(
                                                                 product => product.addedByAction === action.actionInfo.Id
@@ -1352,38 +1350,31 @@ export default class CPQ_ConfigQuote extends LightningElement {
                                                         ) {
                                                             this.addProduct(JSON.parse(JSON.stringify(entry)), action.actionInfo.Id);
                                                         }
-
                                                     } else {
-
                                                         // Remove product
                                                         let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
                                                         updatedProducts = updatedProducts.filter(
                                                             product => product.addedByAction !== action.actionInfo.Id
                                                         );
-
                                                         this.rekeyProducts(updatedProducts);
                                                     }
                                                 }
                                                 else if (action.actionInfo.Action_Type__c === 'Adjust product field' ||
                                                     action.actionInfo.Action_Type__c === 'Adjust product field editability'
                                                 ) {
-
                                                     // Manually Addible (pricebook entry level)
                                                     if (action.actionInfo.Product_Adjustment_Field__c === 'Manually_Addible') {
-
                                                         if (ruleEvaluation === true) {
                                                             entry.Manually_Addible = action.actionInfo.Product_Field_Value_Boolean__c;
                                                         } else {
                                                             entry.Manually_Addible = !action.actionInfo.Product_Field_Value_Boolean__c;
                                                         }
-
                                                         if (entry.Manually_Addible === false) {
                                                             // Remove manually added product
                                                             let updatedProducts = JSON.parse(JSON.stringify(this.quoteProducts));
                                                             updatedProducts = updatedProducts.filter(
                                                                 product => !(product.addedByAction === undefined && product.Product2Id === entry.Product2Id && product.playbookId === this.selectedPlaybookId)
                                                             );
-
                                                             // Re-Key products
                                                             this.rekeyProducts(updatedProducts);
                                                         }
@@ -2136,10 +2127,11 @@ export default class CPQ_ConfigQuote extends LightningElement {
             ) {
                 defaultTerm = playbooks.find(playbook => playbook.playbookInfo.Id === this.selectedPlaybookId).playbookInfo.Default_Term_in_Months__c;
             }
-            let today = new Date();
             let monthsFuture = new Date();
-            monthsFuture.setMonth(today.getMonth() + defaultTerm);
-            monthsFuture.setDate(monthsFuture.getDate() - 1);
+            if (defaultTerm > 0) {
+                monthsFuture.setMonth(new Date().getMonth() + defaultTerm);
+                monthsFuture.setDate(monthsFuture.getDate() - 1);
+            }
             this.quoteEndDate = this.convertDate(monthsFuture);
         }
     }

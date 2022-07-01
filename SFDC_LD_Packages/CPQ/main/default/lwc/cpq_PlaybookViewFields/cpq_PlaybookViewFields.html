@@ -3,26 +3,29 @@
 
         <!-- Configuration Mode -->
         <template if:false={viewMode}>
-            <!-- Start Date -->
-            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-                <lightning-input
-                    type="date"
-                    label="Start Date"
-                    readonly="true"
-                    value={quoteStartDate}
-                >
-                </lightning-input>
-            </div>
-            <!-- End Date -->
-            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-                <lightning-input
-                    type="date"
-                    label="End Date"
-                    readonly="true"
-                    value={quoteEndDate}
-                >
-                </lightning-input>
-            </div>
+            <!-- Has Products -->
+            <template if:true={hasProducts}>
+                <!-- Start Date -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                    <lightning-input
+                        type="date"
+                        label="Start Date"
+                        readonly="true"
+                        value={quoteStartDate}
+                    >
+                    </lightning-input>
+                </div>
+                <!-- End Date -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                    <lightning-input
+                        type="date"
+                        label="End Date"
+                        readonly="true"
+                        value={quoteEndDate}
+                    >
+                    </lightning-input>
+                </div>
+            </template>
         </template>
         <!-- View Mode -->
         <template if:true={viewMode}>

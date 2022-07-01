@@ -7,6 +7,7 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
     @api playbook;
     @api quoteEndDate;
     @api quoteStartDate;
+    @api quoteProducts;
     @api quoteId;
 
     get displayFieldSets() {
@@ -106,5 +107,9 @@ export default class CPQ_PlaybookViewFields extends LightningElement {
 
     get viewMode() {
         return this.configType.includes('View');
+    }
+
+    get hasProducts() {
+        return this.quoteProducts.length > 0;
     }
 }

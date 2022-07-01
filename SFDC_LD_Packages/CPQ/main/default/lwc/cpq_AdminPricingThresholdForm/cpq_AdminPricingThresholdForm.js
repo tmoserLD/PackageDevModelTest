@@ -6,6 +6,9 @@ import cloneRecord from '@salesforce/apex/cpq_AdminContainerClass.cloneRecord';
 // Delete Method
 import deleteRecords from '@salesforce/apex/cpq_AdminContainerClass.deleteRecords';
 
+// Update Method
+import updateRecords from '@salesforce/apex/cpq_AdminContainerClass.updateRecords';
+
 export default class CPQ_AdminPricingThresholdForm extends LightningElement {
 
     // Button Label
@@ -31,6 +34,20 @@ export default class CPQ_AdminPricingThresholdForm extends LightningElement {
 
     // Prompt to show in Delete Confirmation Modal
     @track confirmDeletePrompt = 'Are you sure you want to delete this pricing threshold?';
+
+    // Unit Price
+    @track unitPrice;
+
+    // Unit Price trimmed to 2 decimal places
+    @track unitPriceTrimmed;
+
+    // On Mount
+    connectedCallback() {
+        if (this.pricingThreshold !== undefined) {
+            this.unitPrice = this.pricingThreshold.Unit_Price__c;
+            this.unitPriceTrimmed = Math.round(this.unitPrice * 100) / 100;
+        }
+    }
 
 
     get hasId() {
@@ -100,32 +117,52 @@ export default class CPQ_AdminPricingThresholdForm extends LightningElement {
     }
 
     // Saved Entry
-    savedThreshold(event) {
+    async savedThreshold(event) {
+
+        // Send update DML for unit price since SFDC is not allowing more than 2 decimal places
+        // But the field is setup to accept up to 6......
+
+        try {
+            await updateRecords({
+                records: [{
+                    Id: this.pricingThreshold.Id,
+                    Unit_Price__c: this.unitPrice
+                }]
+            });
+
+            // Send saved event to parent
+            const savedEvent = new CustomEvent(
+                'childsaved', {
+                    detail: {
+                        toast: {
+                            title: 'Success!',
+                            message: 'Pricing Threshold was saved',
+                            variant: 'success'
+                        },
+                        selected: {
+                            pricebook: this.selected.pricebook,
+                            pricebookName: this.selected.pricebookName,
+                            pricebookTab: 'pricingSets',
+                            pricingSet: this.selected.pricingSet,
+                            pricingSetName: this.selected.pricingSetName,
+                            pricingSetTab: 'pricingThresholds',
+                            pricingThreshold: event.detail.id,
+                            pricingThresholdTab: 'pricingThreshold'
+                        }
+                    }
+                });
+            this.dispatchEvent(savedEvent);
+        } catch (e) {
+            this.template.querySelector('c-error-modal').showError(
+                {
+                    title: 'An error occurred while trying to save the pricing threshold',
+                    body: JSON.stringify(e),
+                    forceRefresh: false
+                }
+            );
+        }
 
         this.loading = false;
-
-        // Send saved event to parent
-        const savedEvent = new CustomEvent(
-            'childsaved', {
-                detail: {
-                    toast: {
-                        title: 'Success!',
-                        message: 'Pricing Threshold was saved',
-                        variant: 'success'
-                    },
-                    selected: {
-                        pricebook: this.selected.pricebook,
-                        pricebookName: this.selected.pricebookName,
-                        pricebookTab: 'pricingSets',
-                        pricingSet: this.selected.pricingSet,
-                        pricingSetName: this.selected.pricingSetName,
-                        pricingSetTab: 'pricingThresholds',
-                        pricingThreshold: event.detail.id,
-                        pricingThresholdTab: 'pricingThreshold'
-                    }
-                }
-            });
-        this.dispatchEvent(savedEvent);
     }
 
     // Error
@@ -198,6 +235,12 @@ export default class CPQ_AdminPricingThresholdForm extends LightningElement {
             'cancel'
         );
         this.dispatchEvent(cancelEvent);
+    }
+
+    // Unit Price Changed
+    unitPriceChange(event) {
+        this.unitPrice = event.target.value;
+        this.unitPriceTrimmed = Math.round(this.unitPrice * 100) / 100;
     }
 
 }

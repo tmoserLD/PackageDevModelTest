@@ -41,13 +41,13 @@
                     margin-left: 0.5in;
                     margin-right: 0.5in;
                     position: running(header);
-                    width: 100%;
+                    width: calc(100% - 1in);
                 }
                 div.footer {
                     margin-left: 0.5in;
                     margin-right: 0.5in;
                     position: running(footer);
-                    width: 100%;
+                    width: calc(100% - 1in);
                 }
                 .allowSectionPageBreak{
                     page-break-inside: auto;
@@ -295,7 +295,7 @@
 
                             <!-- Record Table -->
                             <apex:pageBlock rendered="{!section.section.Section_Type__c == 'Record Table'}">
-                                <div style="width: 100%;">
+                                <div style="width: 100%;float: left">
                                     <p>
                                         <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
                                         <table class="tableTable" cellpadding="6" width="100%">
@@ -331,7 +331,7 @@
 
                             <!-- Answer Table -->
                             <apex:pageBlock rendered="{!OR(section.section.Section_Type__c == 'Answer Table - 1 column',section.section.Section_Type__c == 'Answer Table - 2 columns')}">
-                                <div style="width: 100%;">
+                                <div style="width: 100%;float: left">
                                     <p>
                                         <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
                                         <table class="tableTable" cellpadding="6" width="100%">
@@ -384,7 +384,7 @@
                             <!-- User Input - 2 columns -->
                             <apex:pageBlock rendered="{!section.section.Section_Type__c == 'User Input - 2 columns'}">
                                 
-                                <div style="width:100%">
+                                <div style="width:100%;float: left">
                                     <div style="width: 40%;float: left">
                                         <p rendered="{!section.section.Body_Text_Block_1__c != null}">
                                             <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
@@ -397,7 +397,7 @@
                                     </div>
                                 </div>
 
-                                <div style="width:100%">
+                                <div style="width:100%;float: left">
                                     <div style="width: 40%;float: left">
                                         <apex:repeat value="{!section.inputs1}" var="input">
                                             <p  rendered="{!section.section.Inputs_Column_1__c != null}"
@@ -426,7 +426,7 @@
                             <!-- User Input - 3 columns -->
                             <apex:pageBlock rendered="{!section.section.Section_Type__c == 'User Input - 3 columns'}">
                                 
-                                <div style="width:100%">
+                                <div style="width:100%;float: left">
                                     <div style="width: 32%;float: left">
                                         <p rendered="{!section.section.Body_Text_Block_1__c != null}">
                                             <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
@@ -446,7 +446,7 @@
                                     </div>
                                 </div>
 
-                                <div style="width:100%">
+                                <div style="width:100%;float: left">
                                     <div style="width: 32%;float: left">
                                         <apex:repeat value="{!section.inputs1}" var="input">
                                             <p  rendered="{!section.section.Inputs_Column_1__c != null}"

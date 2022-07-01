@@ -1241,6 +1241,15 @@ public with sharing class cpq_AdminContainerClass {
     }
 
     /**
+    * @description Generic method to update a list of sObject records
+    * @param records List of sObject records
+    */
+    @AuraEnabled
+    public static void updateRecords(List<sObject> records) {
+        update records;
+    }
+
+    /**
     * @description Generic method to clone an sObject record
     * @param recordId Id of sObejct record to be cloned
     * @param objectAPI API Name of sObejct that the record belongs to

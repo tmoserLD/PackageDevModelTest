@@ -542,6 +542,24 @@ public class cpq_AdminContainerClassTest {
     }
 
     /**
+     * @description Test to update Playbooks
+     **/
+    @isTest
+    public static void testUpdatePlaybooks() {
+
+        List<CPQ_Playbook__c> testPlaybooks = [
+            SELECT Id
+            FROM CPQ_Playbook__c
+        ];
+
+        Test.startTest();
+
+        cpq_AdminContainerClass.updateRecords(testPlaybooks);
+        
+        Test.stopTest();
+    }
+
+    /**
      * @description Test to clone Question
      **/
     @isTest

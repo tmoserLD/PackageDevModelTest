@@ -301,7 +301,8 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     get showProductSummary() {
         let hasProductsToAdd = false;
         if (this.pricebook !== undefined &&
-            this.pricebook.entries !== undefined    
+            this.pricebook.entries !== undefined &&
+            this.pricebook.entries.length > 0
         ) {
             let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
@@ -321,7 +322,8 @@ export default class CPQ_QuoteProductSummary extends LightningElement {
     get hasProductsToAdd() {
         let hasProductsToAdd = false;
         if (this.pricebook !== undefined &&
-            this.pricebook.entries !== undefined    
+            this.pricebook.entries !== undefined &&
+            this.pricebook.entries.length > 0
         ) {
             let addibleProducts = this.pricebook.entries.filter(
                 pbe => pbe.Manually_Addible === true
