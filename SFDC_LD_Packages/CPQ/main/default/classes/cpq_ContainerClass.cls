@@ -143,6 +143,7 @@ public with sharing class cpq_ContainerClass {
                     + 'SELECT Id,'
                         + 'CPQ_Playbook_Approval__r.Label__c,'
                         + 'CPQ_Playbook_Approval__r.Reason__c,'
+                        + 'CPQ_Playbook_Approval__r.Persistent_Approval__c,'
                         + 'Notes_for_Approvers__c,'
                         + 'Status__c'
                     + ' FROM CPQ_Quote_Approvals__r'

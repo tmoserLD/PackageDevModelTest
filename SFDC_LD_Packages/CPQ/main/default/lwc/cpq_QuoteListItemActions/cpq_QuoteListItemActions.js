@@ -169,7 +169,13 @@ export default class CPQ_QuoteListItemActions extends LightningElement {
     // Determine if Quote can be edited
     get canEdit() {
         if (this.quote.IsSyncing ||
-            this.oppInfo.Lock_CPQ__c    
+            this.oppInfo.Lock_CPQ__c ||
+            (
+                this.quote.CPQ_Quote_Approvals__r !== undefined &&
+                this.quote.CPQ_Quote_Approvals__r.filter(
+                    approval => (approval.Status__c === 'Submitted')
+                ).length > 0
+            ) 
         ) {
             return false;
         } else {
@@ -185,6 +191,14 @@ export default class CPQ_QuoteListItemActions extends LightningElement {
         }
         else if (this.quote.IsSyncing) {
             title = 'Cannot Edit. Quote is synced';
+        }
+        else if (
+            this.quote.CPQ_Quote_Approvals__r !== undefined &&
+            this.quote.CPQ_Quote_Approvals__r.filter(
+                approval => (approval.Status__c === 'Submitted')
+            ).length > 0
+        ) {
+            title = 'Cannot Edit. Submitted Approvals on Quote. Recall Approvals befored editing.';
         }
         return title;
     }
@@ -389,14 +403,14 @@ export default class CPQ_QuoteListItemActions extends LightningElement {
     // Edit Quote clicked
     editQuote() {
 
-        // Submitted or Approved Approvals on quote
+        // Non-Persistent, Approved Approvals on quote
         if (this.quote.CPQ_Quote_Approvals__r !== undefined &&
             this.quote.CPQ_Quote_Approvals__r.filter(
-                approval => (approval.Status__c === 'Approved' || approval.Status__c === 'Submitted')
+                approval => (approval.Status__c === 'Approved' && approval.CPQ_Playbook_Approval__r.Persistent_Approval__c !== true)
             ).length > 0
         ) {
             this.showConfirmEdit = true;
-            this.confirmEditPrompt = 'Are you sure you want to edit \'' + this.quote.Name + '\'? There are sumbitted/approved approvals on this quote. Any saved edits will delete any progress on those approvals.';
+            this.confirmEditPrompt = 'Are you sure you want to edit \'' + this.quote.Name + '\'? There are one or more approved approvals on this quote that will be lost upon saving a new version of this quote.';
         }
         else {
 

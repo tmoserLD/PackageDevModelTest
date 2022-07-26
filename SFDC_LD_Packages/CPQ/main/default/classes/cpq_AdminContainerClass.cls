@@ -546,6 +546,7 @@ public with sharing class cpq_AdminContainerClass {
                 IsActive__c,
                 Label__c,
                 Name,
+                Persistent_Approval__c,
                 Reason__c
             FROM CPQ_Playbook_Approval__c
             WHERE CPQ_Playbook__c IN:playbookIDs

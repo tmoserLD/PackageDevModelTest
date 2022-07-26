@@ -201,6 +201,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>CPQ_Playbook_Approval__c.Persistent_Approval__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>CPQ_Playbook_Approval__c.Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>

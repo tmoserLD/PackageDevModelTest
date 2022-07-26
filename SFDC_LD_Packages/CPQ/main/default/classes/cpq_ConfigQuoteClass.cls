@@ -1331,71 +1331,86 @@ public with sharing class cpq_ConfigQuoteClass {
         insert playbookAnswers;
 
         // Get and delete existing Approvals on quote if applicable
-        List<CPQ_Quote_Approval__c> existingApprovals = new List<CPQ_Quote_Approval__c>();
-        existingApprovals = [
-            SELECT Id
+        List<CPQ_Quote_Approval__c> approvalsToDelete = new List<CPQ_Quote_Approval__c>();
+        Set<Id> persistentApprovedApprovals = new Set<Id>();
+        for (CPQ_Quote_Approval__c existingApproval : [
+            SELECT Id,
+                CPQ_Playbook_Approval__r.Persistent_Approval__c,
+                Status__c
             FROM CPQ_Quote_Approval__c
             WHERE Quote__c=:quoteToSave.Id
-        ];
-        if (existingApprovals.size() > 0) {
-            delete existingApprovals;
+        ]) {
+            Boolean deleteApproval = true;
+            // Do not delete approvals that are approved and persistent and still needed
+            if (existingApproval.Status__c == 'Approved' &&
+                existingApproval.CPQ_Playbook_Approval__r.Persistent_Approval__c == true
+            ) {
+                for (CPQ_Quote_Approval__c approval : quoteApprovals) {
+                    if (existingApproval.CPQ_Playbook_Approval__c == approval.CPQ_Playbook_Approval__c) {
+                        deleteApproval = false;
+                        persistentApprovedApprovals.add(approval.CPQ_Playbook_Approval__c);
+                    }
+                }
+            }
+            if (deleteApproval == true) {
+                approvalsToDelete.add(existingApproval);
+            }
+        }
+
+        if (approvalsToDelete.size() > 0) {
+            delete approvalsToDelete;
         }
 
         // Associate Quote to Approvals
+        List<CPQ_Quote_Approval__c> approvals = new List<CPQ_Quote_Approval__c>();
         for (CPQ_Quote_Approval__c approval : quoteApprovals) {
-            approval.Quote__c = quoteToSave.Id;
+            // Do not recreate persistent, approved approvals
+            if (!persistentApprovedApprovals.contains(approval.CPQ_Playbook_Approval__c)) {
+                approval.Quote__c = quoteToSave.Id;
+                approvals.add(approval);
+            }
         }
 
-        // Insert Answers
-        insert quoteApprovals;
-
-        // Get and delete existing Approval Steps on quote if applicable
-        List<CPQ_Quote_Approval_Step__c> existingApprovalSteps = new List<CPQ_Quote_Approval_Step__c>();
-        existingApprovalSteps = [
-            SELECT Id
-            FROM CPQ_Quote_Approval_Step__c
-            WHERE CPQ_Quote_Approval__r.Quote__c=:quoteToSave.Id
-        ];
-        if (existingApprovalSteps.size() > 0) {
-            delete existingApprovalSteps;
+        // Insert Approvals
+        if (approvals.size() > 0) {
+            insert approvals;
         }
 
         // Associate Quote Approval Id to Steps
         List<CPQ_Quote_Approval_Step__c> steps = new List<CPQ_Quote_Approval_Step__c>();
         for (Integer index=0; index < quoteApprovalSteps.size(); index++) {
-            for (CPQ_Quote_Approval_Step__c step : quoteApprovalSteps[index]) {
-                step.CPQ_Quote_Approval__c = quoteApprovals[index].Id;
-                steps.add(step);
+            // Do not recreate steps for persistent, approved approvals
+            if (!persistentApprovedApprovals.contains(quoteApprovals[index].CPQ_Playbook_Approval__c)) {
+                for (CPQ_Quote_Approval_Step__c step : quoteApprovalSteps[index]) {
+                    step.CPQ_Quote_Approval__c = quoteApprovals[index].Id;
+                    steps.add(step);
+                }
             }
         }
 
         // Insert Steps
-        insert steps;
-
-        // Get and delete existing Approval Steps on quote if applicable
-        List<CPQ_Quote_Approver__c> existingApprovers = new List<CPQ_Quote_Approver__c>();
-        existingApprovers = [
-            SELECT Id
-            FROM CPQ_Quote_Approver__c
-            WHERE CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__c=:quoteToSave.Id
-        ];
-        if (existingApprovers.size() > 0) {
-            delete existingApprovers;
+        if (steps.size() > 0) {
+            insert steps;
         }
 
         // Associate Approval Step Id to Approvers
         List<CPQ_Quote_Approver__c> approvers = new List<CPQ_Quote_Approver__c>();
         for (Integer index=0; index < quoteApprovers.size(); index++) {
-            for (Integer index2=0; index2 < quoteApprovers[index].size(); index2++) {
-                for (CPQ_Quote_Approver__c approver : quoteApprovers[index][index2]) {
-                    approver.CPQ_Quote_Approval_Step__c = quoteApprovalSteps[index][index2].Id;
-                    approvers.add(approver);
+            // Do not recreate approvers for persistent, approved approvals
+            if (!persistentApprovedApprovals.contains(quoteApprovals[index].CPQ_Playbook_Approval__c)) {
+                for (Integer index2=0; index2 < quoteApprovers[index].size(); index2++) {
+                    for (CPQ_Quote_Approver__c approver : quoteApprovers[index][index2]) {
+                        approver.CPQ_Quote_Approval_Step__c = quoteApprovalSteps[index][index2].Id;
+                        approvers.add(approver);
+                    }
                 }
             }
         }
 
         // Save Approvers
-        insert approvers;
+        if (approvers.size() > 0) {
+            insert approvers;
+        }
 
         return quoteToSave.Id;
     }

@@ -60,7 +60,7 @@
             "externalId": "Name;CPQ_Playbook_Rule_Action__r.Name"
         },
         {
-            "query": "SELECT Id,CPQ_Playbook__c,IsActive__c,Label__c,Name,Reason__c FROM CPQ_Playbook_Approval__c",
+            "query": "SELECT Id,CPQ_Playbook__c,IsActive__c,Label__c,Name,Persistent_Approval__c,Reason__c FROM CPQ_Playbook_Approval__c",
             "operation": "Upsert",
             "externalId": "Name;CPQ_Playbook__r.Name"
         },

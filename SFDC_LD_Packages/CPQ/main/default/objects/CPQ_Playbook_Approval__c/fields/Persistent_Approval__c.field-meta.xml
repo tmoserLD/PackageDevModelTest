@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Persistent_Approval__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Determines if approval needs to be reapproved after it has been approved once, but the quote is edited.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Determines if approval needs to be reapproved after it has been approved once, but the quote is edited. If TRUE, an approved approval does not need to be reapproved upon the quote being edited.</inlineHelpText>
+    <label>Persistent Approval</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
