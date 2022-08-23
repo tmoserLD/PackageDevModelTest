@@ -9,7 +9,7 @@ import deleteRecords from '@salesforce/apex/cpq_AdminContainerClass.deleteRecord
 // Insert Method
 import insertRecords from '@salesforce/apex/cpq_AdminContainerClass.insertRecords';
 
-export default class Cpq_AdminProposalSectionForm extends LightningElement {
+export default class CPQ_AdminApprovalEmailSectionForm extends LightningElement {
 
     // Button Label
     @api buttonLabel;
@@ -33,13 +33,9 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     @api selected;
 
     // Picklist value trackers
-    @track input1Columns;
-    @track input2Columns;
-    @track input3Columns;
     @track ansColumns;
 
     // Color value trackers
-    @track inputColor;
     @track headerColor;
     @track entryColor;
 
@@ -47,17 +43,13 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     @track showConfirmDelete = false;
 
     // Prompt to show in Delete Confirmation Modal
-    @track confirmDeletePrompt = 'Are you sure you want to delete this proposal section?';
+    @track confirmDeletePrompt = 'Are you sure you want to delete this email section?';
 
     // On Mount
     connectedCallback() {
         if (this.section !== undefined) {
             this.sectionType = this.section.sectionInfo.Section_Type__c;
-            this.input1Columns = this.section.sectionInfo.Inputs_Column_1__c;
-            this.input2Columns = this.section.sectionInfo.Inputs_Column_2__c;
-            this.input3Columns = this.section.sectionInfo.Inputs_Column_3__c;
             this.ansColumns = this.section.sectionInfo.Answer_Table_Questions__c;
-            this.inputColor = this.section.sectionInfo.Inputs_Font_Color__c;
             this.headerColor = this.section.sectionInfo.Table_Headers_Font_Color__c;
             this.entryColor = this.section.sectionInfo.Table_Entries_Font_Color__c;
         }
@@ -67,8 +59,8 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         return this.section !== undefined;
     }
 
-    get playbookId() {
-        return this.selected.playbook.split('-')[0];
+    get approvalId() {
+        return this.selected.approval.split('-')[0];
     }
 
     get acceptedFormats() {
@@ -110,27 +102,15 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     }
 
     get showTextBlock1() {
-        return ['Text - 1 column', 'Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Record Table', 'Answer Table - 1 column','Answer Table - 2 columns', 'User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 1 column', 'Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'Image and Text - 2 columns (1:1)', 'Image and Text - 2 columns (1:2)', 'Image and Text - 2 columns (1:3)', 'Record Table', 'Answer Table - 1 column','Answer Table - 2 columns'].includes(this.sectionType);
     }
 
     get showTextBlock2() {
-        return ['Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 2 columns (1:1)', 'Text - 2 columns (1:2)', 'Text - 2 columns (2:1)', 'Text - 3 columns'].includes(this.sectionType);
     }
 
     get showTextBlock3() {
-        return ['Text - 3 columns', 'User Input - 3 columns'].includes(this.sectionType);
-    }
-
-    get showInputs1() {
-        return ['User Input - 1 column', 'User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
-    }
-
-    get showInputs2() {
-        return ['User Input - 2 columns', 'User Input - 3 columns'].includes(this.sectionType);
-    }
-
-    get showInputs3() {
-        return ['User Input - 3 columns'].includes(this.sectionType);
+        return ['Text - 3 columns'].includes(this.sectionType);
     }
 
     get showTable() {
@@ -172,16 +152,19 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
                     detail: {
                         toast: {
                             title: 'Success!',
-                            message: 'Proposal Section was deleted',
+                            message: 'Email Section was deleted',
                             variant: 'success'
                         },
                         selected: {
                             playbook: this.selected.playbook,
                             playbookName: this.selected.playbookName,
-                            playbookTab: 'proposalSections',
-                            proposalSection: undefined,
-                            proposalSectionName: undefined,
-                            proposalSectionTab: undefined
+                            playbookTab: 'approvals',
+                            approval: this.selected.approval,
+                            approvalName: this.selected.approvalName,
+                            approvalTab: 'emailSections',
+                            emailSection: undefined,
+                            emailSectionName: undefined,
+                            emailSectionTab: undefined
                         }
                     }
                 }
@@ -190,7 +173,7 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         } catch (e) {
             this.template.querySelector('c-error-modal').showError(
                 {
-                    title: 'An error occurred while trying to delete the proposal section',
+                    title: 'An error occurred while trying to delete the email section',
                     body: JSON.stringify(e),
                     forceRefresh: false
                 }
@@ -216,15 +199,18 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
                 detail: {
                     toast: {
                         title: 'Success!',
-                        message: 'Proposal Section was saved',
+                        message: 'Email Section was saved',
                         variant: 'success'
                     },
                     selected: {
                         playbook: this.selected.playbook,
                         playbookName: this.selected.playbookName,
-                        playbookTab: 'proposalSections',
-                        proposalSection: event.detail.id,
-                        proposalSectionTab: 'section'
+                        playbookTab: 'approvals',
+                        approval: this.selected.approval,
+                        approvalName: this.selected.approvalName,
+                        approvalTab: 'emailSections',
+                        emailSection: event.detail.id,
+                        emailSectionTab: 'section'
                     }
                 }
             });
@@ -235,7 +221,7 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
     handleError(error) {
         this.template.querySelector('c-error-modal').showError(
             {
-                title: 'An error occurred while trying to save the proposal section',
+                title: 'An error occurred while trying to save the email section',
                 body: error.detail.detail + '\n\n' + error.detail.message,
                 forceRefresh: false
             }
@@ -251,7 +237,7 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         try {
             let newRecord = await cloneRecord({
                 recordId: this.section.sectionInfo.Id,
-                objectAPI: 'CPQ_Playbook_Proposal_Section__c'
+                objectAPI: 'CPQ_Playbook_Approval_Email_Section__c'
             });
 
             // Send childsaved event to parent
@@ -260,16 +246,19 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
                     detail: {
                         toast: {
                             title: 'Success!',
-                            message: 'Proposal Section was cloned',
+                            message: 'Email Section was cloned',
                             variant: 'success'
                         },
                         selected: {
                             playbook: this.selected.playbook,
                             playbookName: this.selected.playbookName,
-                            playbookTab: 'proposalSections',
-                            proposalSection: newRecord.Id,
-                            proposalSectionName: newRecord.Name,
-                            proposalSectionTab: 'section'
+                            playbookTab: 'approvals',
+                            approval: this.selected.approval,
+                            approvalName: this.selected.approvalName,
+                            approvalTab: 'emailSections',
+                            emailSection: newRecord.id,
+                            emailSectionName: newRecord.Name,
+                            emailSectionTab: 'section'
                         }
                     }
                 }
@@ -278,7 +267,7 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         } catch (e) {
             this.template.querySelector('c-error-modal').showError(
                 {
-                    title: 'An error occurred while trying to clone the proposal section',
+                    title: 'An error occurred while trying to clone the email section',
                     body: JSON.stringify(e),
                     forceRefresh: false
                 }
@@ -341,15 +330,19 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
                             detail: {
                                 toast: {
                                     title: 'Success!',
-                                    message: 'Proposal Section Image was saved',
+                                    message: 'Email Section Image was saved',
                                     variant: 'success'
                                 },
                                 selected: {
                                     playbook: this.selected.playbook,
                                     playbookName: this.selected.playbookName,
-                                    playbookTab: 'proposalSections',
-                                    proposalSection: this.selected.proposalSection,
-                                    proposalSectionTab: 'section'
+                                    playbookTab: 'approvals',
+                                    approval: this.selected.approval,
+                                    approvalName: this.selected.approvalName,
+                                    approvalTab: 'emailSections',
+                                    emailSection: this.selected.emailSection,
+                                    emailSectionName: this.selected.emailSectionName,
+                                    emailSectionTab: 'section'
                                 }
                             }
                         });
@@ -377,9 +370,13 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
                             selected: {
                                 playbook: this.selected.playbook,
                                 playbookName: this.selected.playbookName,
-                                playbookTab: 'proposalSections',
-                                proposalSection: this.selected.proposalSection,
-                                proposalSectionTab: 'section'
+                                playbookTab: 'approvals',
+                                approval: this.selected.approval,
+                                approvalName: this.selected.approvalName,
+                                approvalTab: 'emailSections',
+                                emailSection: this.selected.emailSection,
+                                emailSectionName: this.selected.emailSectionName,
+                                emailSectionTab: 'section'
                             }
                         }
                     });
@@ -395,48 +392,6 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         this.loading = true;
     }
 
-    // Input 1 Columns Change
-    input1ColumnsChange(event) {
-        let cols = '';
-        if (event.detail.length > 0) {
-            let selectedOptions = [];
-            event.detail.forEach(function(option) {
-                selectedOptions.push(option);
-            });
-            cols = selectedOptions.join(';');
-        }
-
-        this.input1Columns = cols;
-    }
-
-    // Input 2 Columns Change
-    input2ColumnsChange(event) {
-        let cols = '';
-        if (event.detail.length > 0) {
-            let selectedOptions = [];
-            event.detail.forEach(function(option) {
-                selectedOptions.push(option);
-            });
-            cols = selectedOptions.join(';');
-        }
-
-        this.input2Columns = cols;
-    }
-
-    // Input 3 Columns Change
-    input3ColumnsChange(event) {
-        let cols = '';
-        if (event.detail.length > 0) {
-            let selectedOptions = [];
-            event.detail.forEach(function(option) {
-                selectedOptions.push(option);
-            });
-            cols = selectedOptions.join(';');
-        }
-
-        this.input3Columns = cols;
-    }
-
     // Answer Columns Change
     ansColumnsChange(event) {
         let cols = '';
@@ -449,11 +404,6 @@ export default class Cpq_AdminProposalSectionForm extends LightningElement {
         }
 
         this.ansColumns = cols;
-    }
-
-    // Input Color Change
-    inputColorChange(event) {
-        this.inputColor = event.target.value;
     }
 
     // Header Color Change

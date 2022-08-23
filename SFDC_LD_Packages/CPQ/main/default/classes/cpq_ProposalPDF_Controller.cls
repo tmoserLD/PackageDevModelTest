@@ -708,25 +708,33 @@ public with sharing class cpq_ProposalPDF_Controller {
                             if (new List<Schema.DisplayType>{Schema.DisplayType.Currency,Schema.DisplayType.Double,Schema.DisplayType.Integer,Schema.DisplayType.Date}.contains(
                                 fieldType
                             )) {
-                                String val;
-                                
+                                String val = '';
+                            
                                 if (fieldType == Schema.DisplayType.Double) {
                                     Double decVal = (Double)rec.get(field);
-                                    val = String.valueOf(decVal.format());
+                                    if (decVal != null) {
+                                        val = String.valueOf(decVal.format());
+                                    }
                                 }
                                 else if (fieldType == Schema.DisplayType.Currency) {
                                     Decimal decVal = (Decimal)rec.get(field);
-                                    val = currencySymbol + String.valueOf(decVal.format());
+                                    if (decVal != null) {
+                                        val = currencySymbol + String.valueOf(decVal.format());
+                                    }
                                 }
                                 else if (fieldType == Schema.DisplayType.Integer) {
                                     Integer intVal = (Integer)rec.get(field);
-                                    val = String.valueOf(intVal.format());
+                                    if (intVal != null) {
+                                        val = String.valueOf(intVal.format());
+                                    }
                                 }
                                 else if (fieldType == Schema.DisplayType.Date) {
                                     Date dateVal = (Date)rec.get(field);
-                                    val = String.valueOf(dateVal.format());
+                                    if (dateVal != null) {
+                                        val = String.valueOf(dateVal.format());
+                                    }
                                 }
-
+    
                                 record.add(val);
                             } else {
                                 String val = String.valueOf(rec.get(field));

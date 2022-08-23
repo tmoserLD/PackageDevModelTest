@@ -1,8 +1,0 @@
-Approval: {!CPQ_Quote_Approver__c.Approval__c}
-Submitter: {!CPQ_Quote_Approver__c.CreatedBy}
-
-Related to Quote: {!CPQ_Quote_Approver__c.Quote__c}
-Related to Opportunity: {!CPQ_Quote_Approver__c.Opportunity__c}
-Related to Account: {!CPQ_Quote_Approver__c.Account__c}
-
-Please use the following link to view the approval and make your decision: {!CPQ_Quote_Approver__c.Link}

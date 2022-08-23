@@ -1,0 +1,263 @@
+<apex:component
+    access="global"
+    controller="cpq_ApprovalDisplayController"
+>
+    <apex:attribute
+        name="record"
+        type="CPQ_Quote_Approver__c"
+        description="Quote Approver record"
+        assignTo="{!approverRecord}"
+    />
+
+    <apex:outputPanel rendered="{!approverRecord != null}">
+
+        <apex:outputPanel rendered="{!sections.size < 1}">
+            <p>
+                Approval: &nbsp;{!approverRecord.Approval__c}
+                <br></br>
+                Submitted by: &nbsp;{!approverRecord.CreatedBy.Name}
+            </p>
+
+            <p>
+                Approval Reason: &nbsp;{!approverRecord.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.CPQ_Playbook_Approval__r.Reason__c}
+            </p>
+
+            <p>
+                Related to Quote: &nbsp;{!approverRecord.Quote__c}
+                <br></br>
+                Related to Opportunity: &nbsp;<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+approverRecord.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__r.OpportunityId}">{!approverRecord.Opportunity__c}</apex:outputlink>
+                <br></br>
+                Related to Account: &nbsp;<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+approverRecord.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__r.Opportunity.AccountId}">{!approverRecord.Account__c}</apex:outputlink>
+            </p>
+
+            <p>
+                Please use the following link to view the approval and make your decision: &nbsp;
+                <apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+'lightning/n/CPQ_Approvals'}">Approvals Interface</apex:outputlink>
+            </p>
+        </apex:outputPanel>
+
+        <apex:outputPanel rendered="{!sections.size > 0}">
+            <apex:repeat value="{!sections}" var="section"> 
+
+                <!-- Text - 1 column -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Text - 1 column'}">
+                    <div style="width: 100%;float: left">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Text - 1:1 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Text - 2 columns (1:1)'}">
+                    <div style="width: 48%;float: left">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+                    <div style="width: 48%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_2__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_2__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Text - 1:2 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Text - 2 columns (1:2)'}">
+                    <div style="width: 32%;float: left">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+                    <div style="width: 66%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_2__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_2__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Text - 2:1 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Text - 2 columns (2:1)'}">
+                    <div style="width: 66%;float: left">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+                    <div style="width: 32%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_2__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_2__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Text - 1:1:1 3 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Text - 3 columns'}">
+                    <div style="width: 32%;float: left">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+                    <div style="width: 65%;float: right">
+                        <div style="width: 49%;float: left">
+                            <p rendered="{!section.section.Body_Text_Block_2__c != null}">
+                                <apex:outputtext value="{!section.section.Body_Text_Block_2__c}" escape="false"/>
+                            </p>
+                        </div>
+                        <div style="width: 49%;float: right">
+                            <p rendered="{!section.section.Body_Text_Block_3__c != null}">
+                                <apex:outputtext value="{!section.section.Body_Text_Block_3__c}" escape="false"/>
+                            </p>
+                        </div>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Image - 1 column -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Image - 1 column'}">
+                    <div style="width: 100%;float: left">
+                        <p>
+                            <apex:image
+                                url="{!section.ImageID}"
+                                width="100%"
+                            />
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Image - 1:1 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Image and Text - 2 columns (1:1)'}">
+                    <div style="width: 48%;float: left">
+                        <p>
+                            <apex:image
+                                url="{!section.ImageID}"
+                                width="100%"
+                            />
+                        </p>
+                    </div>
+                    <div style="width: 48%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Image - 1:2 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Image and Text - 2 columns (1:2)'}">
+                    <div style="width: 32%;float: left">
+                        <p>
+                            <apex:image
+                                url="{!section.ImageID}"
+                                width="100%"
+                            />
+                        </p>
+                    </div>
+                    <div style="width: 66%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Image - 1:3 2 columns -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Image and Text - 2 columns (1:3)'}">
+                    <div style="width: 24%;float: left">
+                        <p>
+                            <apex:image
+                                url="{!section.ImageID}"
+                                width="100%"
+                            />
+                        </p>
+                    </div>
+                    <div style="width: 75%;float: right">
+                        <p rendered="{!section.section.Body_Text_Block_1__c != null}">
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Record Table -->
+                <apex:outputPanel rendered="{!section.section.Section_Type__c == 'Record Table'}">
+                    <div style="width: 100%;float: left">
+                        <p>
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                            <table class="tableTable" cellpadding="6" width="100%">
+                                <tr style="background-color: rgb(241, 238, 238)">
+                                    <apex:repeat value="{!section.tableHeaders}" var="header">
+                                        <th
+                                            class="tableHeader"
+                                            style="{!'text-align:left;color:'+section.section.Table_Headers_Font_Color__c+';font-size:'+section.section.Table_Headers_Font_Size__c}"
+                                        >
+                                            {!header}
+                                        </th>
+                                    </apex:repeat>
+                                </tr>
+                                <apex:repeat value="{!section.tableRecords}" var="record">
+                                    <tr>
+                                        <apex:repeat value="{!record}" var="value">
+                                            <td
+                                                class="tableRow"
+                                                style="{!'color:'+section.section.Table_Entries_Font_Color__c+';font-size:'+section.section.Table_Entries_Font_Size__c}"
+                                            >
+                                                {!value}
+                                            </td>
+                                        </apex:repeat>
+                                    </tr>
+                                </apex:repeat>
+                            </table> 
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+
+                <!-- Answer Table -->
+                <apex:outputPanel rendered="{!OR(section.section.Section_Type__c == 'Answer Table - 1 column',section.section.Section_Type__c == 'Answer Table - 2 columns')}">
+                    <div style="width: 100%;float: left">
+                        <p>
+                            <apex:outputtext value="{!section.section.Body_Text_Block_1__c}" escape="false"/>
+                            <table class="tableTable" cellpadding="6" width="100%">
+                                <apex:repeat value="{!section.answerTablePairSets}" var="sets">
+                                    <tr style="width: 100%">
+                                        <apex:repeat value="{!sets}" var="set">
+                                            <th
+                                                class="answerTableHeader"
+                                                style="{!'width: 20%;background-color: rgb(241, 238, 238);color:'+section.section.Table_Headers_Font_Color__c+';font-size:'+section.section.Table_Headers_Font_Size__c}"
+                                            >
+                                                {!set.label}
+                                            </th>
+                                            <td
+                                                class="answerTableItem"
+                                                style="{!'width:30%;color:'+section.section.Table_Entries_Font_Color__c+';font-size:'+section.section.Table_Entries_Font_Size__c}"
+                                            >
+                                                {!set.value}
+                                            </td>
+                                        </apex:repeat>
+                                    </tr>
+                                </apex:repeat>
+                            </table> 
+                        </p>
+                    </div>
+
+                    <br></br>
+                </apex:outputPanel>
+            </apex:repeat>
+        </apex:outputPanel>
+    </apex:outputPanel>
+</apex:component>

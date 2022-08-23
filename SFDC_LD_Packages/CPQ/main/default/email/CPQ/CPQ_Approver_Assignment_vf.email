@@ -1,25 +1,47 @@
 <messaging:emailTemplate subject="A New CPQ Quote Approval Has Been Assigned To You" recipientType="User" relatedToType="CPQ_Quote_Approver__c">
     <messaging:htmlEmailBody >
         <html>
-            <body>
-                <p>Approval: &nbsp;{!relatedTo.Approval__c}
-                <br></br>
-                Submitted by: &nbsp;{!relatedTo.CreatedBy.Name}
-                </p>
-
-                <p>Approval Reason: &nbsp;{!relatedTo.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.CPQ_Playbook_Approval__r.Reason__c}
-                </p>
-
-                <p>Related to Quote: &nbsp;{!relatedTo.Quote__c}
-                <br></br>
-                Related to Opportunity: &nbsp;<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+relatedTo.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__r.OpportunityId}">{!relatedTo.Opportunity__c}</apex:outputlink>
-                <br></br>
-                Related to Account: &nbsp;<apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+relatedTo.CPQ_Quote_Approval_Step__r.CPQ_Quote_Approval__r.Quote__r.Opportunity.AccountId}">{!relatedTo.Account__c}</apex:outputlink>
-                </p>
-
-                <p>Please use the following link to view the approval and make your decision: &nbsp;
-                <apex:outputlink value="{!LEFT($Api.Partner_Server_URL_140,FIND('.com',$Api.Partner_Server_URL_140)+4)+relatedTo.Id}">Approval Link</apex:outputlink>
-                </p>
+            <head>
+                <style type="text/css" media="print">
+                    .tableTable {
+                        border-collapse: collapse;
+                        border: 0px;
+                    }
+                    .tableRow {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                    }
+                    .tableHeader {
+                        border: 1px solid black;
+                        border-bottom: 2px solid black;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                    }
+                    .answerTableHeader {
+                        border: 1px solid black;
+                        border-right: 2px solid black;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        max-width: 65%;
+                        min-width: 15%;
+                    }
+                    .answerTableItem {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                        max-width: 65%;
+                        min-width: 15%;
+                    }
+                    .inputLine {
+                        margin-top: 50px;
+                        padding-left: 15px;
+                        padding-top: 5px;
+                    }
+                </style>
+            </head>
+            <body style="width:600px;padding-left:25px;padding-top:25px;padding-right:25px;padding-right:25px;">
+                <c:cpq_ApprovalDisplay record="{!relatedTo}"/>
             </body>
         </html>
     </messaging:htmlEmailBody>

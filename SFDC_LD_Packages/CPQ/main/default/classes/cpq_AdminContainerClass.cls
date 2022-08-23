@@ -569,6 +569,7 @@ public with sharing class cpq_AdminContainerClass {
             approvalInfoSet.approvalInfo = approval;
             approvalInfoSet.criteriaGroups = new List<ApprovalCriteriaGroupInfo>();
             approvalInfoSet.approverGroups = new List<ApproverGroupInfo>();
+            approvalInfoSet.emailSections = new List<EmailSectionInfo>();
 
             // Add to map
             approvalInfoSets.put(approval.Id, approvalInfoSet);
@@ -722,6 +723,47 @@ public with sharing class cpq_AdminContainerClass {
                     break;
                 }
             }
+        }
+
+        // All Email Sections
+        List<CPQ_Playbook_Approval_Email_Section__c> emailSections = new List<CPQ_Playbook_Approval_Email_Section__c>();
+        emailSections = [
+            SELECT Id,
+                Answer_Table_Questions__c,
+                Body_Text_Block_1__c,
+                Body_Text_Block_2__c,
+                Body_Text_Block_3__c,
+                CPQ_Playbook_Approval__c,
+                Display_Order__c,
+                IsActive__c,
+                Name,
+                Record_Table_Query__c,
+                Section_Type__c,
+                Table_Entries_Font_Color__c,
+                Table_Entries_Font_Size__c,
+                Table_Headers_Font_Color__c,
+                Table_Headers_Font_Size__c,
+                (
+                    SELECT Id,
+                        ContentDocument.LatestPublishedVersionId
+                    FROM AttachedContentDocuments
+                )
+            FROM CPQ_Playbook_Approval_Email_Section__c
+            WHERE CPQ_Playbook_Approval__c IN:approvalIDs
+            ORDER BY IsActive__c DESC,
+                Display_Order__c ASC
+        ];
+
+        // Update Map of approval object
+        for (CPQ_Playbook_Approval_Email_Section__c emailSection : emailSections) {
+
+            // Configure EmailSectionInfo class object 
+            EmailSectionInfo EmailSectionInfoSet = new EmailSectionInfo();
+            EmailSectionInfoSet.sectionInfo = emailSection;
+
+            // Update map
+            ApprovalInfo approvalInfoSet = approvalInfoSets.get(emailSection.CPQ_Playbook_Approval__c);
+            approvalInfoSet.emailSections.add(EmailSectionInfoSet);
         }
 
         // Update playbook map
@@ -922,6 +964,7 @@ public with sharing class cpq_AdminContainerClass {
         @AuraEnabled public CPQ_Playbook_Approval__c approvalInfo;
         @AuraEnabled public List<ApprovalCriteriaGroupInfo> criteriaGroups;
         @AuraEnabled public List<ApproverGroupInfo> approverGroups;
+        @AuraEnabled public List<EmailSectionInfo> emailSections;
     }
 
     public class ApprovalCriteriaGroupInfo {
@@ -940,6 +983,10 @@ public with sharing class cpq_AdminContainerClass {
 
     public class ApproverInfo {
         @AuraEnabled public CPQ_Playbook_Approver__c approverInfo;
+    }
+
+    public class EmailSectionInfo {
+        @AuraEnabled public CPQ_Playbook_Approval_Email_Section__c sectionInfo;
     }
 
     public class SectionInfo {
@@ -1248,6 +1295,15 @@ public with sharing class cpq_AdminContainerClass {
     @AuraEnabled
     public static void updateRecords(List<sObject> records) {
         update records;
+    }
+
+    /**
+    * @description Generic method to insert a list of sObject records
+    * @param records List of sObject records
+    */
+    @AuraEnabled
+    public static void insertRecords(List<sObject> records) {
+        insert records;
     }
 
     /**

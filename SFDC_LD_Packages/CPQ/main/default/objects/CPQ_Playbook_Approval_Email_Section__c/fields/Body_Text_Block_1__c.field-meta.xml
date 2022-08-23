@@ -3,7 +3,7 @@
     <fullName>Body_Text_Block_1__c</fullName>
     <description>Body text for block 1</description>
     <externalId>false</externalId>
-    <inlineHelpText>Text for the first column of text of the section. Quote Question Answers can be piped directly into text with the following format: {%QuestionVariableName%}</inlineHelpText>
+    <inlineHelpText>Text for the first column of text of the section. Quote Question Answers can be piped directly into text with the following format: {%QuestionVariableName%}. Approver Name can be piped in using {%Approver.Name%}</inlineHelpText>
     <label>Body (Column 1)</label>
     <length>32768</length>
     <trackTrending>false</trackTrending>

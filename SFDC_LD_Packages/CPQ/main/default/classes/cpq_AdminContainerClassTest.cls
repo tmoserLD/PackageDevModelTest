@@ -560,6 +560,30 @@ public class cpq_AdminContainerClassTest {
     }
 
     /**
+     * @description Test to insert Products
+     **/
+    @isTest
+    public static void testInsertProducts() {
+
+        List<Product2> testProducts = new List<Product2>();
+        testProducts.add(
+            new Product2(
+                Description = 'Product Z',
+                Family = 'Family',
+                IsActive = true,
+                Name = 'Product Z',
+                ProductCode = 'Product Code Z'
+            )
+        );
+
+        Test.startTest();
+
+        cpq_AdminContainerClass.insertRecords(testProducts);
+        
+        Test.stopTest();
+    }
+
+    /**
      * @description Test to clone Question
      **/
     @isTest
