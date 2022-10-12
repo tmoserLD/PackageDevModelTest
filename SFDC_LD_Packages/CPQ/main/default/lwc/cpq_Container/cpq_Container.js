@@ -107,10 +107,36 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
 
         // Set 'Quote' data
         tempQuoteObj.Name = 'Replacement of Contract #' + tempQuoteObj.ContractNumber;
-        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
+        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r.filter(
+            ent => (
+                ent.Product__r.Do_Not_Upgrade_Entitlement__c === undefined ||
+                !ent.Product__r.Do_Not_Upgrade_Entitlement__c.includes('Replacement')
+            )
+        );
         tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
         tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
         tempQuoteObj.Adjustment_Type__c = 'Replacement';
+
+        // Adjust dates on line items
+        if (tempQuoteObj.QuoteLineItems !== undefined) {
+            tempQuoteObj.QuoteLineItems.forEach(function(qli) {
+
+                // Line already started
+                if (new Date() > new Date(qli.Start_Date__c)) {
+                    let newStart = new Date();
+                    let newYear = newStart.getFullYear().toString();
+                    let newMonth = (newStart.getMonth() + 1).toString();
+                    if ((newStart.getMonth() + 1) < 10) {
+                        newMonth = '0' + newMonth;
+                    }
+                    let newDay = newStart.getDate().toString();
+                    if (newStart.getDate() < 10) {
+                        newDay = '0' + newDay;
+                    }
+                    qli.Start_Date__c = newYear + '-' + newMonth + '-' + newDay;
+                }
+            }, this);
+        }
 
         // Remove Id -- since not quote
         tempQuoteObj.contractId = tempQuoteObj.Id;
@@ -131,18 +157,36 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
 
         // Set 'Quote' data
         tempQuoteObj.Name = 'Renewal of Contract #' + tempQuoteObj.ContractNumber;
-        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r;
-        tempQuoteObj.CPQ_Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
+        tempQuoteObj.QuoteLineItems = tempQuoteObj.Contract_Entitlements__r.filter(
+            ent => (
+                ent.Product__r.Do_Not_Upgrade_Entitlement__c === undefined ||
+                !ent.Product__r.Do_Not_Upgrade_Entitlement__c.includes('Renewal')
+            )
+        );
+        tempQuoteObj.Playbook_Answers__r = tempQuoteObj.Contract_Playbook_Answers__r;
         tempQuoteObj.Adjustment_of_Contract__c = tempQuoteObj.Id;
         tempQuoteObj.Adjustment_Type__c = 'Renewal';
 
-        // Adjust dates on line items
+        // Determine most future end date and qlis that belong there
+        let endDate;
+        let mostFutureQLIs = [];
         if (tempQuoteObj.QuoteLineItems !== undefined) {
             tempQuoteObj.QuoteLineItems.forEach(function(qli) {
+                if (endDate === undefined ||
+                    new Date(qli.End_Date__c) > endDate
+                ) {
+                    endDate = qli.End_Date__c;
+                    mostFutureQLIs = [qli];
+                } else if (qli.End_Date__c === endDate) {
+                    mostFutureQLIs.push(qli);
+                }
+            }, this);
+        }
 
-                // Get term
-                let Difference_In_Time = new Date(qli.End_Date__c).getTime() - new Date(qli.Start_Date__c).getTime();
-                let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+        // Adjust dates on line items
+        tempQuoteObj.QuoteLineItems = mostFutureQLIs;
+        if (tempQuoteObj.QuoteLineItems !== undefined) {
+            tempQuoteObj.QuoteLineItems.forEach(function(qli) {
 
                 // Set Start Date one day after End Date
                 let newStart = new Date(qli.End_Date__c);
@@ -158,9 +202,10 @@ export default class Cpq_Container extends NavigationMixin(LightningElement) {
                 }
                 qli.Start_Date__c = newYear + '-' + newMonth + '-' + newDay;
 
-                // Set End Date to match same line term
+                // Set End Date to match same playbook term
                 let newEnd = new Date(qli.Start_Date__c);
-                newEnd.setUTCDate(new Date(qli.Start_Date__c).getUTCDate() + Difference_In_Days);
+                newEnd.setUTCMonth(new Date(qli.Start_Date__c).getUTCMonth() + tempQuoteObj.Playbook__r.Default_Term_in_Months__c);
+                newEnd.setUTCDate(newEnd.getUTCDate() - 1);
                 let year = newEnd.getUTCFullYear().toString();
                 let month = (newEnd.getUTCMonth() + 1).toString();
                 if ((newEnd.getUTCMonth() + 1) < 10) {

@@ -1,27 +1,43 @@
 <template>
-    <div class="slds-col slds-grid slds-gutters slds-wrap slds-m-top_x-small">
+    <div class="slds-col slds-grid slds-gutters slds-wrap slds-m-top_x-small slds-p-around_x-small">
 
         <!-- Configuration Mode -->
         <template if:false={viewMode}>
             <!-- Has Products -->
             <template if:true={hasProducts}>
                 <!-- Start Date -->
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-3">
                     <lightning-input
                         type="date"
+                        name="Start"
                         label="Start Date"
-                        readonly="true"
                         value={quoteStartDate}
+                        readonly={startDateReadOnly}
+                        onchange={startDateChanged}
+                    >
+                    </lightning-input>
+                </div>
+                <!-- Term -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-3">
+                    <lightning-input
+                        type="number"
+                        name="Term"
+                        label="Term (in months)"
+                        value={quoteTerm}
+                        readonly={termReadOnly}
+                        onchange={termChanged}
                     >
                     </lightning-input>
                 </div>
                 <!-- End Date -->
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-large-size_1-of-3">
                     <lightning-input
                         type="date"
+                        name="End"
                         label="End Date"
-                        readonly="true"
+                        readonly={endDateReadOnly}
                         value={quoteEndDate}
+                        onchange={endDateChanged}
                     >
                     </lightning-input>
                 </div>

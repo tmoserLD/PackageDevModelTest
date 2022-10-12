@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>End_Date_Editable__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Determines if user can manually adjust the end date of the quote in CPQ</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Determines if user can manually adjust the end date of the quote in CPQ. NOTE: End Date is always locked for Contract Amendments</inlineHelpText>
+    <label>End Date Editable</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

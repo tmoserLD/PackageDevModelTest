@@ -213,6 +213,33 @@
                             >
                             </lightning-input-field>
                         </template>
+
+                        <!-- System Value -->
+                        <template if:true={systemValType}>
+                            <lightning-input-field
+                                field-name="System_Value__c"
+                                onchange={systemValChange}
+                            >
+                            </lightning-input-field>
+                        </template>
+
+                        <!-- Product -->
+                        <template if:true={productType}>
+                            <lightning-input-field
+                                field-name="Product__c"
+                                required="true"
+                            >
+                            </lightning-input-field>
+
+                            <!-- Product Field Type -->
+                            <div style="display:none">
+                                <lightning-input-field
+                                    field-name="Product_Adjustment_Field_Type__c"
+                                    value={productFieldType}
+                                >
+                                </lightning-input-field>
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Col 2 -->
@@ -236,223 +263,116 @@
                                 onchange={questionGroupAdjustmentFieldChange}
                             >
                             </lightning-input-field>
-                        </template>                        
+                        </template> 
+                        
+                        <!-- Adjust Field -->
+                        <template if:true={adjustProductFieldType}>
+                            <lightning-input-field
+                                field-name="Product_Adjustment_Field__c"
+                                required="true"
+                                onchange={productFieldChange}
+                            >
+                            </lightning-input-field>
+                        </template>
                     </div>
                 </div>
 
-                <template if:true={questionFieldTypes}>
+                <!-- Row 6 -->
+                <div class="slds-col slds-grid slds-wrap">
 
-                    <!-- Row 6 -->
-                    <div class="slds-col slds-grid slds-wrap">
+                    <!-- Col 1 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
 
-                        <!-- Col 1 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                            <template if:true={staticSource}>
-                                <!-- Question Value -->
-                                <template if:true={isBoolean}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Boolean__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isCurrency}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Currency__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isDate}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Date__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isDecimal}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Decimal__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isInteger}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Integer__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isText}>
-                                    <lightning-input-field
-                                        field-name="Question_Field_Value_Text__c"
-                                        value={questionText}
-                                        onupdate={questionTextChange}
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isPicklistAnswer}>
-                                    <c-list-generator
-                                        label="Question Picklist Answers"
-                                        order-label-title="Adjust Picklist Answers Order"
-                                        placeholder="Enter desired answer"
-                                        help-text="List of answer choices"
-                                        initial-options={questionText}
-                                        initial-options-source="Semicolon delineated"
-                                        onupdate={picklistAnswersChange}
-                                    >
-                                    </c-list-generator>
-                                    <div style="display:none">
-                                        <lightning-input-field
-                                            field-name="Question_Field_Value_Text__c"
-                                            value={questionText}
-                                        >
-                                        </lightning-input-field>
-                                    </div>
-                                </template>
-                            </template>
-
-                            <template if:true={dynamicSource}>
-                                <div
-                                    class="slds-theme_info slds-m-top_small slds-p-vertical_xx-small slds-p-horizontal_small"
-                                    style="border: 1px solid gray;border-radius: 25px;"
+                        <template if:true={staticSource}>
+                            <!-- Question Value -->
+                            <template if:true={isBoolean}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Boolean__c"
                                 >
-                                    <ul class="slds-list_horizontal">
-                                        <li class="slds-m-right_x-small">
-                                            <lightning-icon
-                                                alternative-text="info"
-                                                icon-name="utility:info_alt"
-                                                size="x-small"
-                                                variant="inverse"
-                                            >
-                                            </lightning-icon>
-                                        </li>
-                                        <li>
-                                            Value will be set from Calculation Items
-                                        </li>
-                                    </ul>
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isCurrency}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Currency__c"
+                                >
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isDate}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Date__c"
+                                >
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isDecimal}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Decimal__c"
+                                >
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isInteger}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Integer__c"
+                                >
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isText}>
+                                <lightning-input-field
+                                    field-name="Field_Value_Text__c"
+                                    value={textValue}
+                                    onupdate={textChange}
+                                >
+                                </lightning-input-field>
+                            </template>
+                            <template if:true={isPicklistAnswer}>
+                                <c-list-generator
+                                    label="Question Picklist Answers"
+                                    order-label-title="Adjust Picklist Answers Order"
+                                    placeholder="Enter desired answer"
+                                    help-text="List of answer choices"
+                                    initial-options={textValue}
+                                    initial-options-source="Semicolon delineated"
+                                    onupdate={picklistAnswersChange}
+                                >
+                                </c-list-generator>
+                                <div style="display:none">
+                                    <lightning-input-field
+                                        field-name="Field_Value_Text__c"
+                                        value={textValue}
+                                    >
+                                    </lightning-input-field>
                                 </div>
                             </template>
-                        </div>
+                        </template>
 
-                        <!-- Col 2 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-                        </div>
+                        <template if:true={dynamicSource}>
+                            <div
+                                class="slds-theme_info slds-m-top_small slds-p-vertical_xx-small slds-p-horizontal_small"
+                                style="border: 1px solid gray;border-radius: 25px;"
+                            >
+                                <ul class="slds-list_horizontal">
+                                    <li class="slds-m-right_x-small">
+                                        <lightning-icon
+                                            alternative-text="info"
+                                            icon-name="utility:info_alt"
+                                            size="x-small"
+                                            variant="inverse"
+                                        >
+                                        </lightning-icon>
+                                    </li>
+                                    <li>
+                                        Value will be set from Calculation Items
+                                    </li>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
-                </template>
+
+                    <!-- Col 2 -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
+                    </div>
+                </div>
 
                 <!-- Row 7 -->
-                <template if:true={productType}>
-                    <div class="slds-col slds-grid slds-wrap">
-
-                        <!-- Col 1 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                            <!-- Product -->
-                            <lightning-input-field
-                                field-name="Product__c"
-                                required="true"
-                            >
-                            </lightning-input-field>
-                        </div>
-
-                        <!-- Col 2 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                            <!-- Adjust Field -->
-                            <template if:true={adjustProductFieldType}>
-                                <lightning-input-field
-                                    field-name="Product_Adjustment_Field__c"
-                                    required="true"
-                                    onchange={productFieldChange}
-                                >
-                                </lightning-input-field>
-                            </template>
-                        </div>
-                    </div>
-
-                    <!-- Row 8 -->
-                    <div class="slds-col slds-grid slds-wrap">
-
-                        <!-- Col 1 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                            <!-- Product Field Type -->
-                            <div style="display:none">
-                                <lightning-input-field
-                                    field-name="Product_Adjustment_Field_Type__c"
-                                    value={productFieldType}
-                                >
-                                </lightning-input-field>
-                            </div>
-                        </div>
-
-                        <!-- Col 2 -->
-                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2">
-
-                            <template if:true={staticSource}>
-                                <!-- Product Field Types -->
-                                <template if:true={isBooleanProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Boolean__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isCurrencyProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Currency__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isDateProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Date__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isDecimalProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Decimal__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isIntegerProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Integer__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                                <template if:true={isTextProd}>
-                                    <lightning-input-field
-                                        field-name="Product_Field_Value_Text__c"
-                                    >
-                                    </lightning-input-field>
-                                </template>
-                            </template>
-
-                            <template if:true={dynamicSource}>
-                                <div
-                                    class="slds-theme_info slds-m-top_small slds-p-vertical_xx-small slds-p-horizontal_small"
-                                    style="border: 1px solid gray;border-radius: 25px;"
-                                >
-                                    <ul class="slds-list_horizontal">
-                                        <li class="slds-m-right_x-small">
-                                            <lightning-icon
-                                                alternative-text="info"
-                                                icon-name="utility:info_alt"
-                                                size="x-small"
-                                                variant="inverse"
-                                            >
-                                            </lightning-icon>
-                                        </li>
-                                        <li>
-                                            Value will be set from Calculation Items
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- Row 9 -->
                 <div class="slds-col slds-grid slds-wrap">
 
                     <!-- Col 1 -->

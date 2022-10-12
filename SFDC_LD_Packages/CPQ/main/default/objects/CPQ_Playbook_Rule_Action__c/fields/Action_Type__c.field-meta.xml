@@ -37,6 +37,11 @@
                 <default>false</default>
                 <label>Adjust product field editability</label>
             </value>
+            <value>
+                <fullName>Adjust system value</fullName>
+                <default>false</default>
+                <label>Adjust system value</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

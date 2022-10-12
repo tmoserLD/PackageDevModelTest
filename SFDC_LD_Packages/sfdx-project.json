@@ -17,8 +17,8 @@
         {
             "path": "CPQ",
             "package": "CPQ",
-            "versionName": "ver 1.1",
-            "versionNumber": "1.1.1.NEXT",
+            "versionName": "ver 1.2",
+            "versionNumber": "1.2.0.NEXT",
             "default": true,
             "dependencies": [
                 {
@@ -72,6 +72,7 @@
         "CPQ@1.1.1-5": "04t1K000002qqkWQAQ",
         "CPQ@1.1.1-6": "04t1K000002qqmhQAA",
         "CPQ@1.1.1-7": "04t1K000002qqqjQAA",
-        "CPQ@1.1.1-8": "04t1K000002qqzMQAQ"
+        "CPQ@1.1.1-8": "04t1K000002qqzMQAQ",
+        "CPQ@1.2.0-1": "04t6T000000xLJyQAM"
     }
 }

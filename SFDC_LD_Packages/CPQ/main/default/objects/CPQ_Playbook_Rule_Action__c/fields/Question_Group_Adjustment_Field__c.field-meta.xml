@@ -15,7 +15,7 @@
             <value>
                 <fullName>IsHidden__c</fullName>
                 <default>false</default>
-                <label>IsHidden__c</label>
+                <label>Is Hidden</label>
             </value>
         </valueSetDefinition>
     </valueSet>

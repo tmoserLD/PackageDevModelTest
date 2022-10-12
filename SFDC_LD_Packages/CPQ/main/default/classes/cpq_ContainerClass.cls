@@ -322,6 +322,7 @@ public with sharing class cpq_ContainerClass {
             'End_Date__c',
             'List_Price__c',
             'Product__c',
+            'Product__r.Do_Not_Upgrade_Entitlement__c',
             'Product_Name__c',
             'Quantity__c',
             'Start_Date__c',

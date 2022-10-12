@@ -4,6 +4,10 @@
     <c-error-modal>
     </c-error-modal>
 
+    <!-- Evaluator -->
+    <c-cpq_-config-quote-evaluator>
+    </c-cpq_-config-quote-evaluator>
+
     <!-- Header -->
     <template if:false={hideHeader}>
         <div
@@ -54,7 +58,7 @@
 
         <template if:false={loading}>
 
-            <div class="slds-col slds-grid slds-gutters slds-m-top_x-small">
+            <div class="slds-col slds-grid slds-gutters slds-m-top_x-small slds-p-around_x-small">
                 <!-- Quote Name -->
                 <div class="slds-col slds-size_3-of-4">
                     <lightning-input
@@ -89,8 +93,11 @@
                 playbook={selectedPlaybookObj}
                 quote-end-date={quoteEndDate}
                 quote-start-date={quoteStartDate}
+                quote-term={quoteTerm}
                 quote-products={quoteProducts}
                 quote-id={existingQuoteData.Id}
+                quote-adjustment-type={existingQuoteData.Adjustment_Type__c}
+                ondatesupdate={datesUpdated}
             >
             </c-cpq_-playbook-view-fields>
 

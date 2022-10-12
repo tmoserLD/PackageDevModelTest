@@ -115,6 +115,7 @@ public with sharing class cpq_ConfigQuoteClass {
             SELECT Id,
                 Contract_View_Display_Fields__c,
                 Default_Term_in_Months__c,
+                End_Date_Editable__c,
                 Entitlement_Summary_Columns__c,
                 Entitlement_Summary_Group_by_Default__c,
                 Entitlement_Summary_Sort_by_Default__c,
@@ -125,7 +126,9 @@ public with sharing class cpq_ConfigQuoteClass {
                 Product_Summary_Columns__c,
                 Product_Summary_Group_by_Default__c,
                 Product_Summary_Sort_by_Default__c,
-                Quote_View_Display_Fields__c
+                Quote_View_Display_Fields__c,
+                Start_Date_Editable__c,
+                Term_Editable__c
             FROM CPQ_Playbook__c
             WHERE IsActive__c = TRUE AND
                 Pricebook__r.IsActive = TRUE
@@ -537,6 +540,12 @@ public with sharing class cpq_ConfigQuoteClass {
                 CPQ_Playbook_Question_Group__c,
                 CPQ_Playbook_Rule__c,
                 Execution_Order__c,
+                Field_Value_Boolean__c,
+                Field_Value_Currency__c,
+                Field_Value_Date__c,
+                Field_Value_Decimal__c,
+                Field_Value_Integer__c,
+                Field_Value_Text__c,
                 IsActive__c,
                 Name,
                 Numeric_Math_Operator__c,
@@ -544,20 +553,9 @@ public with sharing class cpq_ConfigQuoteClass {
                 Product_Adjustment_Field__c,
                 Product_Adjustment_Field_Type__c,
                 Product_Adjustment_Target_Rule_Action__c,
-                Product_Field_Value_Boolean__c,
-                Product_Field_Value_Currency__c,
-                Product_Field_Value_Date__c,
-                Product_Field_Value_Decimal__c,
-                Product_Field_Value_Integer__c,
-                Product_Field_Value_Text__c,
                 Question_Adjustment_Field__c,
                 Question_Group_Adjustment_Field__c,
-                Question_Field_Value_Boolean__c,
-                Question_Field_Value_Currency__c,
-                Question_Field_Value_Date__c,
-                Question_Field_Value_Decimal__c,
-                Question_Field_Value_Integer__c,
-                Question_Field_Value_Text__c,
+                System_Value__c,
                 Target_Manual_Addition_Only__c,
                 Value_Source_Type__c
             FROM CPQ_Playbook_Rule_Action__c

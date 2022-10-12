@@ -631,32 +631,32 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Boolean__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Boolean__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Currency__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Currency__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Date__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Decimal__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Decimal__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Integer__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Integer__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Product_Field_Value_Text__c</field>
+        <field>CPQ_Playbook_Rule_Action__c.Field_Value_Text__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -671,37 +671,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Boolean__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Currency__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Decimal__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Integer__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>CPQ_Playbook_Rule_Action__c.Question_Field_Value_Text__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>CPQ_Playbook_Rule_Action__c.Question_Group_Adjustment_Field__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Playbook_Rule_Action__c.System_Value__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -977,6 +952,21 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>CPQ_Playbook__c.Quote_View_Display_Fields__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Playbook__c.Term_Editable__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Playbook__c.Start_Date_Editable__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>CPQ_Playbook__c.End_Date_Editable__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1327,6 +1317,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Product2.Do_Not_Create_Entitlement__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Product2.Do_Not_Upgrade_Entitlement__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
