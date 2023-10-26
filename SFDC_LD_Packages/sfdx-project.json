@@ -1,13 +1,6 @@
 {
     "packageDirectories": [
         {
-            "path": "ld-catfood",
-            "default": false,
-            "package": "LaunchDarklyCatFood",
-            "versionName": "ver 1.0",
-            "versionNumber": "1.0.0.NEXT"
-        },
-        {
             "path": "Generic",
             "package": "GenericComponents",
             "versionName": "ver 1.1",
@@ -15,64 +8,19 @@
             "default": false
         },
         {
-            "path": "CPQ",
-            "package": "CPQ",
-            "versionName": "ver 1.2",
-            "versionNumber": "1.2.0.NEXT",
+            "path": "ld-sfdc-slack",
+            "package": "LaunchDarkly_SFDC_Slack",
+            "versionName": "ver 1.0",
+            "versionNumber": "1.0.0.NEXT",
             "default": true,
-            "dependencies": [
-                {
-                    "package": "GenericComponents@1.1.2-1"
-                }
-            ],
             "definitionFile": "config/project-scratch-def.json"
-        },
-        {
-            "path": "TerritoryMapping",
-            "package": "TerritoryMapping",
-            "versionName": "ver 1.1",
-            "versionNumber": "1.1.1.NEXT",
-            "default": false,
-            "dependencies": [
-                {
-                    "package": "GenericComponents@1.1.1-1"
-                }
-            ]
         }
     ],
     "name": "SFDC_LD_Packages",
     "namespace": "",
     "sfdcLoginUrl": "https://login.salesforce.com",
-    "sourceApiVersion": "52.0",
+    "sourceApiVersion": "56.0",
     "packageAliases": {
-        "LaunchDarklyCatFood": "0Ho1K000000fxVUSAY",
-        "LaunchDarklyCatFood@0.1.0-1": "04t1K000002qpJ9QAI",
-        "LaunchDarklyCatFood@1.0.0-1": "04t1K000002qpJdQAI",
-        "GenericComponents": "0Ho1K000000fxVeSAI",
-        "GenericComponents@1.1.0-1": "04t1K000002qqAXQAY",
-        "GenericComponents@1.1.0-2": "04t1K000002qqEeQAI",
-        "GenericComponents@1.1.0-3": "04t1K000002qqIWQAY",
-        "GenericComponents@1.1.1-1": "04t1K000002qqRsQAI",
-        "GenericComponents@1.1.2-1": "04t1K000002qqZ4QAI",
-        "TerritoryMapping": "0Ho1K000000fxVjSAI",
-        "TerritoryMapping@1.1.0-1": "04t1K000002qqAcQAI",
-        "TerritoryMapping@1.1.0-2": "04t1K000002qqB1QAI",
-        "TerritoryMapping@1.1.0-3": "04t1K000002qqEjQAI",
-        "TerritoryMapping@1.1.0-4": "04t1K000002qqIbQAI",
-        "TerritoryMapping@1.1.0-5": "04t1K000002qqRxQAI",
-        "TerritoryMapping@1.1.1-1": "04t1K000002qqS2QAI",
-        "CPQ": "0Ho1K000000fxVtSAI",
-        "CPQ@1.1.0-1": "04t1K000002qqIlQAI",
-        "CPQ@1.1.0-2": "04t1K000002qqIqQAI",
-        "CPQ@1.1.0-3": "04t1K000002qqP3QAI",
-        "CPQ@1.1.1-1": "04t1K000002qqZ9QAI",
-        "CPQ@1.1.1-2": "04t1K000002qqe4QAA",
-        "CPQ@1.1.1-3": "04t1K000002qqeOQAQ",
-        "CPQ@1.1.1-4": "04t1K000002qqhwQAA",
-        "CPQ@1.1.1-5": "04t1K000002qqkWQAQ",
-        "CPQ@1.1.1-6": "04t1K000002qqmhQAA",
-        "CPQ@1.1.1-7": "04t1K000002qqqjQAA",
-        "CPQ@1.1.1-8": "04t1K000002qqzMQAQ",
-        "CPQ@1.2.0-1": "04t6T000000xLJyQAM"
+
     }
 }

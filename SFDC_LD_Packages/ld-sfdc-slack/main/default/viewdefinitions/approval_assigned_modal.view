@@ -1,0 +1,10 @@
+description: "Action outstanding approval record from Slack"
+components:
+  - definition: modal
+    properties:
+      title: "My Assigned Approvals"
+      closeLabel: "Close"
+    components:
+      - definition: header
+        properties:
+          text: "Text to go here"

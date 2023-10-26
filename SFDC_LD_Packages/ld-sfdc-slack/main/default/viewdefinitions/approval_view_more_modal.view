@@ -1,0 +1,74 @@
+description: "Approval notification received for new approval ready to be actioned"
+schema:
+  properties:
+    approvalId:
+      type: string
+      required: true
+dataproviders:
+  approvalInfo:
+    definition: "apex__Slack_CPQApprovals_Provider.getApprovalMessageDetails"
+    properties:
+      approvalId: "{!view.properties.approvalId}"
+  quoteLines:
+    definition: "apex__Slack_CPQApprovals_Provider.getQuoteLines"
+    properties:
+      approvalId: "{!view.properties.approvalId}"
+components:
+  - definition: modal
+    properties:
+      title: "More Quote Details"
+      closeLabel: "Close"
+    components:
+      - definition: divider
+      - definition: section
+        properties:
+          text:
+            text: "{!approvalInfo.approvalsText}"
+            type: "mrkdwn"
+        components:
+        - definition: button
+          properties:
+            label: "Approve / Reject"
+            style: "primary"
+            name: "approval_approve_reject"
+          events:
+              onclick:
+                definition: "apex__action__Slack_Modal_Dispatcher"
+                properties:
+                  viewName: "approval_approve_reject_modal"
+                  approvalId: "{!view.properties.approvalId}"
+      - definition: section
+        properties:
+          fields:
+            - text: "{!approvalInfo.opportunityLinkText}"
+              type: "mrkdwn"
+              disableEncoding: true
+            - text: "{!approvalInfo.quoteLinkText}"
+              type: "mrkdwn"
+              disableEncoding: true
+      - definition: section
+        properties:
+          text:
+            text: "{!approvalInfo.approvalNotes}"
+            type: "mrkdwn"
+            disableEncoding: true
+      - definition: iteration
+        properties:
+          foreach: "{!quoteLines}"
+          foritem: "line"
+        components:
+          - definition: section
+            properties:
+              text:
+                text: "{!line.ProductCode} {!line.Name}"
+                type: "mrkdwn"
+                disableEncoding: true
+          - definition: section
+            properties:
+              fields:
+              - text: "*Quantity:*\n>{!line.Quantity}"
+                type: "mrkdwn"
+                disableEncoding: true
+              - text: "*Total Price:*\n>{!line.TotalPrice}"
+                type: "mrkdwn"
+                disableEncoding: true

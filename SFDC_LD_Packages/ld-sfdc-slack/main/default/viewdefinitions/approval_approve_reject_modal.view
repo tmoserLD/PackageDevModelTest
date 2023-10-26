@@ -1,0 +1,43 @@
+description: "Action outstanding approval record from Slack"
+schema:
+  properties:
+    approvalId:
+      type: string
+      required: true
+components:
+  - definition: modal
+    properties:
+      title: "Approve / Reject"
+      closeLabel: "Cancel"
+      submitLabel: "Save"
+    events:
+      onsubmit:
+        definition: "apex__action__Slack_Commit_Dispatcher"
+        properties:
+          actionType: "approval_approve_reject"
+          approvalId: "{!view.properties.approvalId}"
+    components:
+      - definition: input
+        properties:
+          label: "Approval Status"
+          required: true
+        components:
+          - definition: select
+            properties:
+              name: "ApprovalStatus"
+              placeholder: "Select an option"
+              options:
+                - identifier: "Approved"
+                  label: "Approved"
+                - identifier: "Rejected"
+                  label: "Rejected"
+      - definition: input
+        properties:
+          label: "Approval Comments"
+          required: false
+        components:
+          - definition: textInput
+            properties:
+              name: "ApprovalComments"
+              multiline: true
+              placeholder: "Any reasoning you want others to know about your 'Approval Status' decision"
