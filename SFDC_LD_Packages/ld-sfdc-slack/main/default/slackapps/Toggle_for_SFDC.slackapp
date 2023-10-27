@@ -3,24 +3,18 @@ commands:
   /sfdc-view-assigned-approvals:
     action:
         definition: apex__action__Slack_Slash_Modal_Dispatcher
-        properties:
-          viewName: "approval_assigned_modal"
     title: View Assigned Approvals
     description: View all outstanding approvals assigned to me.
 globalShortcuts:
   sfdc-view-assigned-approvals:
     action:
         definition: apex__action__Slack_Shortcut_Modal_Dispatcher
-        properties:
-          viewName: "approval_assigned_modal"
     title: View Assigned Approvals
     description: View all outstanding approvals assigned to me.
 messageShortcuts:
   sfdc-view-assigned-approvals:
     action:
         definition: apex__action__Slack_Shortcut_Modal_Dispatcher
-        properties:
-          viewName: "approval_assigned_modal"
     title: View Assigned Approvals
     description: View all outstanding approvals assigned to me.
 events:

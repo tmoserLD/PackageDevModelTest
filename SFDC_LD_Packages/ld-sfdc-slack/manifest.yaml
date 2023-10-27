@@ -41,6 +41,7 @@ settings:
     request_url: https://slack-apps.salesforce.com:9443/a/A063BUUGSL9
     bot_events:
       - app_home_opened
+      - app_uninstalled
   interactivity:
     is_enabled: true
     request_url: https://slack-apps.salesforce.com:9443/a/A063BUUGSL9
