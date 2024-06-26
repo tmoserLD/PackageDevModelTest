@@ -2,7 +2,7 @@
     "packageDirectories": [
         {
             "path": "ld-catfood",
-            "default": false,
+            "default": true,
             "package": "LaunchDarklyCatFood",
             "versionName": "ver 1.0",
             "versionNumber": "1.0.0.NEXT"
@@ -13,19 +13,6 @@
             "versionName": "ver 1.1",
             "versionNumber": "1.1.2.NEXT",
             "default": false
-        },
-        {
-            "path": "CPQ",
-            "package": "CPQ",
-            "versionName": "ver 1.2",
-            "versionNumber": "1.2.0.NEXT",
-            "default": true,
-            "dependencies": [
-                {
-                    "package": "GenericComponents@1.1.2-1"
-                }
-            ],
-            "definitionFile": "config/project-scratch-def.json"
         },
         {
             "path": "TerritoryMapping",
@@ -43,7 +30,7 @@
     "name": "SFDC_LD_Packages",
     "namespace": "",
     "sfdcLoginUrl": "https://login.salesforce.com",
-    "sourceApiVersion": "52.0",
+    "sourceApiVersion": "59.0",
     "packageAliases": {
         "LaunchDarklyCatFood": "0Ho1K000000fxVUSAY",
         "LaunchDarklyCatFood@0.1.0-1": "04t1K000002qpJ9QAI",
@@ -60,19 +47,6 @@
         "TerritoryMapping@1.1.0-3": "04t1K000002qqEjQAI",
         "TerritoryMapping@1.1.0-4": "04t1K000002qqIbQAI",
         "TerritoryMapping@1.1.0-5": "04t1K000002qqRxQAI",
-        "TerritoryMapping@1.1.1-1": "04t1K000002qqS2QAI",
-        "CPQ": "0Ho1K000000fxVtSAI",
-        "CPQ@1.1.0-1": "04t1K000002qqIlQAI",
-        "CPQ@1.1.0-2": "04t1K000002qqIqQAI",
-        "CPQ@1.1.0-3": "04t1K000002qqP3QAI",
-        "CPQ@1.1.1-1": "04t1K000002qqZ9QAI",
-        "CPQ@1.1.1-2": "04t1K000002qqe4QAA",
-        "CPQ@1.1.1-3": "04t1K000002qqeOQAQ",
-        "CPQ@1.1.1-4": "04t1K000002qqhwQAA",
-        "CPQ@1.1.1-5": "04t1K000002qqkWQAQ",
-        "CPQ@1.1.1-6": "04t1K000002qqmhQAA",
-        "CPQ@1.1.1-7": "04t1K000002qqqjQAA",
-        "CPQ@1.1.1-8": "04t1K000002qqzMQAQ",
-        "CPQ@1.2.0-1": "04t6T000000xLJyQAM"
+        "TerritoryMapping@1.1.1-1": "04t1K000002qqS2QAI"
     }
 }

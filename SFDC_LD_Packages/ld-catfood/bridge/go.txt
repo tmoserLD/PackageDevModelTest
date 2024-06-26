@@ -1,0 +1,8 @@
+export LD_SDK_KEY='sdk-5c50f8e7-b067-47ad-a45a-98eff7818a5a'
+export SALESFORCE_URL='https://catamorphiccompany.my.salesforce.com/services/apexrest/'
+export OAUTH_ID='3MVG9Xl3BC6VHB.burM2MsT8B2Nvda_6IadmUx2v4P9ZUwSGzGOldhv_ffqacOY7nXuOSvFkBqRJ4OUmcq6Df'
+export OAUTH_SECRET='A14F366026D4EB7BCFAB6ECC40ABD901082ADA48CAB0CF4351B50E5415447159'
+export OAUTH_USERNAME='tmoser-7nnf@force.com'
+export OAUTH_PASSWORD='eud7uvm7EVA!ukv3wkpCIL5USnJj6KJ6UhArgDXMVCJ'
+
+./bridge
